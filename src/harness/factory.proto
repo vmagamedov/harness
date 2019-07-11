@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package harness;
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FieldOptions {
+    optional string factory = 2001;
+}

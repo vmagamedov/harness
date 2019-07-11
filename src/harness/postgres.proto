@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package harness.postgres;
+
+message DSN {
+    string value = 1;
+}
+
+message Connection {
+    string host = 1;
+    int32 port = 2;
+    string database = 3;
+}

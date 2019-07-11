@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package example;
+
+import "harness/factory.proto";
+import "harness/postgres.proto";
+import "harness/grpc.proto";
+
+import "google/protobuf/empty.proto";
+
+message Configuration {
+  bool debug = 1;
+  harness.postgres.DSN db = 2 [(harness.factory) = "python/asyncpg.v1"];
+  harness.grpc.Channel taskqueue = 3 [(harness.factory) = "python/grpclib.v1"];
+  harness.grpc.Endpoint listen = 4 [(harness.factory) = "python/grpclib.v1"];
+}
+
+service Example {
+  rpc Store (google.protobuf.Empty) returns (google.protobuf.Empty) {}
+}

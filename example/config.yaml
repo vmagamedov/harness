@@ -1,0 +1,8 @@
+db:
+  value: postgres://postgres:postgres@db:5432/postgres
+taskqueue:
+  host: localhost
+  port: 50051
+listen:
+  host: 127.0.0.1
+  port: 50052
