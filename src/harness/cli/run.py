@@ -3,9 +3,44 @@ import asyncio
 import inspect
 import argparse
 import importlib
+from contextlib import AsyncExitStack
+from dataclasses import fields
 
 import yaml
+from grpclib.utils import graceful_exit
 from google.protobuf.json_format import ParseDict
+
+
+async def wrapper(service_func, wires_in_type, wires_out_type, config):
+    async with AsyncExitStack() as stack:
+        resources = {}
+        for field in fields(wires_in_type):
+            if field.name == '__config__':
+                continue
+            resource_config = getattr(config, field.name)
+            resource = field.type()
+            resource.configure(resource_config)
+            resources[field.name] = await stack.enter_async_context(resource)
+        wires_in = wires_in_type(**resources, __config__=config)
+
+        wires_out = await service_func(wires_in)
+        if not isinstance(wires_out, wires_out_type):
+            raise RuntimeError(
+                f'{service_func} returned invalid type: {type(wires_out)!r}; '
+                f'expected: {wires_out_type!r}'
+            )
+
+        waiters = set()
+        resources = []
+        for field in fields(wires_out_type):
+            resource = getattr(wires_out, field.name)
+            resource_config = getattr(config, field.name)
+            resource.configure(resource_config)
+            await stack.enter_async_context(resource)
+            waiters.add(resource.wait_closed())
+            resources.append(resource)
+        with graceful_exit(resources):
+            await asyncio.wait(waiters, return_when=asyncio.FIRST_COMPLETED)
 
 
 def main():
@@ -36,6 +71,15 @@ def main():
         raise SystemExit(f'"{module_name}:{name}" function has invalid '
                          f'annotation for the "{arg_name}" argument')
 
+    wires_out_type = wires_in_type.__wires_out_type__
+    return_annotation = signature.annotations.get('return')
+    if not return_annotation:
+        raise SystemExit(f'"{module_name}:{name}" function '
+                         f'is missing return annotation')
+    elif return_annotation is not wires_out_type:
+        raise SystemExit(f'"{module_name}:{name}" function '
+                         f'has invalid return annotation')
+
     config_type = wires_in_annotations['__config__']
     with codecs.open(args.config, 'rb', 'utf-8') as f:
         config_data = yaml.safe_load(f)
@@ -46,6 +90,4 @@ def main():
 
     config = config_type()
     ParseDict(config_data, config)
-
-    wrapper = wires_in_type.__wrapper__()
-    asyncio.run(wrapper(service_func, config))
+    asyncio.run(wrapper(service_func, wires_in_type, wires_out_type, config))

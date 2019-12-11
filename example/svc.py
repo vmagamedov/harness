@@ -1,9 +1,9 @@
 from grpclib.server import Stream
 from google.protobuf.empty_pb2 import Empty
-from harness.resources.grpclib.v1 import ServerResource
+from harness.resources.grpclib.v1 import Server
 
 from svc_grpc import ExampleBase
-from svc_wires_prototype import WiresIn, WiresOut
+from svc_wires import WiresIn, WiresOut
 
 
 class Service(ExampleBase):
@@ -17,7 +17,8 @@ class Service(ExampleBase):
 
 
 async def main(wires_in: WiresIn) -> WiresOut:
-    print(wires_in)
-    return WiresOut(listen=ServerResource([
+    print(wires_in.db)
+    print(wires_in.taskqueue)
+    return WiresOut(listen=Server([
         Service(db=wires_in.db, taskqueue=wires_in.taskqueue),
     ]))

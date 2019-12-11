@@ -5,5 +5,6 @@ package harness;
 import "google/protobuf/descriptor.proto";
 
 extend google.protobuf.FieldOptions {
-    optional string factory = 2001;
+    optional string input = 2001;
+    optional string output = 2002;
 }

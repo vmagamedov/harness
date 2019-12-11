@@ -3,19 +3,19 @@ from typing_extensions import Protocol
 
 import harness.grpc_pb2
 
-from ..base import ResourceBase
+from ..base import Resource
 
 
 class _IServable(Protocol):
     def __mapping__(self) -> Any: ...
 
 
-class ChannelResource(ResourceBase):
-    __implements__ = harness.grpc_pb2.Channel.DESCRIPTOR.full_name
-
+class Channel(Resource):
     _channel = None
 
     def configure(self, value: harness.grpc_pb2.Channel):
+        assert isinstance(value, harness.grpc_pb2.Channel), type(value)
+
         from grpclib.client import Channel
 
         self._channel = Channel(value.host or 'localhost',
@@ -28,9 +28,7 @@ class ChannelResource(ResourceBase):
         self._channel.close()
 
 
-class ServerResource(ResourceBase):
-    __implements__ = harness.grpc_pb2.Endpoint.DESCRIPTOR.full_name
-
+class Server(Resource):
     _host = None
     _port = None
     _server = None
@@ -39,6 +37,8 @@ class ServerResource(ResourceBase):
         self.handlers = handlers
 
     def configure(self, value: harness.grpc_pb2.Endpoint):
+        assert isinstance(value, harness.grpc_pb2.Endpoint), type(value)
+
         from grpclib.server import Server
 
         self._host = value.host or '127.0.0.1'

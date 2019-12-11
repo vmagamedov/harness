@@ -1,15 +1,15 @@
 import harness.postgres_pb2
 
-from ..base import ResourceBase
+from ..base import Resource
 
 
-class EngineResource(ResourceBase):
-    __implements__ = harness.postgres_pb2.DSN.DESCRIPTOR.full_name
-
+class Connection(Resource):
     _dsn = None
     _connection = None
 
     def configure(self, value: harness.postgres_pb2.DSN):
+        assert isinstance(value, harness.postgres_pb2.DSN), type(value)
+
         from asyncpg import connect
 
         assert value.value

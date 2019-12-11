@@ -1,4 +1,4 @@
-class ResourceBase:
+class Resource:
 
     def configure(self, value):
         pass
