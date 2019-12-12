@@ -90,21 +90,20 @@ and return it with a ``WiresOut`` structure (``svc.py`` file):
 
   from harness.resources.grpclib.v1 import Server
 
-  from svc_grpc import CoffeeMachineBase
-
+  @dataclass
   class CoffeeMachine(CoffeeMachineBase):
-      ...
+      db: asyncpg.Connection
+      taskqueue: grpclib.client.Channel
+
+      async def Brew(stream):
+          ...
 
   async def main(wires_in: WiresIn) -> WiresOut:
-      print('Connection:', wires_in.db.connection)
-      print('Channel:', wires_in.taskqueue.channel)
-      server_resource = Server([
-          CoffeeMachine(
-              db=wires_in.db.connection,
-              taskqueue=wires_in.taskqueue.channel,
-          ),
-      ])
-      return WiresOut(listen=server_resource)
+      service = CoffeeMachine(
+          db=wires_in.db.connection,
+          taskqueue=wires_in.taskqueue.channel,
+      )
+      return WiresOut(listen=Server([service]))
 
 Files Generation
 ~~~~~~~~~~~~~~~~

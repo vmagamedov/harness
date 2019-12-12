@@ -1,3 +1,7 @@
+from dataclasses import dataclass
+
+import asyncpg
+import grpclib.client
 from grpclib.server import Stream
 from google.protobuf.empty_pb2 import Empty
 from harness.resources.grpclib.v1 import Server
@@ -6,19 +10,20 @@ from svc_grpc import ExampleBase
 from svc_wires import WiresIn, WiresOut
 
 
+@dataclass
 class Service(ExampleBase):
-
-    def __init__(self, *, db, taskqueue):
-        self._db = db
-        self._taskqueue = taskqueue
+    db: asyncpg.Connection
+    taskqueue: grpclib.client.Channel
 
     async def Store(self, stream: Stream[Empty, Empty]) -> None:
-        pass
+        request = await stream.recv_message()
+        print(request)
+        await stream.send_message(Empty())
 
 
 async def main(wires_in: WiresIn) -> WiresOut:
-    print(wires_in.db.connection)
-    print(wires_in.taskqueue.channel)
-    return WiresOut(listen=Server([
-        Service(db=wires_in.db, taskqueue=wires_in.taskqueue),
-    ]))
+    service = Service(
+        db=wires_in.db.connection,
+        taskqueue=wires_in.taskqueue.channel,
+    )
+    return WiresOut(listen=Server([service]))
