@@ -13,15 +13,16 @@ from google.protobuf.json_format import ParseDict
 
 async def wrapper(service_func, wires_in_type, wires_out_type, config):
     async with AsyncExitStack() as stack:
-        resources = {}
+        input_resources = {}
         for field in fields(wires_in_type):
             if field.name == '__config__':
                 continue
             resource_config = getattr(config, field.name)
             resource = field.type()
             resource.configure(resource_config)
-            resources[field.name] = await stack.enter_async_context(resource)
-        wires_in = wires_in_type(**resources, __config__=config)
+            await stack.enter_async_context(resource)
+            input_resources[field.name] = resource
+        wires_in = wires_in_type(**input_resources, __config__=config)
 
         wires_out = await service_func(wires_in)
         if not isinstance(wires_out, wires_out_type):
@@ -31,15 +32,15 @@ async def wrapper(service_func, wires_in_type, wires_out_type, config):
             )
 
         waiters = set()
-        resources = []
+        output_resources = []
         for field in fields(wires_out_type):
             resource = getattr(wires_out, field.name)
             resource_config = getattr(config, field.name)
             resource.configure(resource_config)
             await stack.enter_async_context(resource)
             waiters.add(resource.wait_closed())
-            resources.append(resource)
-        with graceful_exit(resources):
+            output_resources.append(resource)
+        with graceful_exit(output_resources):
             await asyncio.wait(waiters, return_when=asyncio.FIRST_COMPLETED)
 
 

@@ -17,8 +17,8 @@ class Service(ExampleBase):
 
 
 async def main(wires_in: WiresIn) -> WiresOut:
-    print(wires_in.db)
-    print(wires_in.taskqueue)
+    print(wires_in.db.connection)
+    print(wires_in.taskqueue.channel)
     return WiresOut(listen=Server([
         Service(db=wires_in.db, taskqueue=wires_in.taskqueue),
     ]))
