@@ -9,7 +9,7 @@ with open(
 
 setup(
     name='harness',
-    version='0.1.0rc1',
+    version='0.1.0rc2',
     description='Language-agnostic microservices boilerplate as a code',
     long_description=DESCRIPTION,
     long_description_content_type='text/x-rst',
