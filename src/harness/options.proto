@@ -4,7 +4,13 @@ package harness;
 
 import "google/protobuf/descriptor.proto";
 
+message HarnessOptions {
+    oneof type {
+        string input = 1;
+        string output = 2;
+    }
+}
+
 extend google.protobuf.FieldOptions {
-    optional string input = 2001;
-    optional string output = 2002;
+    optional HarnessOptions options = 2001;
 }

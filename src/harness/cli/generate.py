@@ -10,9 +10,8 @@ from google.protobuf.compiler.plugin_pb2 import CodeGeneratorResponse
 
 from grpclib.plugin.main import Buffer
 
+from ..options_pb2 import HarnessOptions
 
-INPUT_EXT_NUMBER = 2001
-OUTPUT_EXT_NUMBER = 2002
 
 ProtoFile = str
 MessageName = str
@@ -67,15 +66,18 @@ def main() -> None:
             inputs: List[ResourceContext] = []
             outputs: List[ResourceContext] = []
             for f in mt.field:
-                for uf in f.options.UnknownFields():
-                    if uf.field_number == INPUT_EXT_NUMBER:
+                for _, opt in f.options.ListFields():
+                    if not isinstance(opt, HarnessOptions):
+                        continue
+                    if opt.WhichOneof('type') == 'input':
                         collection = inputs
-                    elif uf.field_number == OUTPUT_EXT_NUMBER:
+                        option_value = opt.input
+                    elif opt.WhichOneof('type') == 'output':
                         collection = outputs
+                        option_value = opt.output
                     else:
                         continue
                     assert f.type_name
-                    option_value = uf.data.decode('ascii')
                     adapter_name, _, resource_name = option_value.partition(':')
                     adapter_path = entrypoints[adapter_name].module_name
                     resource_path = f'{adapter_path}.{resource_name}'

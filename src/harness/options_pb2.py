@@ -19,33 +19,79 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='harness',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=b'\n\x15harness/options.proto\x12\x07harness\x1a google/protobuf/descriptor.proto:-\n\x05input\x12\x1d.google.protobuf.FieldOptions\x18\xd1\x0f \x01(\t:.\n\x06output\x12\x1d.google.protobuf.FieldOptions\x18\xd2\x0f \x01(\t'
+  serialized_pb=b'\n\x15harness/options.proto\x12\x07harness\x1a google/protobuf/descriptor.proto\";\n\x0eHarnessOptions\x12\x0f\n\x05input\x18\x01 \x01(\tH\x00\x12\x10\n\x06output\x18\x02 \x01(\tH\x00\x42\x06\n\x04type:H\n\x07options\x12\x1d.google.protobuf.FieldOptions\x18\xd1\x0f \x01(\x0b\x32\x17.harness.HarnessOptions'
   ,
   dependencies=[google_dot_protobuf_dot_descriptor__pb2.DESCRIPTOR,])
 
 
-INPUT_FIELD_NUMBER = 2001
-input = _descriptor.FieldDescriptor(
-  name='input', full_name='harness.input', index=0,
-  number=2001, type=9, cpp_type=9, label=1,
-  has_default_value=False, default_value=b"".decode('utf-8'),
-  message_type=None, enum_type=None, containing_type=None,
-  is_extension=True, extension_scope=None,
-  serialized_options=None, file=DESCRIPTOR)
-OUTPUT_FIELD_NUMBER = 2002
-output = _descriptor.FieldDescriptor(
-  name='output', full_name='harness.output', index=1,
-  number=2002, type=9, cpp_type=9, label=1,
-  has_default_value=False, default_value=b"".decode('utf-8'),
+OPTIONS_FIELD_NUMBER = 2001
+options = _descriptor.FieldDescriptor(
+  name='options', full_name='harness.options', index=0,
+  number=2001, type=11, cpp_type=10, label=1,
+  has_default_value=False, default_value=None,
   message_type=None, enum_type=None, containing_type=None,
   is_extension=True, extension_scope=None,
   serialized_options=None, file=DESCRIPTOR)
 
-DESCRIPTOR.extensions_by_name['input'] = input
-DESCRIPTOR.extensions_by_name['output'] = output
+
+_HARNESSOPTIONS = _descriptor.Descriptor(
+  name='HarnessOptions',
+  full_name='harness.HarnessOptions',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='input', full_name='harness.HarnessOptions.input', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='output', full_name='harness.HarnessOptions.output', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+    _descriptor.OneofDescriptor(
+      name='type', full_name='harness.HarnessOptions.type',
+      index=0, containing_type=None, fields=[]),
+  ],
+  serialized_start=68,
+  serialized_end=127,
+)
+
+_HARNESSOPTIONS.oneofs_by_name['type'].fields.append(
+  _HARNESSOPTIONS.fields_by_name['input'])
+_HARNESSOPTIONS.fields_by_name['input'].containing_oneof = _HARNESSOPTIONS.oneofs_by_name['type']
+_HARNESSOPTIONS.oneofs_by_name['type'].fields.append(
+  _HARNESSOPTIONS.fields_by_name['output'])
+_HARNESSOPTIONS.fields_by_name['output'].containing_oneof = _HARNESSOPTIONS.oneofs_by_name['type']
+DESCRIPTOR.message_types_by_name['HarnessOptions'] = _HARNESSOPTIONS
+DESCRIPTOR.extensions_by_name['options'] = options
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-google_dot_protobuf_dot_descriptor__pb2.FieldOptions.RegisterExtension(input)
-google_dot_protobuf_dot_descriptor__pb2.FieldOptions.RegisterExtension(output)
+HarnessOptions = _reflection.GeneratedProtocolMessageType('HarnessOptions', (_message.Message,), {
+  'DESCRIPTOR' : _HARNESSOPTIONS,
+  '__module__' : 'harness.options_pb2'
+  # @@protoc_insertion_point(class_scope:harness.HarnessOptions)
+  })
+_sym_db.RegisterMessage(HarnessOptions)
+
+options.message_type = _HARNESSOPTIONS
+google_dot_protobuf_dot_descriptor__pb2.FieldOptions.RegisterExtension(options)
 
 # @@protoc_insertion_point(module_scope)
