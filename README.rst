@@ -1,5 +1,5 @@
-Harness
-=======
+Harness (proof-of-concept)
+==========================
 
 Language-agnostic microservices boilerplate as a code.
 You define service configuration and implementation,
@@ -22,7 +22,7 @@ Configuration
 
   package cafe;
 
-  import "harness/factory.proto";
+  import "harness/options.proto";
   import "harness/postgres.proto";
   import "harness/grpc.proto";
 

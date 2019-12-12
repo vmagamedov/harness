@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package example;
 
-import "harness/factory.proto";
+import "harness/options.proto";
 import "harness/postgres.proto";
 import "harness/grpc.proto";
 

@@ -11,7 +11,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from harness import factory_pb2 as harness_dot_factory__pb2
+from harness import options_pb2 as harness_dot_options__pb2
 from harness import postgres_pb2 as harness_dot_postgres__pb2
 from harness import grpc_pb2 as harness_dot_grpc__pb2
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
@@ -22,9 +22,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='example',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\tsvc.proto\x12\x07\x65xample\x1a\x15harness/factory.proto\x1a\x16harness/postgres.proto\x1a\x12harness/grpc.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xef\x01\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12\x42\n\x02\x64\x62\x18\x02 \x01(\x0b\x32\x15.harness.postgres.DSNB\x1f\x8a}\x1cpython/asyncpg.v1:Connection\x12\x46\n\ttaskqueue\x18\x03 \x01(\x0b\x32\x15.harness.grpc.ChannelB\x1c\x8a}\x19python/grpclib.v1:Channel\x12\x43\n\x06listen\x18\x04 \x01(\x0b\x32\x16.harness.grpc.EndpointB\x1b\x92}\x18python/grpclib.v1:Server2D\n\x07\x45xample\x12\x39\n\x05Store\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\tsvc.proto\x12\x07\x65xample\x1a\x15harness/options.proto\x1a\x16harness/postgres.proto\x1a\x12harness/grpc.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xef\x01\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12\x42\n\x02\x64\x62\x18\x02 \x01(\x0b\x32\x15.harness.postgres.DSNB\x1f\x8a}\x1cpython/asyncpg.v1:Connection\x12\x46\n\ttaskqueue\x18\x03 \x01(\x0b\x32\x15.harness.grpc.ChannelB\x1c\x8a}\x19python/grpclib.v1:Channel\x12\x43\n\x06listen\x18\x04 \x01(\x0b\x32\x16.harness.grpc.EndpointB\x1b\x92}\x18python/grpclib.v1:Server2D\n\x07\x45xample\x12\x39\n\x05Store\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3'
   ,
-  dependencies=[harness_dot_factory__pb2.DESCRIPTOR,harness_dot_postgres__pb2.DESCRIPTOR,harness_dot_grpc__pb2.DESCRIPTOR,google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
+  dependencies=[harness_dot_options__pb2.DESCRIPTOR,harness_dot_postgres__pb2.DESCRIPTOR,harness_dot_grpc__pb2.DESCRIPTOR,google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
 
 
