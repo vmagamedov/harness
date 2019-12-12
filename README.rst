@@ -27,10 +27,10 @@ Configuration
   import "harness/grpc.proto";
 
   message Configuration {
-    bool debug = 1;
-    harness.postgres.DSN db = 2 [(harness.options).input = "python/asyncpg.v1:Connection"];
-    harness.grpc.Channel taskqueue = 3 [(harness.options).input = "python/grpclib.v1:Channel"];
-    harness.grpc.Endpoint listen = 4 [(harness.options).output = "python/grpclib.v1:Server"];
+      bool debug = 1;
+      harness.postgres.DSN db = 2 [(harness.options).input = "python/asyncpg.v1:Connection"];
+      harness.grpc.Channel taskqueue = 3 [(harness.options).input = "python/grpclib.v1:Channel"];
+      harness.grpc.Endpoint listen = 4 [(harness.options).output = "python/grpclib.v1:Server"];
   }
 
 As you can see from this configuration, our service has:
