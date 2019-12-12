@@ -45,11 +45,18 @@ async def wrapper(service_func, wires_in_type, wires_out_type, config):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('location')
-    parser.add_argument('config')
+    parser.add_argument(
+        'path',
+        help='Import path to the service function; '
+             'path.to.svc or path.to.svc:main',
+    )
+    parser.add_argument(
+        'config',
+        help='Configuration file in the YAML format',
+    )
     args = parser.parse_args()
 
-    module_name, _, name = args.location.partition(':')
+    module_name, _, name = args.path.partition(':')
     if not name:
         name = 'main'
 
