@@ -1,6 +1,3 @@
 __pycache__
 *.pyi
 *.egg-info
-*_pb2.py
-*_grpc.py
-*_wires.py
