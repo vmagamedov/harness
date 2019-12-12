@@ -40,10 +40,14 @@ class Server(Resource):
         assert isinstance(value, harness.grpc_pb2.Endpoint), type(value)
 
         from grpclib.server import Server
+        from grpclib.reflection.service import ServerReflection
 
         self._host = value.host or '127.0.0.1'
         self._port = value.port or 50051
-        self.server = Server(self.handlers)
+
+        handlers = list(self.handlers)
+        services = ServerReflection.extend(handlers)
+        self.server = Server(services)
 
     async def __aenter__(self):
         await self.server.start(self._host, self._port)
