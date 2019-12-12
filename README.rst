@@ -58,7 +58,7 @@ Service Definition
 ~~~~~~~~~~~~~~~~~~
 
 `Harness` must be able to run your service. In order to do this you must
-provide a "main" function, it's signature looks like this:
+provide a ``main`` function, it's signature looks like this:
 
 .. code-block:: python3
 
