@@ -1,9 +1,9 @@
 import harness.postgres_pb2
 
-from ..base import Resource
+from ..base import Wire
 
 
-class Connection(Resource):
+class Connection(Wire):
     _dsn = None
     _connector = None
     connection = None

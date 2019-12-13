@@ -16,13 +16,13 @@ from ..options_pb2 import HarnessOptions
 ProtoFile = str
 MessageName = str
 FieldName = str
-ResourcePath = str
+WirePath = str
 
 
 @dataclass
-class ResourceContext:
+class WireContext:
     field_name: FieldName
-    resource_path: ResourcePath
+    wire_path: WirePath
 
 
 @dataclass
@@ -30,8 +30,8 @@ class ConfigurationContext:
     class_name: MessageName
     wires_in_name: str
     wires_out_name: str
-    inputs: Collection[ResourceContext]
-    outputs: Collection[ResourceContext]
+    inputs: Collection[WireContext]
+    outputs: Collection[WireContext]
 
 
 @dataclass
@@ -63,8 +63,8 @@ def main() -> None:
         pb2_module = pf.name.replace('/', '.').replace('.proto', '_pb2')
 
         for mt in pf.message_type:
-            inputs: List[ResourceContext] = []
-            outputs: List[ResourceContext] = []
+            inputs: List[WireContext] = []
+            outputs: List[WireContext] = []
             for f in mt.field:
                 for _, opt in f.options.ListFields():
                     if not isinstance(opt, HarnessOptions):
@@ -78,14 +78,14 @@ def main() -> None:
                     else:
                         continue
                     assert f.type_name
-                    adapter_name, _, resource_name = option_value.partition(':')
-                    adapter_path = entrypoints[adapter_name].module_name
-                    resource_path = f'{adapter_path}.{resource_name}'
-                    collection.append(ResourceContext(
+                    wire_ns, _, wire_name = option_value.partition(':')
+                    wire_module = entrypoints[wire_ns].module_name
+                    wire_path = f'{wire_module}.{wire_name}'
+                    collection.append(WireContext(
                         field_name=f.name,
-                        resource_path=resource_path,
+                        wire_path=wire_path,
                     ))
-                    adapter_imports.add(adapter_path)
+                    adapter_imports.add(wire_module)
             if inputs or outputs:
                 config_ctx = ConfigurationContext(
                     class_name=mt.name,
@@ -129,7 +129,7 @@ def render(ctx: ModuleContext) -> str:
         with buf.indent():
             if conf_ctx.outputs:
                 for res_ctx in conf_ctx.outputs:
-                    buf.add(f'{res_ctx.field_name}: {res_ctx.resource_path}')
+                    buf.add(f'{res_ctx.field_name}: {res_ctx.wire_path}')
             else:
                 buf.add('pass')
         buf.add('')
@@ -140,5 +140,5 @@ def render(ctx: ModuleContext) -> str:
             buf.add(f'__config__: {conf_ctx.class_name}')
             buf.add(f'__wires_out_type__ = {conf_ctx.wires_out_name}')
             for res_ctx in conf_ctx.inputs:
-                buf.add(f'{res_ctx.field_name}: {res_ctx.resource_path}')
+                buf.add(f'{res_ctx.field_name}: {res_ctx.wire_path}')
     return buf.content()

@@ -3,20 +3,20 @@
 # plugin: harness.cli.generate
 from dataclasses import dataclass
 
-import harness.resources.asyncpg.v1
-import harness.resources.grpclib.v1
+import harness.wires.asyncpg.v1
+import harness.wires.grpclib.v1
 
 from svc_pb2 import Configuration
 
 
 @dataclass
 class WiresOut:
-    listen: harness.resources.grpclib.v1.Server
+    listen: harness.wires.grpclib.v1.Server
 
 
 @dataclass
 class WiresIn:
     __config__: Configuration
     __wires_out_type__ = WiresOut
-    db: harness.resources.asyncpg.v1.Connection
-    taskqueue: harness.resources.grpclib.v1.Channel
+    db: harness.wires.asyncpg.v1.Connection
+    taskqueue: harness.wires.grpclib.v1.Channel

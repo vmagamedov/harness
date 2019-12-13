@@ -1,4 +1,4 @@
-class Resource:
+class Wire:
 
     def configure(self, value):
         pass

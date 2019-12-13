@@ -75,12 +75,12 @@ service configuration:
 
   @dataclass
   class WiresIn:
-      db: harness.resources.asyncpg.v1.Connection
-      taskqueue: harness.resources.grpclib.v1.Channel
+      db: harness.wires.asyncpg.v1.Connection
+      taskqueue: harness.wires.grpclib.v1.Channel
 
   @dataclass
   class WiresOut:
-      listen: harness.resources.grpclib.v1.Server
+      listen: harness.wires.grpclib.v1.Server
 
 When `Harness` runs your service, you receive already initialized environment in
 a ``WiresIn`` structure. All you have to do is to setup your request handler
@@ -88,7 +88,7 @@ and return it with a ``WiresOut`` structure (``svc.py`` file):
 
 .. code-block:: python3
 
-  from harness.resources.grpclib.v1 import Server
+  from harness.wires.grpclib.v1 import Server
 
   @dataclass
   class CoffeeMachine(CoffeeMachineBase):

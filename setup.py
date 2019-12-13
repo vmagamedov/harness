@@ -27,8 +27,8 @@ setup(
             'harness=harness.cli.run:main',
         ],
         'harness.wires': [
-            'python/asyncpg.v1=harness.resources.asyncpg.v1',
-            'python/grpclib.v1=harness.resources.grpclib.v1',
+            'python/asyncpg.v1=harness.wires.asyncpg.v1',
+            'python/grpclib.v1=harness.wires.grpclib.v1',
         ],
     },
     classifiers=[

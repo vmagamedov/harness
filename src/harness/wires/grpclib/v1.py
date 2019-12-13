@@ -3,14 +3,14 @@ from typing_extensions import Protocol
 
 import harness.grpc_pb2
 
-from ..base import Resource
+from ..base import Wire
 
 
 class _IServable(Protocol):
     def __mapping__(self) -> Any: ...
 
 
-class Channel(Resource):
+class Channel(Wire):
     channel = None
 
     def configure(self, value: harness.grpc_pb2.Channel):
@@ -28,7 +28,7 @@ class Channel(Resource):
         self.channel.close()
 
 
-class Server(Resource):
+class Server(Wire):
     _host = None
     _port = None
     server = None

@@ -3,8 +3,8 @@ from dataclasses import dataclass
 import asyncpg
 import grpclib.client
 from grpclib.server import Stream
+from harness.wires.grpclib.v1 import Server
 from google.protobuf.empty_pb2 import Empty
-from harness.resources.grpclib.v1 import Server
 
 from svc_grpc import ExampleBase
 from svc_wires import WiresIn, WiresOut
