@@ -4,7 +4,7 @@ package harness;
 
 import "google/protobuf/descriptor.proto";
 
-message HarnessOptions {
+message HarnessWire {
     oneof type {
         string input = 1;
         string output = 2;
@@ -12,5 +12,5 @@ message HarnessOptions {
 }
 
 extend google.protobuf.FieldOptions {
-    optional HarnessOptions options = 2001;
+    optional HarnessWire wire = 2001;
 }

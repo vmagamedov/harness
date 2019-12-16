@@ -5,6 +5,8 @@ from dataclasses import dataclass
 
 import harness.wires.asyncpg.v1
 import harness.wires.grpclib.v1
+import harness.wires.logging
+import harness.wires.prometheus
 
 from svc_pb2 import Configuration
 
@@ -12,6 +14,7 @@ from svc_pb2 import Configuration
 @dataclass
 class WiresOut:
     listen: harness.wires.grpclib.v1.Server
+    prometheus: harness.wires.prometheus.Server
 
 
 @dataclass
@@ -20,3 +23,5 @@ class WiresIn:
     __wires_out_type__ = WiresOut
     db: harness.wires.asyncpg.v1.Connection
     taskqueue: harness.wires.grpclib.v1.Channel
+    console: harness.wires.logging.Console
+    syslog: harness.wires.logging.Syslog

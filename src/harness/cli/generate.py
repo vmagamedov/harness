@@ -10,7 +10,7 @@ from google.protobuf.compiler.plugin_pb2 import CodeGeneratorResponse
 
 from grpclib.plugin.main import Buffer
 
-from ..options_pb2 import HarnessOptions
+from ..wire_pb2 import HarnessWire
 
 
 ProtoFile = str
@@ -67,7 +67,7 @@ def main() -> None:
             outputs: List[WireContext] = []
             for f in mt.field:
                 for _, opt in f.options.ListFields():
-                    if not isinstance(opt, HarnessOptions):
+                    if not isinstance(opt, HarnessWire):
                         continue
                     if opt.WhichOneof('type') == 'input':
                         collection = inputs

@@ -27,6 +27,8 @@ setup(
             'harness=harness.cli.run:main',
         ],
         'harness.wires': [
+            'python/logging=harness.wires.logging',
+            'python/prometheus=harness.wires.prometheus',
             'python/asyncpg.v1=harness.wires.asyncpg.v1',
             'python/grpclib.v1=harness.wires.grpclib.v1',
         ],

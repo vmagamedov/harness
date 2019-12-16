@@ -6,3 +6,7 @@ taskqueue:
 listen:
   host: 127.0.0.1
   port: 50052
+console:
+  level: INFO
+prometheus:
+  port: 9000
