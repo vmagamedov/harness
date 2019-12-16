@@ -1,6 +1,6 @@
 import harness.postgres_pb2
 
-from ..base import Wire
+from .base import Wire
 
 
 class Connection(Wire):

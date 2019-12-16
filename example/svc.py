@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import asyncpg
 import grpclib.client
 from grpclib.server import Stream
-from harness.wires.grpclib.v1 import Server
+from harness.wires.grpclib import Server
 from harness.wires.prometheus import Server as PServer
 from google.protobuf.empty_pb2 import Empty
 

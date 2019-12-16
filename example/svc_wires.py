@@ -3,8 +3,8 @@
 # plugin: harness.cli.generate
 from dataclasses import dataclass
 
-import harness.wires.asyncpg.v1
-import harness.wires.grpclib.v1
+import harness.wires.asyncpg
+import harness.wires.grpclib
 import harness.wires.logging
 import harness.wires.prometheus
 
@@ -13,7 +13,7 @@ from svc_pb2 import Configuration
 
 @dataclass
 class WiresOut:
-    listen: harness.wires.grpclib.v1.Server
+    listen: harness.wires.grpclib.Server
     prometheus: harness.wires.prometheus.Server
 
 
@@ -21,7 +21,7 @@ class WiresOut:
 class WiresIn:
     __config__: Configuration
     __wires_out_type__ = WiresOut
-    db: harness.wires.asyncpg.v1.Connection
-    taskqueue: harness.wires.grpclib.v1.Channel
+    db: harness.wires.asyncpg.Connection
+    taskqueue: harness.wires.grpclib.Channel
     console: harness.wires.logging.Console
     syslog: harness.wires.logging.Syslog

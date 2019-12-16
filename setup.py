@@ -29,8 +29,8 @@ setup(
         'harness.wires': [
             'python/logging=harness.wires.logging',
             'python/prometheus=harness.wires.prometheus',
-            'python/asyncpg.v1=harness.wires.asyncpg.v1',
-            'python/grpclib.v1=harness.wires.grpclib.v1',
+            'python/asyncpg=harness.wires.asyncpg',
+            'python/grpclib=harness.wires.grpclib',
         ],
     },
     classifiers=[

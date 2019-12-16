@@ -3,7 +3,7 @@ from typing_extensions import Protocol
 
 import harness.grpc_pb2
 
-from ..base import Wire
+from .base import Wire
 
 
 class _IServable(Protocol):

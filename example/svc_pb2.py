@@ -26,7 +26,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='example',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\tsvc.proto\x12\x07\x65xample\x1a\x12harness/wire.proto\x1a\x16harness/postgres.proto\x1a\x12harness/grpc.proto\x1a\x15harness/logging.proto\x1a\x18harness/prometheus.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xd3\x03\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12\x44\n\x02\x64\x62\x18\x02 \x01(\x0b\x32\x15.harness.postgres.DSNB!\x8a}\x1e\n\x1cpython/asyncpg.v1:Connection\x12H\n\ttaskqueue\x18\x03 \x01(\x0b\x32\x15.harness.grpc.ChannelB\x1e\x8a}\x1b\n\x19python/grpclib.v1:Channel\x12\x46\n\x07\x63onsole\x18\x04 \x01(\x0b\x32\x18.harness.logging.ConsoleB\x1b\x8a}\x18\n\x16python/logging:Console\x12\x43\n\x06syslog\x18\x05 \x01(\x0b\x32\x17.harness.logging.SyslogB\x1a\x8a}\x17\n\x15python/logging:Syslog\x12\x45\n\x06listen\x18\x06 \x01(\x0b\x32\x16.harness.grpc.EndpointB\x1d\x8a}\x1a\x12\x18python/grpclib.v1:Server\x12O\n\nprometheus\x18\x07 \x01(\x0b\x32\x1c.harness.prometheus.EndpointB\x1d\x8a}\x1a\x12\x18python/prometheus:Server2D\n\x07\x45xample\x12\x39\n\x05Store\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\tsvc.proto\x12\x07\x65xample\x1a\x12harness/wire.proto\x1a\x16harness/postgres.proto\x1a\x12harness/grpc.proto\x1a\x15harness/logging.proto\x1a\x18harness/prometheus.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xca\x03\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12\x41\n\x02\x64\x62\x18\x02 \x01(\x0b\x32\x15.harness.postgres.DSNB\x1e\x8a}\x1b\n\x19python/asyncpg:Connection\x12\x45\n\ttaskqueue\x18\x03 \x01(\x0b\x32\x15.harness.grpc.ChannelB\x1b\x8a}\x18\n\x16python/grpclib:Channel\x12\x46\n\x07\x63onsole\x18\x04 \x01(\x0b\x32\x18.harness.logging.ConsoleB\x1b\x8a}\x18\n\x16python/logging:Console\x12\x43\n\x06syslog\x18\x05 \x01(\x0b\x32\x17.harness.logging.SyslogB\x1a\x8a}\x17\n\x15python/logging:Syslog\x12\x42\n\x06listen\x18\x06 \x01(\x0b\x32\x16.harness.grpc.EndpointB\x1a\x8a}\x17\x12\x15python/grpclib:Server\x12O\n\nprometheus\x18\x07 \x01(\x0b\x32\x1c.harness.prometheus.EndpointB\x1d\x8a}\x1a\x12\x18python/prometheus:Server2D\n\x07\x45xample\x12\x39\n\x05Store\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3')
   ,
   dependencies=[harness_dot_wire__pb2.DESCRIPTOR,harness_dot_postgres__pb2.DESCRIPTOR,harness_dot_grpc__pb2.DESCRIPTOR,harness_dot_logging__pb2.DESCRIPTOR,harness_dot_prometheus__pb2.DESCRIPTOR,google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
@@ -53,14 +53,14 @@ _CONFIGURATION = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=_b('\212}\036\n\034python/asyncpg.v1:Connection'), file=DESCRIPTOR),
+      serialized_options=_b('\212}\033\n\031python/asyncpg:Connection'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='taskqueue', full_name='example.Configuration.taskqueue', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=_b('\212}\033\n\031python/grpclib.v1:Channel'), file=DESCRIPTOR),
+      serialized_options=_b('\212}\030\n\026python/grpclib:Channel'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='console', full_name='example.Configuration.console', index=3,
       number=4, type=11, cpp_type=10, label=1,
@@ -81,7 +81,7 @@ _CONFIGURATION = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=_b('\212}\032\022\030python/grpclib.v1:Server'), file=DESCRIPTOR),
+      serialized_options=_b('\212}\027\022\025python/grpclib:Server'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='prometheus', full_name='example.Configuration.prometheus', index=6,
       number=7, type=11, cpp_type=10, label=1,
@@ -102,7 +102,7 @@ _CONFIGURATION = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=165,
-  serialized_end=632,
+  serialized_end=623,
 )
 
 _CONFIGURATION.fields_by_name['db'].message_type = harness_dot_postgres__pb2._DSN
@@ -135,8 +135,8 @@ _EXAMPLE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=634,
-  serialized_end=702,
+  serialized_start=625,
+  serialized_end=693,
   methods=[
   _descriptor.MethodDescriptor(
     name='Store',
