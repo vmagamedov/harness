@@ -23,15 +23,15 @@ message Console {
 message Syslog {
     enum Facility {
         NOTSET = 0;
-        USER = 1;
-        LOCAL0 = 2;
-        LOCAL1 = 3;
-        LOCAL2 = 4;
-        LOCAL3 = 5;
-        LOCAL4 = 6;
-        LOCAL5 = 7;
-        LOCAL6 = 8;
-        LOCAL7 = 9;
+        USER = 2;
+        LOCAL0 = 17;
+        LOCAL1 = 18;
+        LOCAL2 = 19;
+        LOCAL3 = 20;
+        LOCAL4 = 21;
+        LOCAL5 = 22;
+        LOCAL6 = 23;
+        LOCAL7 = 24;
     }
     string app = 1;
     Facility facility = 2;

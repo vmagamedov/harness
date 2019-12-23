@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='harness.logging',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x15harness/logging.proto\x12\x0fharness.logging\"\x83\x01\n\x07\x43onsole\x12/\n\x06stream\x18\x01 \x01(\x0e\x32\x1f.harness.logging.Console.Stream\x12%\n\x05level\x18\x02 \x01(\x0e\x32\x16.harness.logging.Level\" \n\x06Stream\x12\n\n\x06STDERR\x10\x00\x12\n\n\x06STDOUT\x10\x01\"\xf3\x01\n\x06Syslog\x12\x0b\n\x03\x61pp\x18\x01 \x01(\t\x12\x32\n\x08\x66\x61\x63ility\x18\x02 \x01(\x0e\x32 .harness.logging.Syslog.Facility\x12%\n\x05level\x18\x03 \x01(\x0e\x32\x16.harness.logging.Level\"\x80\x01\n\x08\x46\x61\x63ility\x12\n\n\x06NOTSET\x10\x00\x12\x08\n\x04USER\x10\x01\x12\n\n\x06LOCAL0\x10\x02\x12\n\n\x06LOCAL1\x10\x03\x12\n\n\x06LOCAL2\x10\x04\x12\n\n\x06LOCAL3\x10\x05\x12\n\n\x06LOCAL4\x10\x06\x12\n\n\x06LOCAL5\x10\x07\x12\n\n\x06LOCAL6\x10\x08\x12\n\n\x06LOCAL7\x10\t*N\n\x05Level\x12\n\n\x06NOTSET\x10\x00\x12\t\n\x05\x44\x45\x42UG\x10\x01\x12\x08\n\x04INFO\x10\x02\x12\x0b\n\x07WARNING\x10\x03\x12\t\n\x05\x45RROR\x10\x04\x12\x0c\n\x08\x43RITICAL\x10\x05\x62\x06proto3')
+  serialized_pb=_b('\n\x15harness/logging.proto\x12\x0fharness.logging\"\x83\x01\n\x07\x43onsole\x12/\n\x06stream\x18\x01 \x01(\x0e\x32\x1f.harness.logging.Console.Stream\x12%\n\x05level\x18\x02 \x01(\x0e\x32\x16.harness.logging.Level\" \n\x06Stream\x12\n\n\x06STDERR\x10\x00\x12\n\n\x06STDOUT\x10\x01\"\xf3\x01\n\x06Syslog\x12\x0b\n\x03\x61pp\x18\x01 \x01(\t\x12\x32\n\x08\x66\x61\x63ility\x18\x02 \x01(\x0e\x32 .harness.logging.Syslog.Facility\x12%\n\x05level\x18\x03 \x01(\x0e\x32\x16.harness.logging.Level\"\x80\x01\n\x08\x46\x61\x63ility\x12\n\n\x06NOTSET\x10\x00\x12\x08\n\x04USER\x10\x02\x12\n\n\x06LOCAL0\x10\x11\x12\n\n\x06LOCAL1\x10\x12\x12\n\n\x06LOCAL2\x10\x13\x12\n\n\x06LOCAL3\x10\x14\x12\n\n\x06LOCAL4\x10\x15\x12\n\n\x06LOCAL5\x10\x16\x12\n\n\x06LOCAL6\x10\x17\x12\n\n\x06LOCAL7\x10\x18*N\n\x05Level\x12\n\n\x06NOTSET\x10\x00\x12\t\n\x05\x44\x45\x42UG\x10\x01\x12\x08\n\x04INFO\x10\x02\x12\x0b\n\x07WARNING\x10\x03\x12\t\n\x05\x45RROR\x10\x04\x12\x0c\n\x08\x43RITICAL\x10\x05\x62\x06proto3')
 )
 
 _LEVEL = _descriptor.EnumDescriptor(
@@ -104,39 +104,39 @@ _SYSLOG_FACILITY = _descriptor.EnumDescriptor(
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='USER', index=1, number=1,
+      name='USER', index=1, number=2,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='LOCAL0', index=2, number=2,
+      name='LOCAL0', index=2, number=17,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='LOCAL1', index=3, number=3,
+      name='LOCAL1', index=3, number=18,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='LOCAL2', index=4, number=4,
+      name='LOCAL2', index=4, number=19,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='LOCAL3', index=5, number=5,
+      name='LOCAL3', index=5, number=20,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='LOCAL4', index=6, number=6,
+      name='LOCAL4', index=6, number=21,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='LOCAL5', index=7, number=7,
+      name='LOCAL5', index=7, number=22,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='LOCAL6', index=8, number=8,
+      name='LOCAL6', index=8, number=23,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='LOCAL7', index=9, number=9,
+      name='LOCAL7', index=9, number=24,
       serialized_options=None,
       type=None),
   ],
