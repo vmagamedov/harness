@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package harness.http;
+
+message TCPServer {
+    string host = 1;
+    int32 port = 2;
+}
+
+message Server {
+    oneof type {
+        TCPServer tcp = 1;
+    }
+}

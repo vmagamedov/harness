@@ -31,6 +31,7 @@ setup(
             'python/prometheus=harness.wires.prometheus',
             'python/asyncpg=harness.wires.asyncpg',
             'python/grpclib=harness.wires.grpclib',
+            'python/aiohttp=harness.wires.aiohttp',
         ],
     },
     classifiers=[

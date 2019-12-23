@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package example;
+
+import "harness/wire.proto";
+import "harness/postgres.proto";
+import "harness/http.proto";
+import "harness/logging.proto";
+
+message Configuration {
+    bool debug = 1;
+    harness.postgres.DSN db = 2 [(harness.wire).input = "python/asyncpg:ConnectionWire"];
+    harness.logging.Console console = 4 [(harness.wire).input = "python/logging:ConsoleWire"];
+    harness.http.Server listen = 6 [(harness.wire).output = "python/aiohttp:ServerWire"];
+}

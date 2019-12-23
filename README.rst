@@ -41,7 +41,7 @@ As you can see from this configuration, our service has:
 - gRPC server to serve incoming requests
 
 We can provide values for this configuration using YAML file
-(``config.yaml`` file):
+(``svc.yaml`` file):
 
 .. code-block:: yaml
 
@@ -123,4 +123,4 @@ Use ``harness`` command to run your service:
 
 .. code-block:: console
 
-  $ harness svc:main config.yaml
+  $ harness svc:main svc.yaml
