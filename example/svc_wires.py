@@ -13,15 +13,15 @@ from svc_pb2 import Configuration
 
 @dataclass
 class WiresOut:
-    listen: harness.wires.grpclib.Server
-    prometheus: harness.wires.prometheus.Server
+    listen: harness.wires.grpclib.ServerWire
+    prometheus: harness.wires.prometheus.ServerWire
 
 
 @dataclass
 class WiresIn:
     __config__: Configuration
     __wires_out_type__ = WiresOut
-    db: harness.wires.asyncpg.Connection
-    taskqueue: harness.wires.grpclib.Channel
-    console: harness.wires.logging.Console
-    syslog: harness.wires.logging.Syslog
+    db: harness.wires.asyncpg.ConnectionWire
+    taskqueue: harness.wires.grpclib.ChannelWire
+    console: harness.wires.logging.ConsoleWire
+    syslog: harness.wires.logging.SyslogWire

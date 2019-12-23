@@ -1,7 +1,7 @@
 from typing import List, Any
 from typing_extensions import Protocol
 
-import harness.grpc_pb2
+from .. import grpc_pb2
 
 from .base import Wire
 
@@ -10,11 +10,11 @@ class _IServable(Protocol):
     def __mapping__(self) -> Any: ...
 
 
-class Channel(Wire):
+class ChannelWire(Wire):
     channel = None
 
-    def configure(self, value: harness.grpc_pb2.Channel):
-        assert isinstance(value, harness.grpc_pb2.Channel), type(value)
+    def configure(self, value: grpc_pb2.Channel):
+        assert isinstance(value, grpc_pb2.Channel), type(value)
 
         from grpclib.client import Channel
 
@@ -28,7 +28,7 @@ class Channel(Wire):
         self.channel.close()
 
 
-class Server(Wire):
+class ServerWire(Wire):
     _host = None
     _port = None
     server = None
@@ -36,8 +36,8 @@ class Server(Wire):
     def __init__(self, handlers: List[_IServable]):
         self.handlers = handlers
 
-    def configure(self, value: harness.grpc_pb2.Endpoint):
-        assert isinstance(value, harness.grpc_pb2.Endpoint), type(value)
+    def configure(self, value: grpc_pb2.Endpoint):
+        assert isinstance(value, grpc_pb2.Endpoint), type(value)
 
         from grpclib.server import Server
         from grpclib.reflection.service import ServerReflection

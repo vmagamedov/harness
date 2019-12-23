@@ -3,9 +3,9 @@ from dataclasses import dataclass
 
 import asyncpg
 import grpclib.client
+import harness.wires.grpclib
+import harness.wires.prometheus
 from grpclib.server import Stream
-from harness.wires.grpclib import Server
-from harness.wires.prometheus import Server as PServer
 from google.protobuf.empty_pb2 import Empty
 
 from svc_grpc import ExampleBase
@@ -32,5 +32,7 @@ async def main(wires_in: WiresIn) -> WiresOut:
         db=wires_in.db.connection,
         taskqueue=wires_in.taskqueue.channel,
     )
-    return WiresOut(listen=Server([service]),
-                    prometheus=PServer())
+    return WiresOut(
+        listen=harness.wires.grpclib.ServerWire([service]),
+        prometheus=harness.wires.prometheus.ServerWire(),
+    )

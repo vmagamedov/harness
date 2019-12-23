@@ -1,10 +1,8 @@
 import logging
 
-from metricslog.ext.formatter import ColorFormatter
+from .. import logging_pb2
 
-from harness import logging_pb2
-
-from harness.wires.base import Wire
+from .base import Wire
 
 
 _LEVELS_MAP = {
@@ -16,10 +14,12 @@ _LEVELS_MAP = {
 }
 
 
-class Console(Wire):
+class ConsoleWire(Wire):
     handler = None
 
     def configure(self, value: logging_pb2.Console):
+        from metricslog.ext.formatter import ColorFormatter
+
         logging.captureWarnings(True)
         self.handler = logging.StreamHandler()
         self.handler.setFormatter(ColorFormatter())
@@ -32,5 +32,5 @@ class Console(Wire):
             logging.root.setLevel(level)
 
 
-class Syslog(Wire):
+class SyslogWire(Wire):
     pass

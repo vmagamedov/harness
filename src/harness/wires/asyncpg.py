@@ -1,15 +1,15 @@
-import harness.postgres_pb2
+from .. import postgres_pb2
 
 from .base import Wire
 
 
-class Connection(Wire):
+class ConnectionWire(Wire):
     _dsn = None
     _connector = None
     connection = None
 
-    def configure(self, value: harness.postgres_pb2.DSN):
-        assert isinstance(value, harness.postgres_pb2.DSN), type(value)
+    def configure(self, value: postgres_pb2.DSN):
+        assert isinstance(value, postgres_pb2.DSN), type(value)
 
         from asyncpg import connect
 

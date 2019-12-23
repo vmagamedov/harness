@@ -5,7 +5,7 @@ from .. import prometheus_pb2
 from .base import Wire
 
 
-class Server(Wire):
+class ServerWire(Wire):
     _host = None
     _port = None
     _start = None
@@ -22,8 +22,9 @@ class Server(Wire):
         self._exit = Event()
 
     async def __aenter__(self):
-        self._start(self._port, self._host)
-        print(f'Metrics are exposed on {self._host}:{self._port}')
+        if self._port is not None:
+            self._start(self._port, self._host)
+            print(f'Metrics are exposed on {self._host}:{self._port}')
 
     def close(self):
         self._exit.set()
