@@ -6,7 +6,7 @@ import "harness/wire.proto";
 import "harness/postgres.proto";
 import "harness/grpc.proto";
 import "harness/logging.proto";
-import "harness/prometheus.proto";
+import "harness/http.proto";
 
 import "google/protobuf/empty.proto";
 
@@ -17,7 +17,7 @@ message Configuration {
     harness.logging.Console console = 4 [(harness.wire).input = "python/logging:ConsoleWire"];
     harness.logging.Syslog syslog = 5 [(harness.wire).input = "python/logging:SyslogWire"];
     harness.grpc.Endpoint listen = 6 [(harness.wire).output = "python/grpclib:ServerWire"];
-    harness.prometheus.Endpoint prometheus = 7 [(harness.wire).output = "python/prometheus:ServerWire"];
+    harness.http.TCPServer prometheus = 7 [(harness.wire).output = "python/prometheus:ServerWire"];
 }
 
 service Example {

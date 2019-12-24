@@ -13,7 +13,6 @@ clean:
 proto: clean
 	cd src && $(GEN) harness/wire.proto
 	cd src && $(GEN) harness/logging.proto
-	cd src && $(GEN) harness/prometheus.proto
 	cd src && $(GEN) harness/postgres.proto
 	cd src && $(GEN) harness/grpc.proto
 	cd src && $(GEN) harness/http.proto

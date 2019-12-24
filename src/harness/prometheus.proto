@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-package harness.prometheus;
-
-message Endpoint {
-    string host = 1;
-    int32 port = 2;
-}

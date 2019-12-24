@@ -1,6 +1,6 @@
 from asyncio import Event
 
-from .. import prometheus_pb2
+from .. import http_pb2
 
 from .base import Wire
 
@@ -11,7 +11,7 @@ class ServerWire(Wire):
     _start = None
     _exit = None
 
-    def configure(self, value: prometheus_pb2.Endpoint):
+    def configure(self, value: http_pb2.TCPServer):
         from prometheus_client import start_http_server
 
         if value.port:

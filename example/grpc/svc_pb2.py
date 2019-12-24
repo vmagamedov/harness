@@ -17,7 +17,7 @@ from harness import wire_pb2 as harness_dot_wire__pb2
 from harness import postgres_pb2 as harness_dot_postgres__pb2
 from harness import grpc_pb2 as harness_dot_grpc__pb2
 from harness import logging_pb2 as harness_dot_logging__pb2
-from harness import prometheus_pb2 as harness_dot_prometheus__pb2
+from harness import http_pb2 as harness_dot_http__pb2
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
@@ -26,9 +26,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='example',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\tsvc.proto\x12\x07\x65xample\x1a\x12harness/wire.proto\x1a\x16harness/postgres.proto\x1a\x12harness/grpc.proto\x1a\x15harness/logging.proto\x1a\x18harness/prometheus.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xe2\x03\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12\x45\n\x02\x64\x62\x18\x02 \x01(\x0b\x32\x15.harness.postgres.DSNB\"\x8a}\x1f\n\x1dpython/asyncpg:ConnectionWire\x12I\n\ttaskqueue\x18\x03 \x01(\x0b\x32\x15.harness.grpc.ChannelB\x1f\x8a}\x1c\n\x1apython/grpclib:ChannelWire\x12J\n\x07\x63onsole\x18\x04 \x01(\x0b\x32\x18.harness.logging.ConsoleB\x1f\x8a}\x1c\n\x1apython/logging:ConsoleWire\x12G\n\x06syslog\x18\x05 \x01(\x0b\x32\x17.harness.logging.SyslogB\x1e\x8a}\x1b\n\x19python/logging:SyslogWire\x12\x46\n\x06listen\x18\x06 \x01(\x0b\x32\x16.harness.grpc.EndpointB\x1e\x8a}\x1b\x12\x19python/grpclib:ServerWire\x12S\n\nprometheus\x18\x07 \x01(\x0b\x32\x1c.harness.prometheus.EndpointB!\x8a}\x1e\x12\x1cpython/prometheus:ServerWire2D\n\x07\x45xample\x12\x39\n\x05Store\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\tsvc.proto\x12\x07\x65xample\x1a\x12harness/wire.proto\x1a\x16harness/postgres.proto\x1a\x12harness/grpc.proto\x1a\x15harness/logging.proto\x1a\x12harness/http.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xdd\x03\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12\x45\n\x02\x64\x62\x18\x02 \x01(\x0b\x32\x15.harness.postgres.DSNB\"\x8a}\x1f\n\x1dpython/asyncpg:ConnectionWire\x12I\n\ttaskqueue\x18\x03 \x01(\x0b\x32\x15.harness.grpc.ChannelB\x1f\x8a}\x1c\n\x1apython/grpclib:ChannelWire\x12J\n\x07\x63onsole\x18\x04 \x01(\x0b\x32\x18.harness.logging.ConsoleB\x1f\x8a}\x1c\n\x1apython/logging:ConsoleWire\x12G\n\x06syslog\x18\x05 \x01(\x0b\x32\x17.harness.logging.SyslogB\x1e\x8a}\x1b\n\x19python/logging:SyslogWire\x12\x46\n\x06listen\x18\x06 \x01(\x0b\x32\x16.harness.grpc.EndpointB\x1e\x8a}\x1b\x12\x19python/grpclib:ServerWire\x12N\n\nprometheus\x18\x07 \x01(\x0b\x32\x17.harness.http.TCPServerB!\x8a}\x1e\x12\x1cpython/prometheus:ServerWire2D\n\x07\x45xample\x12\x39\n\x05Store\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3')
   ,
-  dependencies=[harness_dot_wire__pb2.DESCRIPTOR,harness_dot_postgres__pb2.DESCRIPTOR,harness_dot_grpc__pb2.DESCRIPTOR,harness_dot_logging__pb2.DESCRIPTOR,harness_dot_prometheus__pb2.DESCRIPTOR,google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
+  dependencies=[harness_dot_wire__pb2.DESCRIPTOR,harness_dot_postgres__pb2.DESCRIPTOR,harness_dot_grpc__pb2.DESCRIPTOR,harness_dot_logging__pb2.DESCRIPTOR,harness_dot_http__pb2.DESCRIPTOR,google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
 
 
@@ -101,8 +101,8 @@ _CONFIGURATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=165,
-  serialized_end=647,
+  serialized_start=159,
+  serialized_end=636,
 )
 
 _CONFIGURATION.fields_by_name['db'].message_type = harness_dot_postgres__pb2._DSN
@@ -110,7 +110,7 @@ _CONFIGURATION.fields_by_name['taskqueue'].message_type = harness_dot_grpc__pb2.
 _CONFIGURATION.fields_by_name['console'].message_type = harness_dot_logging__pb2._CONSOLE
 _CONFIGURATION.fields_by_name['syslog'].message_type = harness_dot_logging__pb2._SYSLOG
 _CONFIGURATION.fields_by_name['listen'].message_type = harness_dot_grpc__pb2._ENDPOINT
-_CONFIGURATION.fields_by_name['prometheus'].message_type = harness_dot_prometheus__pb2._ENDPOINT
+_CONFIGURATION.fields_by_name['prometheus'].message_type = harness_dot_http__pb2._TCPSERVER
 DESCRIPTOR.message_types_by_name['Configuration'] = _CONFIGURATION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -135,8 +135,8 @@ _EXAMPLE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=649,
-  serialized_end=717,
+  serialized_start=638,
+  serialized_end=706,
   methods=[
   _descriptor.MethodDescriptor(
     name='Store',
