@@ -10,6 +10,7 @@ import "harness/logging.proto";
 message Configuration {
     bool debug = 1;
     harness.postgres.DSN db = 2 [(harness.wire).input = "python/asyncpg:ConnectionWire"];
-    harness.logging.Console console = 4 [(harness.wire).input = "python/logging:ConsoleWire"];
-    harness.http.Server listen = 6 [(harness.wire).output = "python/aiohttp:ServerWire"];
+    harness.logging.Console console = 3 [(harness.wire).input = "python/logging:ConsoleWire"];
+    harness.http.Server listen = 4 [(harness.wire).output = "python/aiohttp:ServerWire"];
+    harness.http.Server monitor = 5 [(harness.wire).output = "python/aiomonitor:MonitorWire"];
 }

@@ -32,6 +32,7 @@ setup(
             'python/asyncpg=harness.wires.asyncpg',
             'python/grpclib=harness.wires.grpclib',
             'python/aiohttp=harness.wires.aiohttp',
+            'python/aiomonitor=harness.wires.aiomonitor',
         ],
     },
     classifiers=[

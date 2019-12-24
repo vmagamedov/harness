@@ -4,6 +4,7 @@
 from dataclasses import dataclass
 
 import harness.wires.aiohttp
+import harness.wires.aiomonitor
 import harness.wires.asyncpg
 import harness.wires.logging
 
@@ -13,6 +14,7 @@ from svc_pb2 import Configuration
 @dataclass
 class WiresOut:
     listen: harness.wires.aiohttp.ServerWire
+    monitor: harness.wires.aiomonitor.MonitorWire
 
 
 @dataclass
