@@ -8,6 +8,7 @@ GENERATED=*{_pb2.py,_grpc.py,_wires.py,.pyi}
 clean:
 	rm -f example/grpc/$(GENERATED)
 	rm -f example/web/$(GENERATED)
+	rm -f example/sched/$(GENERATED)
 	rm -f src/harness/$(GENERATED)
 
 proto: clean
@@ -16,8 +17,10 @@ proto: clean
 	cd src && $(GEN) harness/postgres.proto
 	cd src && $(GEN) harness/grpc.proto
 	cd src && $(GEN) harness/http.proto
+	cd src && $(GEN) harness/redis.proto
 	cd example/grpc && $(GEN) --python_grpc_out=. --python_harness_out=. svc.proto
 	cd example/web && $(GEN) --python_harness_out=. svc.proto
+	cd example/sched && $(GEN) --python_harness_out=. svc.proto
 
 release: proto
 	./scripts/release_check.sh
@@ -29,3 +32,6 @@ run_grpc:
 
 run_web:
 	@PYTHONPATH=example/web harness svc example/web/svc.yaml
+
+run_sched:
+	@PYTHONPATH=example/sched harness svc example/sched/svc.yaml

@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package harness.redis;
+
+message Connection {
+    string host = 1;
+    int32 port = 2;
+    int32 db = 3;
+}

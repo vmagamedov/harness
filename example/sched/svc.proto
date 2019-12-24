@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package example;
+
+import "harness/wire.proto";
+import "harness/redis.proto";
+import "harness/logging.proto";
+import "google/protobuf/empty.proto";
+
+message Configuration {
+    harness.redis.Connection redis_job_store = 2 [(harness.wire).input = "python/apscheduler:RedisJobStoreWire"];
+    harness.logging.Console console = 3 [(harness.wire).input = "python/logging:ConsoleWire"];
+    google.protobuf.Empty scheduler = 1 [(harness.wire).output = "python/apscheduler:SchedulerWire"];
+}

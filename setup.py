@@ -33,6 +33,7 @@ setup(
             'python/grpclib=harness.wires.grpclib',
             'python/aiohttp=harness.wires.aiohttp',
             'python/aiomonitor=harness.wires.aiomonitor',
+            'python/apscheduler=harness.wires.apscheduler',
         ],
     },
     classifiers=[
