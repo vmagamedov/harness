@@ -1,15 +1,14 @@
 from typing import TYPE_CHECKING
-from asyncio import Event
 
 from .. import http_pb2
 
-from .base import Wire
+from .base import Wire, WaitMixin
 
 if TYPE_CHECKING:
     from aiohttp.web import Application
 
 
-class ServerWire(Wire):
+class ServerWire(WaitMixin, Wire):
     _runner = None
     _site = None
     _site_factory = None
@@ -38,19 +37,11 @@ class ServerWire(Wire):
         else:
             raise NotImplementedError(type_)
 
-        self._exit = Event()
-
     async def __aenter__(self):
         await self._runner.setup()
         self._site = self._site_factory()
         await self._site.start()
         print(f'Started Web server and listening on {self._site.name}')
-
-    def close(self):
-        self._exit.set()
-
-    async def wait_closed(self):
-        await self._exit.wait()
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self._runner.cleanup()

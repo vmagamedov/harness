@@ -1,12 +1,11 @@
 import asyncio
-from asyncio import Event
 
 from .. import http_pb2
 
-from .base import Wire
+from .base import Wire, WaitMixin
 
 
-class MonitorWire(Wire):
+class MonitorWire(WaitMixin, Wire):
     _monitor = None
 
     def configure(self, value: http_pb2.Server):
@@ -28,16 +27,8 @@ class MonitorWire(Wire):
         else:
             raise NotImplementedError(type_)
 
-        self._exit = Event()
-
     async def __aenter__(self):
         self._monitor.start()
-
-    def close(self):
-        self._exit.set()
-
-    async def wait_closed(self):
-        await self._exit.wait()
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         self._monitor.close()
