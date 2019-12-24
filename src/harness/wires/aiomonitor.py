@@ -7,7 +7,6 @@ from .base import Wire
 
 
 class MonitorWire(Wire):
-    _config = None
     _monitor = None
 
     def configure(self, value: http_pb2.Server):
@@ -29,7 +28,6 @@ class MonitorWire(Wire):
         else:
             raise NotImplementedError(type_)
 
-        self._config = value
         self._exit = Event()
 
     async def __aenter__(self):
