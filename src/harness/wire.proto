@@ -5,12 +5,39 @@ package harness;
 import "google/protobuf/descriptor.proto";
 
 message HarnessWire {
+    enum Visibility {
+        PRIVATE = 0;
+        HEADLESS = 1;
+        INTERNAL = 2;
+        PUBLIC = 3;
+    }
+    enum Protocol {
+        TCP = 0;
+        HTTP = 1;
+        GRPC = 2;
+    }
     oneof type {
         string input = 1;
         string output = 2;
     }
+    optional Visibility visibility = 3;
+    optional Protocol protocol = 4;
 }
 
 extend google.protobuf.FieldOptions {
     optional HarnessWire wire = 2001;
+}
+
+message HarnessService {
+    enum Release {
+        SINGLE = 0;
+        MULTI = 1;
+    }
+    optional string name = 1;
+    optional Release release = 2;
+    optional string repository = 3;
+}
+
+extend google.protobuf.MessageOptions {
+    optional HarnessService service = 2001;
 }

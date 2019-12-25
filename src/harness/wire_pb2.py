@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='harness',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x12harness/wire.proto\x12\x07harness\x1a google/protobuf/descriptor.proto\"8\n\x0bHarnessWire\x12\x0f\n\x05input\x18\x01 \x01(\tH\x00\x12\x10\n\x06output\x18\x02 \x01(\tH\x00\x42\x06\n\x04type:B\n\x04wire\x12\x1d.google.protobuf.FieldOptions\x18\xd1\x0f \x01(\x0b\x32\x14.harness.HarnessWire')
+  serialized_pb=_b('\n\x12harness/wire.proto\x12\x07harness\x1a google/protobuf/descriptor.proto\"\x8a\x02\n\x0bHarnessWire\x12\x0f\n\x05input\x18\x01 \x01(\tH\x00\x12\x10\n\x06output\x18\x02 \x01(\tH\x00\x12\x33\n\nvisibility\x18\x03 \x01(\x0e\x32\x1f.harness.HarnessWire.Visibility\x12/\n\x08protocol\x18\x04 \x01(\x0e\x32\x1d.harness.HarnessWire.Protocol\"A\n\nVisibility\x12\x0b\n\x07PRIVATE\x10\x00\x12\x0c\n\x08HEADLESS\x10\x01\x12\x0c\n\x08INTERNAL\x10\x02\x12\n\n\x06PUBLIC\x10\x03\"\'\n\x08Protocol\x12\x07\n\x03TCP\x10\x00\x12\x08\n\x04HTTP\x10\x01\x12\x08\n\x04GRPC\x10\x02\x42\x06\n\x04type\"\x86\x01\n\x0eHarnessService\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x30\n\x07release\x18\x02 \x01(\x0e\x32\x1f.harness.HarnessService.Release\x12\x12\n\nrepository\x18\x03 \x01(\t\" \n\x07Release\x12\n\n\x06SINGLE\x10\x00\x12\t\n\x05MULTI\x10\x01:B\n\x04wire\x12\x1d.google.protobuf.FieldOptions\x18\xd1\x0f \x01(\x0b\x32\x14.harness.HarnessWire:J\n\x07service\x12\x1f.google.protobuf.MessageOptions\x18\xd1\x0f \x01(\x0b\x32\x17.harness.HarnessService')
   ,
   dependencies=[google_dot_protobuf_dot_descriptor__pb2.DESCRIPTOR,])
 
@@ -34,6 +34,92 @@ wire = _descriptor.FieldDescriptor(
   message_type=None, enum_type=None, containing_type=None,
   is_extension=True, extension_scope=None,
   serialized_options=None, file=DESCRIPTOR)
+SERVICE_FIELD_NUMBER = 2001
+service = _descriptor.FieldDescriptor(
+  name='service', full_name='harness.service', index=1,
+  number=2001, type=11, cpp_type=10, label=1,
+  has_default_value=False, default_value=None,
+  message_type=None, enum_type=None, containing_type=None,
+  is_extension=True, extension_scope=None,
+  serialized_options=None, file=DESCRIPTOR)
+
+_HARNESSWIRE_VISIBILITY = _descriptor.EnumDescriptor(
+  name='Visibility',
+  full_name='harness.HarnessWire.Visibility',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='PRIVATE', index=0, number=0,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='HEADLESS', index=1, number=1,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='INTERNAL', index=2, number=2,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PUBLIC', index=3, number=3,
+      serialized_options=None,
+      type=None),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=218,
+  serialized_end=283,
+)
+_sym_db.RegisterEnumDescriptor(_HARNESSWIRE_VISIBILITY)
+
+_HARNESSWIRE_PROTOCOL = _descriptor.EnumDescriptor(
+  name='Protocol',
+  full_name='harness.HarnessWire.Protocol',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='TCP', index=0, number=0,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='HTTP', index=1, number=1,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='GRPC', index=2, number=2,
+      serialized_options=None,
+      type=None),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=285,
+  serialized_end=324,
+)
+_sym_db.RegisterEnumDescriptor(_HARNESSWIRE_PROTOCOL)
+
+_HARNESSSERVICE_RELEASE = _descriptor.EnumDescriptor(
+  name='Release',
+  full_name='harness.HarnessService.Release',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='SINGLE', index=0, number=0,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='MULTI', index=1, number=1,
+      serialized_options=None,
+      type=None),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=437,
+  serialized_end=469,
+)
+_sym_db.RegisterEnumDescriptor(_HARNESSSERVICE_RELEASE)
 
 
 _HARNESSWIRE = _descriptor.Descriptor(
@@ -57,11 +143,27 @@ _HARNESSWIRE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='visibility', full_name='harness.HarnessWire.visibility', index=2,
+      number=3, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='protocol', full_name='harness.HarnessWire.protocol', index=3,
+      number=4, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
+    _HARNESSWIRE_VISIBILITY,
+    _HARNESSWIRE_PROTOCOL,
   ],
   serialized_options=None,
   is_extendable=False,
@@ -72,18 +174,72 @@ _HARNESSWIRE = _descriptor.Descriptor(
       name='type', full_name='harness.HarnessWire.type',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=65,
-  serialized_end=121,
+  serialized_start=66,
+  serialized_end=332,
 )
 
+
+_HARNESSSERVICE = _descriptor.Descriptor(
+  name='HarnessService',
+  full_name='harness.HarnessService',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='name', full_name='harness.HarnessService.name', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='release', full_name='harness.HarnessService.release', index=1,
+      number=2, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='repository', full_name='harness.HarnessService.repository', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _HARNESSSERVICE_RELEASE,
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=335,
+  serialized_end=469,
+)
+
+_HARNESSWIRE.fields_by_name['visibility'].enum_type = _HARNESSWIRE_VISIBILITY
+_HARNESSWIRE.fields_by_name['protocol'].enum_type = _HARNESSWIRE_PROTOCOL
+_HARNESSWIRE_VISIBILITY.containing_type = _HARNESSWIRE
+_HARNESSWIRE_PROTOCOL.containing_type = _HARNESSWIRE
 _HARNESSWIRE.oneofs_by_name['type'].fields.append(
   _HARNESSWIRE.fields_by_name['input'])
 _HARNESSWIRE.fields_by_name['input'].containing_oneof = _HARNESSWIRE.oneofs_by_name['type']
 _HARNESSWIRE.oneofs_by_name['type'].fields.append(
   _HARNESSWIRE.fields_by_name['output'])
 _HARNESSWIRE.fields_by_name['output'].containing_oneof = _HARNESSWIRE.oneofs_by_name['type']
+_HARNESSSERVICE.fields_by_name['release'].enum_type = _HARNESSSERVICE_RELEASE
+_HARNESSSERVICE_RELEASE.containing_type = _HARNESSSERVICE
 DESCRIPTOR.message_types_by_name['HarnessWire'] = _HARNESSWIRE
+DESCRIPTOR.message_types_by_name['HarnessService'] = _HARNESSSERVICE
 DESCRIPTOR.extensions_by_name['wire'] = wire
+DESCRIPTOR.extensions_by_name['service'] = service
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 HarnessWire = _reflection.GeneratedProtocolMessageType('HarnessWire', (_message.Message,), {
@@ -93,7 +249,16 @@ HarnessWire = _reflection.GeneratedProtocolMessageType('HarnessWire', (_message.
   })
 _sym_db.RegisterMessage(HarnessWire)
 
+HarnessService = _reflection.GeneratedProtocolMessageType('HarnessService', (_message.Message,), {
+  'DESCRIPTOR' : _HARNESSSERVICE,
+  '__module__' : 'harness.wire_pb2'
+  # @@protoc_insertion_point(class_scope:harness.HarnessService)
+  })
+_sym_db.RegisterMessage(HarnessService)
+
 wire.message_type = _HARNESSWIRE
 google_dot_protobuf_dot_descriptor__pb2.FieldOptions.RegisterExtension(wire)
+service.message_type = _HARNESSSERVICE
+google_dot_protobuf_dot_descriptor__pb2.MessageOptions.RegisterExtension(service)
 
 # @@protoc_insertion_point(module_scope)

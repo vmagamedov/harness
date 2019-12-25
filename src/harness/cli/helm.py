@@ -6,35 +6,45 @@ from pathlib import Path
 from itertools import chain
 from dataclasses import dataclass
 
-# from pkg_resources import iter_entry_points, EntryPoint
-
 import yaml
 
 from google.protobuf.compiler.plugin_pb2 import CodeGeneratorRequest
 from google.protobuf.compiler.plugin_pb2 import CodeGeneratorResponse
 
+from ..wire_pb2 import HarnessService, HarnessWire
+
 
 class Protocol(Enum):
-    HTTP = 'http'
-    GRPC = 'grpc'
+    TCP = HarnessWire.TCP
+    HTTP = HarnessWire.HTTP
+    GRPC = HarnessWire.GRPC
+
+    def k8s_name(self):
+        return 'TCP'
+
+    def istio_name(self, suffix):
+        return self.name.lower() + '-' + suffix
+
+    def istio_type(self):
+        return self.name
 
 
-class PortType(Enum):
-    PRIVATE = 1
-    HEADLESS = 2
-    INTERNAL = 3
-    PUBLIC = 4
+class Visibility(Enum):
+    PRIVATE = HarnessWire.PRIVATE
+    HEADLESS = HarnessWire.HEADLESS
+    INTERNAL = HarnessWire.INTERNAL
+    PUBLIC = HarnessWire.PUBLIC
 
 
 @dataclass
-class Port:
-    protocol: Protocol
+class Wire:
     name: str
-    number: int
-    type: PortType
+    type: str
+    visibility: Visibility
+    protocol: Protocol
 
 
-def _get_full_name(name, singleton=False):
+def _get_full_name(name: str, singleton: bool):
     if singleton:
         return name
     else:
@@ -61,12 +71,16 @@ def chart(name):
     )
 
 
-def _k8s_container_port(port: Port):
+def _k8s_port(wire: Wire):
+    return f'{{{{ .Values.{wire.name}.bind.port }}}}'
+
+
+def _k8s_container_port(wire: Wire):
     k8s_port = dict(
-        name=port.name,
-        containerPort=port.number,
+        name=wire.protocol.istio_name(wire.name),
+        containerPort=_k8s_port(wire),
     )
-    protocol = _k8s_protocol(port.protocol)
+    protocol = wire.protocol.k8s_name()
     if protocol != 'TCP':
         k8s_port['protocol'] = protocol
     return k8s_port
@@ -77,13 +91,13 @@ def deployments(
     *,
     singleton: bool,
     repository: str,
-    ports: List[Port],
+    ingress: List[Wire],
 ):
     labels = _get_labels(name, singleton)
     labels['app.kubernetes.io/version'] = '{{ .Values.version }}'
 
-    if ports:
-        ports_mixin = dict(ports=list(map(_k8s_container_port, ports)))
+    if ingress:
+        ports_mixin = dict(ports=list(map(_k8s_container_port, ingress)))
     else:
         ports_mixin = dict()
 
@@ -115,13 +129,13 @@ def deployments(
     )
 
 
-def _k8s_svc_port(port: Port):
+def _k8s_svc_port(wire: Wire):
     k8s_port = dict(
-        name=port.name,
-        port=port.number,
-        targetPort=port.name,
+        name=wire.protocol.istio_name(wire.name),
+        port=_k8s_port(wire),
+        targetPort=wire.protocol.istio_name(wire.name),
     )
-    protocol = _k8s_protocol(port.protocol)
+    protocol = wire.protocol.k8s_name()
     if protocol != 'TCP':
         k8s_port['protocol'] = protocol
     return k8s_port
@@ -130,16 +144,17 @@ def _k8s_svc_port(port: Port):
 def services(
     name: str,
     singleton: bool,
-    ports: List[Port],
+    ingress: List[Wire],
 ):
-    regular_ports = [
-        p for p in ports if p.type in {PortType.INTERNAL, PortType.PUBLIC}
+    regular_wires = [
+        p for p in ingress
+        if p.visibility in {Visibility.INTERNAL, Visibility.PUBLIC}
     ]
-    headless_ports = [
-        p for p in ports if p.type is PortType.HEADLESS
+    headless_wires = [
+        p for p in ingress if p.visibility is Visibility.HEADLESS
     ]
 
-    if regular_ports:
+    if regular_wires:
         yield dict(
             apiVersion='v1',
             kind='Service',
@@ -147,11 +162,11 @@ def services(
                 name=_get_full_name(name, singleton),
             ),
             spec=dict(
-                ports=list(map(_k8s_svc_port, regular_ports)),
+                ports=list(map(_k8s_svc_port, regular_wires)),
                 selector=_get_labels(name, singleton),
             ),
         )
-    if headless_ports:
+    if headless_wires:
         yield dict(
             apiVersion='v1',
             kind='Service',
@@ -160,31 +175,37 @@ def services(
             ),
             spec=dict(
                 clusterIP='None',
-                ports=list(map(_k8s_svc_port, headless_ports)),
+                ports=list(map(_k8s_svc_port, headless_wires)),
                 selector=_get_labels(name, singleton),
             ),
         )
+
+
+def _public_domain(name: str, singleton: bool):
+    if singleton:
+        return f'{name}.{{{{ .Values.baseDomain }}}}'
+    else:
+        return f'{name}-{{{{ .Release.Name }}}}.{{{{ .Values.baseDomain }}}}'
 
 
 def virtual_services(
     name: str,
     *,
     singleton: bool,
-    domain: str,
-    ports: List[Port],
+    ingress: List[Wire],
 ):
-    internal_ports = [p for p in ports if p.type is PortType.INTERNAL]
-    public_ports = [p for p in ports if p.type is PortType.PUBLIC]
-    if not internal_ports and not public_ports:
+    internal_wires = [w for w in ingress if w.visibility is Visibility.INTERNAL]
+    public_wires = [w for w in ingress if w.visibility is Visibility.PUBLIC]
+    if not internal_wires and not public_wires:
         return
 
     hosts = []
-    if internal_ports:
+    if internal_wires:
         hosts.append(_get_full_name(name, singleton))
-    if public_ports:
-        hosts.append(domain)
+    if public_wires:
+        hosts.append(_public_domain(name, singleton))
 
-    if public_ports:
+    if public_wires:
         gateways_mixin = dict(
             gateways=[_get_full_name(name, singleton), 'mesh'],
         )
@@ -201,17 +222,17 @@ def virtual_services(
             hosts=hosts,
             http=[
                 dict(
-                    match=[dict(port=port.number)],
+                    match=[dict(port=_k8s_port(wire))],
                     route=[
                         dict(
                             destination=dict(
                                 host=_get_full_name(name, singleton),
-                                port=dict(number=port.number),
+                                port=dict(number=_k8s_port(wire)),
                             )
                         )
                     ],
                 )
-                for port in chain(public_ports, internal_ports)
+                for wire in chain(public_wires, internal_wires)
             ],
             **gateways_mixin,
         ),
@@ -222,11 +243,10 @@ def gateways(
     name: str,
     *,
     singleton: bool,
-    domain: str,
-    ports: List[Port],
+    ingress: List[Wire],
 ):
-    ports = [p for p in ports if p.type is PortType.PUBLIC]
-    if not ports:
+    ingress = [w for w in ingress if w.visibility is Visibility.PUBLIC]
+    if not ingress:
         return
     yield dict(
         apiVersion='networking.istio.io/v1alpha3',
@@ -239,13 +259,12 @@ def gateways(
             servers=[
                 dict(
                     port=dict(
-                        name=port.name,
-                        number=port.number,
-                        protocol=port.protocol.value.upper(),
+                        number=_k8s_port(wire),
+                        protocol=wire.protocol.istio_type(),
                     ),
-                    hosts=[domain],
+                    hosts=[_public_domain(name, singleton)],
                 )
-                for port in ports
+                for wire in ingress
             ],
         ),
     )
@@ -257,15 +276,51 @@ def main() -> None:
 
     files_to_generate = set(request.file_to_generate)
 
-    # entrypoints: Dict[str, EntryPoint] = {
-    #     entry_point.name: entry_point
-    #     for entry_point in iter_entry_points(group='harness.wires', name=None)
-    # }
-
     response = CodeGeneratorResponse()
     for pf in request.proto_file:
         if pf.name not in files_to_generate:
             continue
+
+        service_name = None
+        repository = None
+        singleton = False
+
+        ingress = []
+        egress = []
+
+        for mt in pf.message_type:
+            for _, opt in mt.options.ListFields():
+                if isinstance(opt, HarnessService):
+                    service_name = opt.name
+                    repository = opt.repository
+                    if opt.release == HarnessService.SINGLE:
+                        singleton = True
+                    elif opt.release == HarnessService.MULTI:
+                        singleton = False
+                    else:
+                        raise NotImplementedError(opt.release)
+
+            for f in mt.field:
+                for _, opt in f.options.ListFields():
+                    if isinstance(opt, HarnessWire):
+                        if opt.WhichOneof('type') == 'input':
+                            egress.append(Wire(
+                                f.name,
+                                f.type_name,
+                                Visibility(opt.visibility),
+                                Protocol(opt.protocol),
+                            ))
+                        elif opt.WhichOneof('type') == 'output':
+                            ingress.append(Wire(
+                                f.name,
+                                f.type_name,
+                                Visibility(opt.visibility),
+                                Protocol(opt.protocol),
+                            ))
+
+        if not service_name or not repository:
+            continue
+
         proto_file_path = Path(pf.name)
         dest_file_path = proto_file_path.parent.joinpath(
             'chart', 'templates', 'svc.yaml',
@@ -273,60 +328,27 @@ def main() -> None:
         template_file = response.file.add()
         template_file.name = str(dest_file_path)
 
-        service_name = 'whisper'
-        repository = 'registry.acme.dev/team/whisper'
-        singleton = False
-        ports = [
-            Port(
-                protocol=Protocol.HTTP,
-                name='http',
-                number=80,
-                type=PortType.PUBLIC,
-            ),
-            Port(
-                protocol=Protocol.HTTP,
-                name='metrics',
-                number=9000,
-                type=PortType.HEADLESS,
-            ),
-            Port(
-                protocol=Protocol.GRPC,
-                name='grpc',
-                number=50051,
-                type=PortType.INTERNAL,
-            ),
-            Port(
-                protocol=Protocol.HTTP,
-                name='monitor',
-                number=50101,
-                type=PortType.PRIVATE,
-            ),
-        ]
-        domain = 'whisper.example.com'
-
         resources = list(chain(
             deployments(
                 service_name,
                 singleton=singleton,
                 repository=repository,
-                ports=ports,
+                ingress=ingress,
             ),
             services(
                 service_name,
                 singleton=singleton,
-                ports=ports,
+                ingress=ingress,
             ),
             gateways(
                 service_name,
                 singleton=singleton,
-                domain=domain,
-                ports=ports,
+                ingress=ingress,
             ),
             virtual_services(
                 service_name,
                 singleton=singleton,
-                domain=domain,
-                ports=ports,
+                ingress=ingress,
             ),
         ))
 
