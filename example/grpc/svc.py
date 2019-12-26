@@ -33,6 +33,6 @@ async def main(wires_in: WiresIn) -> WiresOut:
         taskqueue=wires_in.taskqueue.channel,
     )
     return WiresOut(
-        listen=harness.wires.grpclib.ServerWire([service]),
+        server=harness.wires.grpclib.ServerWire([service]),
         prometheus=harness.wires.prometheus.ServerWire(),
     )

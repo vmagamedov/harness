@@ -13,7 +13,7 @@ from svc_pb2 import Configuration
 
 @dataclass
 class WiresOut:
-    listen: harness.wires.aiohttp.ServerWire
+    server: harness.wires.aiohttp.ServerWire
     monitor: harness.wires.aiomonitor.MonitorWire
 
 

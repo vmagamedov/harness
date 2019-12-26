@@ -2,12 +2,11 @@ syntax = "proto3";
 
 package harness.postgres;
 
-message DSN {
-    string value = 1;
-}
+import "harness/net.proto";
 
 message Connection {
-    string host = 1;
-    int32 port = 2;
-    string database = 3;
+    harness.net.Socket address = 1;
+    string username = 2;
+    string password = 3;
+    string database = 4;
 }

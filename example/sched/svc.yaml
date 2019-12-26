@@ -1,6 +1,7 @@
 redis_job_store:
-  host: localhost
-  port: 6379
+  address:
+    host: localhost
+    port: 6379
   db: 0
 console:
   level: INFO

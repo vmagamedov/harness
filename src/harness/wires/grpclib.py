@@ -18,8 +18,8 @@ class ChannelWire(Wire):
 
         from grpclib.client import Channel
 
-        self.channel = Channel(value.host or 'localhost',
-                               value.port or 50051)
+        self.channel = Channel(value.address.host or 'localhost',
+                               value.address.port or 50051)
 
     async def __aenter__(self):
         return self.channel
@@ -36,14 +36,14 @@ class ServerWire(Wire):
     def __init__(self, handlers: List[_IServable]):
         self.handlers = handlers
 
-    def configure(self, value: grpc_pb2.Endpoint):
-        assert isinstance(value, grpc_pb2.Endpoint), type(value)
+    def configure(self, value: grpc_pb2.Server):
+        assert isinstance(value, grpc_pb2.Server), type(value)
 
         from grpclib.server import Server
         from grpclib.reflection.service import ServerReflection
 
-        self._host = value.host or '127.0.0.1'
-        self._port = value.port or 50051
+        self._host = value.bind.host or '127.0.0.1'
+        self._port = value.bind.port or 50051
 
         handlers = list(self.handlers)
         services = ServerReflection.extend(handlers)

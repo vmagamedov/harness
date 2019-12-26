@@ -27,7 +27,7 @@ class RedisJobStoreWire(Wire):
         from apscheduler.jobstores.redis import RedisJobStore
 
         self.job_store = RedisJobStore(
-            db=value.db, host=value.host, port=value.port,
+            db=value.db, host=value.address.host, port=value.address.port,
         )
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):

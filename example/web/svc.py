@@ -14,6 +14,6 @@ async def main(wires_in: WiresIn) -> WiresOut:
     app.router.add_get('/', hello)
     app['db'] = wires_in.db.connection
     return WiresOut(
-        listen=ServerWire(app),
+        server=ServerWire(app),
         monitor=MonitorWire(),
     )

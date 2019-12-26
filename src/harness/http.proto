@@ -2,13 +2,12 @@ syntax = "proto3";
 
 package harness.http;
 
-message TCPServer {
-    string host = 1;
-    int32 port = 2;
+import "harness/net.proto";
+
+message Connection {
+    harness.net.Socket address = 1;
 }
 
 message Server {
-    oneof type {
-        TCPServer tcp = 1;
-    }
+    harness.net.Socket bind = 1;
 }

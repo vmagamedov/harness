@@ -1,12 +1,20 @@
 db:
-  value: postgres://postgres:postgres@db:5432/postgres
+  address:
+    host: db
+    port: 5432
+  username: postgres
+  password: postgres
+  database: postgres
 taskqueue:
-  host: localhost
-  port: 50051
-listen:
-  host: 127.0.0.1
-  port: 50052
+  address:
+    host: localhost
+    port: 50051
+server:
+  bind:
+    host: 127.0.0.1
+    port: 50052
 console:
   level: INFO
 prometheus:
-  port: 9000
+  bind:
+    port: 9000

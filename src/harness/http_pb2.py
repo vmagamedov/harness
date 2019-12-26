@@ -13,6 +13,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from harness import net_pb2 as harness_dot_net__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,59 +21,22 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='harness.http',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x12harness/http.proto\x12\x0charness.http\"\'\n\tTCPServer\x12\x0c\n\x04host\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\x05\"8\n\x06Server\x12&\n\x03tcp\x18\x01 \x01(\x0b\x32\x17.harness.http.TCPServerH\x00\x42\x06\n\x04typeb\x06proto3')
-)
+  serialized_pb=_b('\n\x12harness/http.proto\x12\x0charness.http\x1a\x11harness/net.proto\"2\n\nConnection\x12$\n\x07\x61\x64\x64ress\x18\x01 \x01(\x0b\x32\x13.harness.net.Socket\"+\n\x06Server\x12!\n\x04\x62ind\x18\x01 \x01(\x0b\x32\x13.harness.net.Socketb\x06proto3')
+  ,
+  dependencies=[harness_dot_net__pb2.DESCRIPTOR,])
 
 
 
 
-_TCPSERVER = _descriptor.Descriptor(
-  name='TCPServer',
-  full_name='harness.http.TCPServer',
+_CONNECTION = _descriptor.Descriptor(
+  name='Connection',
+  full_name='harness.http.Connection',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='host', full_name='harness.http.TCPServer.host', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='port', full_name='harness.http.TCPServer.port', index=1,
-      number=2, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=36,
-  serialized_end=75,
-)
-
-
-_SERVER = _descriptor.Descriptor(
-  name='Server',
-  full_name='harness.http.Server',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='tcp', full_name='harness.http.Server.tcp', index=0,
+      name='address', full_name='harness.http.Connection.address', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -89,28 +53,54 @@ _SERVER = _descriptor.Descriptor(
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
-    _descriptor.OneofDescriptor(
-      name='type', full_name='harness.http.Server.type',
-      index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=77,
-  serialized_end=133,
+  serialized_start=55,
+  serialized_end=105,
 )
 
-_SERVER.fields_by_name['tcp'].message_type = _TCPSERVER
-_SERVER.oneofs_by_name['type'].fields.append(
-  _SERVER.fields_by_name['tcp'])
-_SERVER.fields_by_name['tcp'].containing_oneof = _SERVER.oneofs_by_name['type']
-DESCRIPTOR.message_types_by_name['TCPServer'] = _TCPSERVER
+
+_SERVER = _descriptor.Descriptor(
+  name='Server',
+  full_name='harness.http.Server',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='bind', full_name='harness.http.Server.bind', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=107,
+  serialized_end=150,
+)
+
+_CONNECTION.fields_by_name['address'].message_type = harness_dot_net__pb2._SOCKET
+_SERVER.fields_by_name['bind'].message_type = harness_dot_net__pb2._SOCKET
+DESCRIPTOR.message_types_by_name['Connection'] = _CONNECTION
 DESCRIPTOR.message_types_by_name['Server'] = _SERVER
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-TCPServer = _reflection.GeneratedProtocolMessageType('TCPServer', (_message.Message,), {
-  'DESCRIPTOR' : _TCPSERVER,
+Connection = _reflection.GeneratedProtocolMessageType('Connection', (_message.Message,), {
+  'DESCRIPTOR' : _CONNECTION,
   '__module__' : 'harness.http_pb2'
-  # @@protoc_insertion_point(class_scope:harness.http.TCPServer)
+  # @@protoc_insertion_point(class_scope:harness.http.Connection)
   })
-_sym_db.RegisterMessage(TCPServer)
+_sym_db.RegisterMessage(Connection)
 
 Server = _reflection.GeneratedProtocolMessageType('Server', (_message.Message,), {
   'DESCRIPTOR' : _SERVER,

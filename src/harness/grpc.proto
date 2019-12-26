@@ -2,12 +2,12 @@ syntax = "proto3";
 
 package harness.grpc;
 
+import "harness/net.proto";
+
 message Channel {
-    string host = 1;
-    int32 port = 2;
+    harness.net.Socket address = 1;
 }
 
-message Endpoint {
-    string host = 1;
-    int32 port = 2;
+message Server {
+    harness.net.Socket bind = 1;
 }

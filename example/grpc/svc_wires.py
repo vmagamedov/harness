@@ -13,7 +13,7 @@ from svc_pb2 import Configuration
 
 @dataclass
 class WiresOut:
-    listen: harness.wires.grpclib.ServerWire
+    server: harness.wires.grpclib.ServerWire
     prometheus: harness.wires.prometheus.ServerWire
 
 

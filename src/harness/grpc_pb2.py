@@ -13,6 +13,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from harness import net_pb2 as harness_dot_net__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,8 +21,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='harness.grpc',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x12harness/grpc.proto\x12\x0charness.grpc\"%\n\x07\x43hannel\x12\x0c\n\x04host\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\x05\"&\n\x08\x45ndpoint\x12\x0c\n\x04host\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\x05\x62\x06proto3')
-)
+  serialized_pb=_b('\n\x12harness/grpc.proto\x12\x0charness.grpc\x1a\x11harness/net.proto\"/\n\x07\x43hannel\x12$\n\x07\x61\x64\x64ress\x18\x01 \x01(\x0b\x32\x13.harness.net.Socket\"+\n\x06Server\x12!\n\x04\x62ind\x18\x01 \x01(\x0b\x32\x13.harness.net.Socketb\x06proto3')
+  ,
+  dependencies=[harness_dot_net__pb2.DESCRIPTOR,])
 
 
 
@@ -34,16 +36,9 @@ _CHANNEL = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='host', full_name='harness.grpc.Channel.host', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='port', full_name='harness.grpc.Channel.port', index=1,
-      number=2, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
+      name='address', full_name='harness.grpc.Channel.address', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -59,29 +54,22 @@ _CHANNEL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=36,
-  serialized_end=73,
+  serialized_start=55,
+  serialized_end=102,
 )
 
 
-_ENDPOINT = _descriptor.Descriptor(
-  name='Endpoint',
-  full_name='harness.grpc.Endpoint',
+_SERVER = _descriptor.Descriptor(
+  name='Server',
+  full_name='harness.grpc.Server',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='host', full_name='harness.grpc.Endpoint.host', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='port', full_name='harness.grpc.Endpoint.port', index=1,
-      number=2, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
+      name='bind', full_name='harness.grpc.Server.bind', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -97,12 +85,14 @@ _ENDPOINT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=75,
-  serialized_end=113,
+  serialized_start=104,
+  serialized_end=147,
 )
 
+_CHANNEL.fields_by_name['address'].message_type = harness_dot_net__pb2._SOCKET
+_SERVER.fields_by_name['bind'].message_type = harness_dot_net__pb2._SOCKET
 DESCRIPTOR.message_types_by_name['Channel'] = _CHANNEL
-DESCRIPTOR.message_types_by_name['Endpoint'] = _ENDPOINT
+DESCRIPTOR.message_types_by_name['Server'] = _SERVER
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Channel = _reflection.GeneratedProtocolMessageType('Channel', (_message.Message,), {
@@ -112,12 +102,12 @@ Channel = _reflection.GeneratedProtocolMessageType('Channel', (_message.Message,
   })
 _sym_db.RegisterMessage(Channel)
 
-Endpoint = _reflection.GeneratedProtocolMessageType('Endpoint', (_message.Message,), {
-  'DESCRIPTOR' : _ENDPOINT,
+Server = _reflection.GeneratedProtocolMessageType('Server', (_message.Message,), {
+  'DESCRIPTOR' : _SERVER,
   '__module__' : 'harness.grpc_pb2'
-  # @@protoc_insertion_point(class_scope:harness.grpc.Endpoint)
+  # @@protoc_insertion_point(class_scope:harness.grpc.Server)
   })
-_sym_db.RegisterMessage(Endpoint)
+_sym_db.RegisterMessage(Server)
 
 
 # @@protoc_insertion_point(module_scope)

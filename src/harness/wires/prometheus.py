@@ -8,12 +8,12 @@ class ServerWire(WaitMixin, Wire):
     _port = None
     _start = None
 
-    def configure(self, value: http_pb2.TCPServer):
+    def configure(self, value: http_pb2.Server):
         from prometheus_client import start_http_server
 
-        if value.port:
-            self._host = value.host or '0.0.0.0'
-            self._port = value.port
+        if value.bind.port:
+            self._host = value.bind.host or '0.0.0.0'
+            self._port = value.bind.port
             self._start = start_http_server
 
     async def __aenter__(self):

@@ -24,7 +24,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='example',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\tsvc.proto\x12\x07\x65xample\x1a\x12harness/wire.proto\x1a\x16harness/postgres.proto\x1a\x12harness/http.proto\x1a\x15harness/logging.proto\"\xc2\x02\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12\x45\n\x02\x64\x62\x18\x02 \x01(\x0b\x32\x15.harness.postgres.DSNB\"\x8a}\x1f\n\x1dpython/asyncpg:ConnectionWire\x12J\n\x07\x63onsole\x18\x03 \x01(\x0b\x32\x18.harness.logging.ConsoleB\x1f\x8a}\x1c\n\x1apython/logging:ConsoleWire\x12\x44\n\x06listen\x18\x04 \x01(\x0b\x32\x14.harness.http.ServerB\x1e\x8a}\x1b\x12\x19python/aiohttp:ServerWire\x12I\n\x07monitor\x18\x05 \x01(\x0b\x32\x14.harness.http.ServerB\"\x8a}\x1f\x12\x1dpython/aiomonitor:MonitorWireb\x06proto3')
+  serialized_pb=_b('\n\tsvc.proto\x12\x07\x65xample\x1a\x12harness/wire.proto\x1a\x16harness/postgres.proto\x1a\x12harness/http.proto\x1a\x15harness/logging.proto\"\xc9\x02\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12L\n\x02\x64\x62\x18\x02 \x01(\x0b\x32\x1c.harness.postgres.ConnectionB\"\x8a}\x1f\n\x1dpython/asyncpg:ConnectionWire\x12J\n\x07\x63onsole\x18\x03 \x01(\x0b\x32\x18.harness.logging.ConsoleB\x1f\x8a}\x1c\n\x1apython/logging:ConsoleWire\x12\x44\n\x06server\x18\x04 \x01(\x0b\x32\x14.harness.http.ServerB\x1e\x8a}\x1b\x12\x19python/aiohttp:ServerWire\x12I\n\x07monitor\x18\x05 \x01(\x0b\x32\x14.harness.http.ServerB\"\x8a}\x1f\x12\x1dpython/aiomonitor:MonitorWireb\x06proto3')
   ,
   dependencies=[harness_dot_wire__pb2.DESCRIPTOR,harness_dot_postgres__pb2.DESCRIPTOR,harness_dot_http__pb2.DESCRIPTOR,harness_dot_logging__pb2.DESCRIPTOR,])
 
@@ -60,7 +60,7 @@ _CONFIGURATION = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=_b('\212}\034\n\032python/logging:ConsoleWire'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='listen', full_name='example.Configuration.listen', index=3,
+      name='server', full_name='example.Configuration.server', index=3,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -86,12 +86,12 @@ _CONFIGURATION = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=110,
-  serialized_end=432,
+  serialized_end=439,
 )
 
-_CONFIGURATION.fields_by_name['db'].message_type = harness_dot_postgres__pb2._DSN
+_CONFIGURATION.fields_by_name['db'].message_type = harness_dot_postgres__pb2._CONNECTION
 _CONFIGURATION.fields_by_name['console'].message_type = harness_dot_logging__pb2._CONSOLE
-_CONFIGURATION.fields_by_name['listen'].message_type = harness_dot_http__pb2._SERVER
+_CONFIGURATION.fields_by_name['server'].message_type = harness_dot_http__pb2._SERVER
 _CONFIGURATION.fields_by_name['monitor'].message_type = harness_dot_http__pb2._SERVER
 DESCRIPTOR.message_types_by_name['Configuration'] = _CONFIGURATION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -106,6 +106,6 @@ _sym_db.RegisterMessage(Configuration)
 
 _CONFIGURATION.fields_by_name['db']._options = None
 _CONFIGURATION.fields_by_name['console']._options = None
-_CONFIGURATION.fields_by_name['listen']._options = None
+_CONFIGURATION.fields_by_name['server']._options = None
 _CONFIGURATION.fields_by_name['monitor']._options = None
 # @@protoc_insertion_point(module_scope)

@@ -13,19 +13,11 @@ class MonitorWire(WaitMixin, Wire):
 
         from aiomonitor import Monitor, MONITOR_HOST, MONITOR_PORT
 
-        type_ = value.WhichOneof('type')
-        if not type_:
-            self._monitor = Monitor(
-                loop=asyncio.get_event_loop(),
-            )
-        elif type_ == 'tcp':
-            self._monitor = Monitor(
-                loop=asyncio.get_event_loop(),
-                host=value.tcp.host or MONITOR_HOST,
-                port=value.tcp.port or MONITOR_PORT,
-            )
-        else:
-            raise NotImplementedError(type_)
+        self._monitor = Monitor(
+            loop=asyncio.get_event_loop(),
+            host=value.bind.host or MONITOR_HOST,
+            port=value.bind.port or MONITOR_PORT,
+        )
 
     async def __aenter__(self):
         self._monitor.start()

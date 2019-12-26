@@ -12,12 +12,12 @@ import "google/protobuf/empty.proto";
 
 message Configuration {
     bool debug = 1;
-    harness.postgres.DSN db = 2 [(harness.wire).input = "python/asyncpg:ConnectionWire"];
+    harness.postgres.Connection db = 2 [(harness.wire).input = "python/asyncpg:ConnectionWire"];
     harness.grpc.Channel taskqueue = 3 [(harness.wire).input = "python/grpclib:ChannelWire"];
     harness.logging.Console console = 4 [(harness.wire).input = "python/logging:ConsoleWire"];
     harness.logging.Syslog syslog = 5 [(harness.wire).input = "python/logging:SyslogWire"];
-    harness.grpc.Endpoint listen = 6 [(harness.wire).output = "python/grpclib:ServerWire"];
-    harness.http.TCPServer prometheus = 7 [(harness.wire).output = "python/prometheus:ServerWire"];
+    harness.grpc.Server server = 6 [(harness.wire).output = "python/grpclib:ServerWire"];
+    harness.http.Server prometheus = 7 [(harness.wire).output = "python/prometheus:ServerWire"];
 }
 
 service Example {
