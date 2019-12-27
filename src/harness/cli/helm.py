@@ -36,12 +36,20 @@ class Visibility(Enum):
     PUBLIC = HarnessWire.PUBLIC
 
 
+class Accessibility(Enum):
+    LOCAL = HarnessWire.LOCAL
+    NAMESPACE = HarnessWire.NAMESPACE
+    CLUSTER = HarnessWire.CLUSTER
+    EXTERNAL = HarnessWire.EXTERNAL
+
+
 @dataclass
 class Wire:
     name: str
     type: str
     visibility: Visibility
     protocol: Protocol
+    access: Accessibility
 
 
 def _get_full_name(name: str, singleton: bool):
@@ -270,6 +278,40 @@ def gateways(
     )
 
 
+def sidecars(name: str, *, singleton: bool, egress: List[Wire]):
+    hosts = ['istio-system/*']
+    for wire in egress:
+        if wire.access is Accessibility.NAMESPACE:
+            hosts.append(
+                f'./{{{{ .Values.{wire.name}.address.host }}}}'
+                f'.{{{{ .Release.Namespace }}}}'
+                f'.svc.cluster.local'
+            )
+        elif wire.access is Accessibility.CLUSTER:
+            hosts.append(
+                f'*/{{{{ .Values.{wire.name}.address.host }}}}'
+            )
+        elif wire.access is Accessibility.EXTERNAL:
+            raise NotImplementedError()  # FIXME
+        else:
+            continue
+    yield dict(
+        apiVersion='networking.istio.io/v1alpha3',
+        kind='Sidecar',
+        metadata=dict(
+            name=_get_full_name(name, singleton),
+        ),
+        spec=dict(
+            egress=[dict(
+                hosts=hosts,
+            )],
+            workloadSelector=dict(
+                labels=_get_labels(name, singleton),
+            ),
+        ),
+    )
+
+
 def main() -> None:
     with os.fdopen(sys.stdin.fileno(), 'rb') as inp:
         request = CodeGeneratorRequest.FromString(inp.read())
@@ -309,6 +351,7 @@ def main() -> None:
                                 f.type_name,
                                 Visibility(opt.visibility),
                                 Protocol(opt.protocol),
+                                Accessibility(opt.access),
                             ))
                         elif opt.WhichOneof('type') == 'output':
                             ingress.append(Wire(
@@ -316,6 +359,7 @@ def main() -> None:
                                 f.type_name,
                                 Visibility(opt.visibility),
                                 Protocol(opt.protocol),
+                                Accessibility(opt.access),
                             ))
 
         if not service_name or not repository:
@@ -349,6 +393,11 @@ def main() -> None:
                 service_name,
                 singleton=singleton,
                 ingress=ingress,
+            ),
+            sidecars(
+                service_name,
+                singleton=singleton,
+                egress=egress,
             ),
         ))
 

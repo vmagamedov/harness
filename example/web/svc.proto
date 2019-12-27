@@ -14,7 +14,10 @@ message Configuration {
 
     bool debug = 1;
 
-    harness.postgres.Connection db = 2 [(harness.wire).input = "python/asyncpg:ConnectionWire"];
+    harness.postgres.Connection db = 2 [
+        (harness.wire).input = "python/asyncpg:ConnectionWire",
+        (harness.wire).access = NAMESPACE
+    ];
     harness.logging.Console console = 3 [(harness.wire).input = "python/logging:ConsoleWire"];
     harness.http.Server server = 4 [
         (harness.wire).output = "python/aiohttp:ServerWire",
