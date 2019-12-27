@@ -292,7 +292,9 @@ def sidecars(name: str, *, singleton: bool, egress: List[Wire]):
                 f'*/{{{{ .Values.{wire.name}.address.host }}}}'
             )
         elif wire.access is Accessibility.EXTERNAL:
-            raise NotImplementedError()  # FIXME
+            hosts.append(
+                f'./{{{{ .Values.{wire.name}.address.host }}}}'
+            )
         else:
             continue
     yield dict(
@@ -310,6 +312,27 @@ def sidecars(name: str, *, singleton: bool, egress: List[Wire]):
             ),
         ),
     )
+
+
+def service_entries(name: str, *, singleton: bool, egress: List[Wire]):
+    for wire in egress:
+        if wire.access is not Accessibility.EXTERNAL:
+            continue
+        yield dict(
+            apiVersion='networking.istio.io/v1alpha3',
+            kind='ServiceEntry',
+            metadata=dict(
+                name=_get_full_name(name, singleton) + '-' + wire.name,
+            ),
+            spec=dict(
+                hosts=[f'{{{{ .Values.{wire.name}.address.host }}}}'],
+                location='MESH_EXTERNAL',
+                ports=[dict(
+                    number=f'{{{{ .Values.{wire.name}.address.port }}}}',
+                    protocol=wire.protocol.istio_type(),
+                )],
+            ),
+        )
 
 
 def main() -> None:
@@ -394,6 +417,11 @@ def main() -> None:
                 singleton=singleton,
                 ingress=ingress,
             ),
+            service_entries(
+                service_name,
+                singleton=singleton,
+                egress=egress,
+            ),
             sidecars(
                 service_name,
                 singleton=singleton,
@@ -401,7 +429,11 @@ def main() -> None:
             ),
         ))
 
-        template_file.content = yaml.dump_all(resources)
+        template_file.content = (
+            yaml.dump_all(resources)
+            .replace("'{{ ", "{{ ")
+            .replace(" }}'", " }}")
+        )
 
         chart_file = response.file.add()
         chart_file.name = str(proto_file_path.parent.joinpath(
