@@ -104,10 +104,42 @@ def deployments(
     labels = _get_labels(name, singleton)
     labels['app.kubernetes.io/version'] = '{{ .Values.version }}'
 
+    container = dict(
+        name='app',
+        image=f'{repository}:{{{{ .Values.version }}}}',
+        securityContext=dict(
+            runAsNonRoot=True,
+        ),
+    )
     if ingress:
-        ports_mixin = dict(ports=list(map(_k8s_container_port, ingress)))
-    else:
-        ports_mixin = dict()
+        container['ports'] = list(map(_k8s_container_port, ingress))
+
+    for wire in ingress:
+        if wire.visibility not in {Visibility.PUBLIC, Visibility.INTERNAL}:
+            continue
+        if wire.protocol is Protocol.HTTP:
+            container['readinessProbe'] = dict(
+                httpGet=dict(
+                    path='/health/ready',
+                    port=wire.protocol.istio_name(wire.name),
+                ),
+            )
+            container['livenessProbe'] = dict(
+                httpGet=dict(
+                    path='/health/live',
+                    port=wire.protocol.istio_name(wire.name),
+                ),
+            )
+        elif wire.protocol is Protocol.GRPC:
+            container['readinessProbe'] = dict(
+                exec=dict(
+                    command=[
+                        'grpc_health_probe',
+                        '-addr',
+                        f'localhost:{_k8s_port(wire)}',
+                    ],
+                ),
+            )
 
     yield dict(
         apiVersion='apps/v1',
@@ -124,13 +156,7 @@ def deployments(
                     labels=labels,
                 ),
                 spec=dict(
-                    containers=[
-                        dict(
-                            name='app',
-                            image=f'{repository}:{{{{ .Values.version }}}}',
-                            **ports_mixin,
-                        ),
-                    ],
+                    containers=[container],
                 ),
             ),
         ),
