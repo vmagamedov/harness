@@ -1,7 +1,7 @@
 import os
 import sys
 from enum import Enum
-from typing import List
+from typing import List, Optional
 from pathlib import Path
 from itertools import chain
 from dataclasses import dataclass
@@ -53,6 +53,12 @@ class Wire:
     secure: bool
 
 
+@dataclass
+class Resource:
+    cpu: str
+    memory: str
+
+
 def _get_name(name: str, singleton: bool, *parts: str):
     name = name if singleton else f'{name}-{{{{ .Release.Name }}}}'
     return '-'.join((name,) + parts)
@@ -100,6 +106,8 @@ def deployments(
     repository: str,
     ingress: List[Wire],
     egress: List[Wire],
+    requests: Optional[Resource] = None,
+    limits: Optional[Resource] = None,
 ):
     labels = _get_labels(name, singleton)
     labels['app.kubernetes.io/version'] = '{{ .Values.version }}'
@@ -156,6 +164,20 @@ def deployments(
             ))
     if secrets_env:
         container.setdefault('env', []).extend(secrets_env)
+
+    if requests is not None:
+        requests_dict = container.setdefault('resources', {})['requests'] = {}
+        if requests.cpu is not None:
+            requests_dict['cpu'] = requests.cpu
+        if requests.memory is not None:
+            requests_dict['memory'] = requests.memory
+
+    if limits is not None:
+        limits_dict = container.setdefault('resources', {})['limits'] = {}
+        if limits.cpu is not None:
+            limits_dict['cpu'] = limits.cpu
+        if limits.memory is not None:
+            limits_dict['memory'] = limits.memory
 
     yield dict(
         apiVersion='apps/v1',
@@ -391,6 +413,8 @@ def main() -> None:
         service_name = None
         repository = None
         singleton = False
+        requests = None
+        limits = None
 
         ingress = []
         egress = []
@@ -406,6 +430,17 @@ def main() -> None:
                         singleton = False
                     else:
                         raise NotImplementedError(opt.release)
+                    if opt.resources is not None:
+                        if opt.resources.requests is not None:
+                            requests = Resource(
+                                cpu=opt.resources.requests.cpu or None,
+                                memory=opt.resources.requests.memory or None,
+                            )
+                        if opt.resources.limits is not None:
+                            limits = Resource(
+                                cpu=opt.resources.limits.cpu or None,
+                                memory=opt.resources.limits.memory or None,
+                            )
 
             for f in mt.field:
                 for _, opt in f.options.ListFields():
@@ -446,6 +481,8 @@ def main() -> None:
                 repository=repository,
                 ingress=ingress,
                 egress=egress,
+                requests=requests,
+                limits=limits,
             ),
             services(
                 service_name,

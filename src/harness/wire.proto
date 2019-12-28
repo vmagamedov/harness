@@ -41,9 +41,18 @@ message HarnessService {
         SINGLE = 0;
         MULTI = 1;
     }
+    message Resource {
+        optional string cpu = 1;
+        optional string memory = 2;
+    }
+    message Resources {
+        optional Resource requests = 1;
+        optional Resource limits = 2;
+    }
     optional string name = 1;
     optional Release release = 2;
     optional string repository = 3;
+    optional Resources resources = 4;
 }
 
 extend google.protobuf.MessageOptions {
