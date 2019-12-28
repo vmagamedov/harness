@@ -50,13 +50,12 @@ class Wire:
     visibility: Visibility
     protocol: Protocol
     access: Accessibility
+    secure: bool
 
 
-def _get_full_name(name: str, singleton: bool):
-    if singleton:
-        return name
-    else:
-        return f'{name}-{{{{ .Release.Name }}}}'
+def _get_name(name: str, singleton: bool, *parts: str):
+    name = name if singleton else f'{name}-{{{{ .Release.Name }}}}'
+    return '-'.join((name,) + parts)
 
 
 def _get_labels(name, singleton=False):
@@ -100,6 +99,7 @@ def deployments(
     singleton: bool,
     repository: str,
     ingress: List[Wire],
+    egress: List[Wire],
 ):
     labels = _get_labels(name, singleton)
     labels['app.kubernetes.io/version'] = '{{ .Values.version }}'
@@ -141,11 +141,27 @@ def deployments(
                 ),
             )
 
+    secrets_env = []
+    for wire in egress:
+        if wire.type in {'.harness.postgres.Connection'} and wire.secure:
+            key = 'password'
+            secrets_env.append(dict(
+                name=f'{wire.name}_{key}'.upper(),
+                valueFrom=dict(
+                    secretKeyRef=dict(
+                        key=key,
+                        name=_get_name(name, singleton, wire.name),
+                    ),
+                ),
+            ))
+    if secrets_env:
+        container.setdefault('env', []).extend(secrets_env)
+
     yield dict(
         apiVersion='apps/v1',
         kind='Deployment',
         metadata=dict(
-            name=_get_full_name(name, singleton),
+            name=_get_name(name, singleton),
         ),
         spec=dict(
             selector=dict(
@@ -193,7 +209,7 @@ def services(
             apiVersion='v1',
             kind='Service',
             metadata=dict(
-                name=_get_full_name(name, singleton),
+                name=_get_name(name, singleton),
             ),
             spec=dict(
                 ports=list(map(_k8s_svc_port, regular_wires)),
@@ -205,7 +221,7 @@ def services(
             apiVersion='v1',
             kind='Service',
             metadata=dict(
-                name=_get_full_name(name, singleton) + '-headless',
+                name=_get_name(name, singleton) + '-headless',
             ),
             spec=dict(
                 clusterIP='None',
@@ -235,13 +251,13 @@ def virtual_services(
 
     hosts = []
     if internal_wires:
-        hosts.append(_get_full_name(name, singleton))
+        hosts.append(_get_name(name, singleton))
     if public_wires:
         hosts.append(_public_domain(name, singleton))
 
     if public_wires:
         gateways_mixin = dict(
-            gateways=[_get_full_name(name, singleton), 'mesh'],
+            gateways=[_get_name(name, singleton), 'mesh'],
         )
     else:
         gateways_mixin = dict()
@@ -250,7 +266,7 @@ def virtual_services(
         apiVersion='networking.istio.io/v1alpha3',
         kind='VirtualService',
         metadata=dict(
-            name=_get_full_name(name, singleton),
+            name=_get_name(name, singleton),
         ),
         spec=dict(
             hosts=hosts,
@@ -260,7 +276,7 @@ def virtual_services(
                     route=[
                         dict(
                             destination=dict(
-                                host=_get_full_name(name, singleton),
+                                host=_get_name(name, singleton),
                                 port=dict(number=_k8s_port(wire)),
                             )
                         )
@@ -286,7 +302,7 @@ def gateways(
         apiVersion='networking.istio.io/v1alpha3',
         kind='Gateway',
         metadata=dict(
-            name=_get_full_name(name, singleton),
+            name=_get_name(name, singleton),
         ),
         spec=dict(
             selector={'istio': 'ingressgateway'},
@@ -327,7 +343,7 @@ def sidecars(name: str, *, singleton: bool, egress: List[Wire]):
         apiVersion='networking.istio.io/v1alpha3',
         kind='Sidecar',
         metadata=dict(
-            name=_get_full_name(name, singleton),
+            name=_get_name(name, singleton),
         ),
         spec=dict(
             egress=[dict(
@@ -348,7 +364,7 @@ def service_entries(name: str, *, singleton: bool, egress: List[Wire]):
             apiVersion='networking.istio.io/v1alpha3',
             kind='ServiceEntry',
             metadata=dict(
-                name=_get_full_name(name, singleton) + '-' + wire.name,
+                name=_get_name(name, singleton) + '-' + wire.name,
             ),
             spec=dict(
                 hosts=[f'{{{{ .Values.{wire.name}.address.host }}}}'],
@@ -401,6 +417,7 @@ def main() -> None:
                                 Visibility(opt.visibility),
                                 Protocol(opt.protocol),
                                 Accessibility(opt.access),
+                                secure=opt.secure,
                             ))
                         elif opt.WhichOneof('type') == 'output':
                             ingress.append(Wire(
@@ -409,6 +426,7 @@ def main() -> None:
                                 Visibility(opt.visibility),
                                 Protocol(opt.protocol),
                                 Accessibility(opt.access),
+                                secure=opt.secure,
                             ))
 
         if not service_name or not repository:
@@ -427,6 +445,7 @@ def main() -> None:
                 singleton=singleton,
                 repository=repository,
                 ingress=ingress,
+                egress=egress,
             ),
             services(
                 service_name,

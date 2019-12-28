@@ -29,6 +29,7 @@ message HarnessWire {
     optional Visibility visibility = 3;
     optional Protocol protocol = 4;
     optional Accessibility access = 5;
+    optional bool secure = 6;
 }
 
 extend google.protobuf.FieldOptions {
