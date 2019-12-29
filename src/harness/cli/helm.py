@@ -149,23 +149,35 @@ def deployments(
                 ),
             )
 
-    secrets_env = []
+    volumes = [
+        dict(
+            name='config',
+            configMap=dict(
+                name='{{ .Values.configName }}',
+            ),
+        ),
+    ]
+    container['volumeMounts'] = [
+        dict(
+            mountPath='/etc/config',
+            name='config',
+        ),
+    ]
+    if any(wire.secure for wire in inputs):
+        volumes.append(dict(
+            name='secret',
+            secret=dict(
+                name='{{ .Values.secretName }}',
+            ),
+        ))
+        container['volumeMounts'].append(dict(
+            mountPath='/etc/secret',
+            name='secret',
+        ))
+
     for wire in inputs:
-        if wire.type in {'.harness.postgres.Connection'} and wire.secure:
-            key = 'password'
-            secrets_env.append(dict(
-                name=f'{wire.name}_{key}'.upper(),
-                valueFrom=dict(
-                    secretKeyRef=dict(
-                        key=key,
-                        name=_get_name(name, singleton, wire.name),
-                    ),
-                ),
-            ))
         if wire.type in {'.harness.logging.Syslog'}:
             pass  # TODO: mount /dev/log volume
-    if secrets_env:
-        container.setdefault('env', []).extend(secrets_env)
 
     if requests is not None:
         requests_dict = container.setdefault('resources', {})['requests'] = {}
@@ -199,6 +211,7 @@ def deployments(
                     containers=[container],
                 ),
             ),
+            volumes=volumes,
         ),
     )
 
