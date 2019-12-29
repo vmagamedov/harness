@@ -104,8 +104,8 @@ def deployments(
     *,
     singleton: bool,
     repository: str,
-    ingress: List[Wire],
-    egress: List[Wire],
+    inputs: List[Wire],
+    outputs: List[Wire],
     requests: Optional[Resource] = None,
     limits: Optional[Resource] = None,
 ):
@@ -119,10 +119,10 @@ def deployments(
             runAsNonRoot=True,
         ),
     )
-    if ingress:
-        container['ports'] = list(map(_k8s_container_port, ingress))
+    if outputs:
+        container['ports'] = list(map(_k8s_container_port, outputs))
 
-    for wire in ingress:
+    for wire in outputs:
         if wire.visibility not in {Visibility.PUBLIC, Visibility.INTERNAL}:
             continue
         if wire.protocol is Protocol.HTTP:
@@ -150,7 +150,7 @@ def deployments(
             )
 
     secrets_env = []
-    for wire in egress:
+    for wire in inputs:
         if wire.type in {'.harness.postgres.Connection'} and wire.secure:
             key = 'password'
             secrets_env.append(dict(
@@ -162,6 +162,8 @@ def deployments(
                     ),
                 ),
             ))
+        if wire.type in {'.harness.logging.Syslog'}:
+            pass  # TODO: mount /dev/log volume
     if secrets_env:
         container.setdefault('env', []).extend(secrets_env)
 
@@ -216,14 +218,14 @@ def _k8s_svc_port(wire: Wire):
 def services(
     name: str,
     singleton: bool,
-    ingress: List[Wire],
+    outputs: List[Wire],
 ):
     regular_wires = [
-        p for p in ingress
+        p for p in outputs
         if p.visibility in {Visibility.INTERNAL, Visibility.PUBLIC}
     ]
     headless_wires = [
-        p for p in ingress if p.visibility is Visibility.HEADLESS
+        p for p in outputs if p.visibility is Visibility.HEADLESS
     ]
 
     if regular_wires:
@@ -264,10 +266,10 @@ def virtual_services(
     name: str,
     *,
     singleton: bool,
-    ingress: List[Wire],
+    outputs: List[Wire],
 ):
-    internal_wires = [w for w in ingress if w.visibility is Visibility.INTERNAL]
-    public_wires = [w for w in ingress if w.visibility is Visibility.PUBLIC]
+    internal_wires = [w for w in outputs if w.visibility is Visibility.INTERNAL]
+    public_wires = [w for w in outputs if w.visibility is Visibility.PUBLIC]
     if not internal_wires and not public_wires:
         return
 
@@ -315,10 +317,10 @@ def gateways(
     name: str,
     *,
     singleton: bool,
-    ingress: List[Wire],
+    outputs: List[Wire],
 ):
-    ingress = [w for w in ingress if w.visibility is Visibility.PUBLIC]
-    if not ingress:
+    outputs = [w for w in outputs if w.visibility is Visibility.PUBLIC]
+    if not outputs:
         return
     yield dict(
         apiVersion='networking.istio.io/v1alpha3',
@@ -336,15 +338,15 @@ def gateways(
                     ),
                     hosts=[_public_domain(name, singleton)],
                 )
-                for wire in ingress
+                for wire in outputs
             ],
         ),
     )
 
 
-def sidecars(name: str, *, singleton: bool, egress: List[Wire]):
+def sidecars(name: str, *, singleton: bool, inputs: List[Wire]):
     hosts = ['istio-system/*']
-    for wire in egress:
+    for wire in inputs:
         if wire.access is Accessibility.NAMESPACE:
             hosts.append(
                 f'./{{{{ .Values.{wire.name}.address.host }}}}'
@@ -378,8 +380,8 @@ def sidecars(name: str, *, singleton: bool, egress: List[Wire]):
     )
 
 
-def service_entries(name: str, *, singleton: bool, egress: List[Wire]):
-    for wire in egress:
+def service_entries(name: str, *, singleton: bool, inputs: List[Wire]):
+    for wire in inputs:
         if wire.access is not Accessibility.EXTERNAL:
             continue
         yield dict(
@@ -416,8 +418,8 @@ def main() -> None:
         requests = None
         limits = None
 
-        ingress = []
-        egress = []
+        outputs = []
+        inputs = []
 
         for mt in pf.message_type:
             for _, opt in mt.options.ListFields():
@@ -446,7 +448,7 @@ def main() -> None:
                 for _, opt in f.options.ListFields():
                     if isinstance(opt, HarnessWire):
                         if opt.WhichOneof('type') == 'input':
-                            egress.append(Wire(
+                            inputs.append(Wire(
                                 f.name,
                                 f.type_name,
                                 Visibility(opt.visibility),
@@ -455,7 +457,7 @@ def main() -> None:
                                 secure=opt.secure,
                             ))
                         elif opt.WhichOneof('type') == 'output':
-                            ingress.append(Wire(
+                            outputs.append(Wire(
                                 f.name,
                                 f.type_name,
                                 Visibility(opt.visibility),
@@ -479,35 +481,35 @@ def main() -> None:
                 service_name,
                 singleton=singleton,
                 repository=repository,
-                ingress=ingress,
-                egress=egress,
+                inputs=inputs,
+                outputs=outputs,
                 requests=requests,
                 limits=limits,
             ),
             services(
                 service_name,
                 singleton=singleton,
-                ingress=ingress,
+                outputs=outputs,
             ),
             gateways(
                 service_name,
                 singleton=singleton,
-                ingress=ingress,
+                outputs=outputs,
             ),
             virtual_services(
                 service_name,
                 singleton=singleton,
-                ingress=ingress,
+                outputs=outputs,
             ),
             service_entries(
                 service_name,
                 singleton=singleton,
-                egress=egress,
+                inputs=inputs,
             ),
             sidecars(
                 service_name,
                 singleton=singleton,
-                egress=egress,
+                inputs=inputs,
             ),
         ))
 

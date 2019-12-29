@@ -11,8 +11,8 @@ message Configuration {
     option (harness.service).name = "whisper";
     option (harness.service).release = MULTI;
     option (harness.service).repository = "registry.acme.dev/team/whisper";
-    option (harness.service).resources.requests = {cpu: "300m" memory: "128M"};
-    option (harness.service).resources.limits = {cpu: "1" memory: "192M"};
+    option (harness.service).resources.requests = {cpu: "300m" memory: "128Mi"};
+    option (harness.service).resources.limits = {cpu: "1" memory: "192Mi"};
 
     bool debug = 1;
 
