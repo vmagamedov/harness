@@ -1,13 +1,16 @@
-import codecs
 import asyncio
 import inspect
 import argparse
 import importlib
+from typing import Any, Type, Callable
 from contextlib import AsyncExitStack
-from dataclasses import fields
+from dataclasses import fields, dataclass
 
 import yaml
+from jsonpatch import JsonPatch
 from grpclib.utils import graceful_exit
+from json_merge_patch import merge
+from google.protobuf.message import Message
 from google.protobuf.json_format import ParseDict
 
 
@@ -44,20 +47,16 @@ async def wrapper(service_func, wires_in_type, wires_out_type, config):
             await asyncio.wait(waiters, return_when=asyncio.FIRST_COMPLETED)
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        'path',
-        help='Import path to the service function; '
-             'path.to.svc or path.to.svc:main',
-    )
-    parser.add_argument(
-        'config',
-        help='Configuration file in the YAML format',
-    )
-    args = parser.parse_args()
+@dataclass
+class Spec:
+    func: Callable[[Any], Any]
+    config_type: Type[Message]
+    wires_in_type: type
+    wires_out_type: type
 
-    module_name, _, name = args.path.partition(':')
+
+def load_spec(path: str) -> Spec:
+    module_name, _, name = path.partition(':')
     if not name:
         name = 'main'
 
@@ -87,15 +86,65 @@ def main():
     elif return_annotation is not wires_out_type:
         raise SystemExit(f'"{module_name}:{name}" function '
                          f'has invalid return annotation')
+    return Spec(
+        func=service_func,
+        config_type=wires_in_annotations['__config__'],
+        wires_in_type=wires_in_type,
+        wires_out_type=wires_out_type,
+    )
 
-    config_type = wires_in_annotations['__config__']
-    with codecs.open(args.config, 'rb', 'utf-8') as f:
-        config_data = yaml.safe_load(f)
-        if config_data is None:
-            config_data = {}
-        if not isinstance(config_data, dict):
-            raise SystemExit(f'Invalid configuration: {args.config!r}')
 
-    config = config_type()
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        'path',
+        help='Import path to the service function; '
+             'path.to.svc or path.to.svc:main',
+    )
+    parser.add_argument(
+        'config',
+        type=argparse.FileType('r', encoding='utf-8'),
+        help='Configuration file in the YAML format',
+    )
+    parser.add_argument(
+        '--merge',
+        default=None,
+        type=argparse.FileType('r', encoding='utf-8'),
+        help='Merge config with a file',
+    )
+    parser.add_argument(
+        '--patch',
+        default=None,
+        type=argparse.FileType('r', encoding='utf-8'),
+        help='Patch config with a file',
+    )
+    args = parser.parse_args()
+
+    spec = load_spec(args.path)
+
+    with args.config:
+        config_data = yaml.safe_load(args.config)
+    if config_data is None:
+        config_data = {}
+    if not isinstance(config_data, dict):
+        raise SystemExit(f'Invalid configuration: {args.config!r}')
+
+    if args.merge is not None:
+        with args.merge:
+            merge_data = yaml.safe_load(args.merge)
+        config_data = merge(config_data, merge_data)
+
+    if args.patch is not None:
+        with args.patch:
+            patch_data = yaml.safe_load(args.patch)
+        json_patch = JsonPatch(patch_data)
+        config_data = json_patch.apply(config_data)
+
+    config = spec.config_type()
     ParseDict(config_data, config)
-    asyncio.run(wrapper(service_func, wires_in_type, wires_out_type, config))
+    asyncio.run(wrapper(
+        spec.func,
+        spec.wires_in_type,
+        spec.wires_out_type,
+        config,
+    ))

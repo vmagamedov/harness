@@ -20,7 +20,7 @@ setup(
     package_dir={'': 'src'},
     license='BSD-3-Clause',
     python_requires='>=3.7',
-    install_requires=['protobuf'],
+    install_requires=['protobuf', 'json-merge-patch', 'jsonpatch'],
     entry_points={
         'console_scripts': [
             'protoc-gen-python_harness=harness.cli.generate:main',
