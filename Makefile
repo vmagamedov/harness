@@ -29,10 +29,10 @@ release: proto
 	python setup.py sdist
 
 run_grpc:
-	@PYTHONPATH=example/grpc harness svc example/grpc/svc.yaml
+	@PYTHONPATH=example/grpc harness run svc example/grpc/svc.yaml
 
 run_web:
-	@PYTHONPATH=example/web harness svc example/web/svc.yaml
+	@PYTHONPATH=example/web harness run svc example/web/svc.yaml
 
 run_sched:
-	@PYTHONPATH=example/sched harness svc example/sched/svc.yaml
+	@PYTHONPATH=example/sched harness run svc example/sched/svc.yaml

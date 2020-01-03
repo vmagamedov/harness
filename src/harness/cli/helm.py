@@ -118,6 +118,14 @@ def deployments(
     container = dict(
         name='app',
         image=f'{repository}:{{{{ .Values.version }}}}',
+        command=[
+            'harness',
+            'run',
+            'svc',
+            '/etc/config/config.yaml',
+            '--merge',
+            '/etc/secret/config.yaml',
+        ],
         securityContext=dict(
             runAsNonRoot=True,
         ),

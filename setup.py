@@ -25,7 +25,7 @@ setup(
         'console_scripts': [
             'protoc-gen-python_harness=harness.cli.generate:main',
             'protoc-gen-helm_harness=harness.cli.helm:main',
-            'harness=harness.cli.run:main',
+            'harness=harness.cli.main:main',
         ],
         'harness.wires': [
             'python/logging=harness.wires.logging',

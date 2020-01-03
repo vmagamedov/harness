@@ -94,32 +94,7 @@ def load_spec(path: str) -> Spec:
     )
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        'path',
-        help='Import path to the service function; '
-             'path.to.svc or path.to.svc:main',
-    )
-    parser.add_argument(
-        'config',
-        type=argparse.FileType('r', encoding='utf-8'),
-        help='Configuration file in the YAML format',
-    )
-    parser.add_argument(
-        '--merge',
-        default=None,
-        type=argparse.FileType('r', encoding='utf-8'),
-        help='Merge config with a file',
-    )
-    parser.add_argument(
-        '--patch',
-        default=None,
-        type=argparse.FileType('r', encoding='utf-8'),
-        help='Patch config with a file',
-    )
-    args = parser.parse_args()
-
+def run(args):
     spec = load_spec(args.path)
 
     with args.config:
@@ -148,3 +123,30 @@ def main():
         spec.wires_out_type,
         config,
     ))
+
+
+def add_commands(subparsers):
+    parser = subparsers.add_parser('run')
+    parser.add_argument(
+        'path',
+        help='Import path to the service function; '
+             'path.to.svc or path.to.svc:main',
+    )
+    parser.add_argument(
+        'config',
+        type=argparse.FileType('r', encoding='utf-8'),
+        help='Configuration file in the YAML format',
+    )
+    parser.add_argument(
+        '--merge',
+        default=None,
+        type=argparse.FileType('r', encoding='utf-8'),
+        help='Merge config with a file',
+    )
+    parser.add_argument(
+        '--patch',
+        default=None,
+        type=argparse.FileType('r', encoding='utf-8'),
+        help='Patch config with a file',
+    )
+    parser.set_defaults(func=run)
