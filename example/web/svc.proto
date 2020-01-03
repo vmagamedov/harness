@@ -18,8 +18,7 @@ message Configuration {
 
     harness.postgres.Connection db = 2 [
         (harness.wire).input = "python/asyncpg:ConnectionWire",
-        (harness.wire).access = EXTERNAL,
-        (harness.wire).secure = true
+        (harness.wire).access = EXTERNAL
     ];
     harness.logging.Console console = 3 [(harness.wire).input = "python/logging:ConsoleWire"];
     harness.http.Server server = 4 [

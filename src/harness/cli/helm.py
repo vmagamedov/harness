@@ -14,6 +14,10 @@ from google.protobuf.compiler.plugin_pb2 import CodeGeneratorResponse
 from ..wire_pb2 import HarnessService, HarnessWire
 
 
+CONFIG = 'config'
+SECRET = 'secret'
+
+
 class Protocol(Enum):
     TCP = HarnessWire.TCP
     HTTP = HarnessWire.HTTP
@@ -50,7 +54,6 @@ class Wire:
     visibility: Visibility
     protocol: Protocol
     access: Accessibility
-    secure: bool
 
 
 @dataclass
@@ -118,6 +121,16 @@ def deployments(
         securityContext=dict(
             runAsNonRoot=True,
         ),
+        volumeMounts=[
+            dict(
+                mountPath='/etc/config',
+                name=CONFIG,
+            ),
+            dict(
+                mountPath='/etc/secret',
+                name=SECRET,
+            ),
+        ],
     )
     if outputs:
         container['ports'] = list(map(_k8s_container_port, outputs))
@@ -148,32 +161,6 @@ def deployments(
                     ],
                 ),
             )
-
-    volumes = [
-        dict(
-            name='config',
-            configMap=dict(
-                name='{{ .Values.configName }}',
-            ),
-        ),
-    ]
-    container['volumeMounts'] = [
-        dict(
-            mountPath='/etc/config',
-            name='config',
-        ),
-    ]
-    if any(wire.secure for wire in inputs):
-        volumes.append(dict(
-            name='secret',
-            secret=dict(
-                name='{{ .Values.secretName }}',
-            ),
-        ))
-        container['volumeMounts'].append(dict(
-            mountPath='/etc/secret',
-            name='secret',
-        ))
 
     for wire in inputs:
         if wire.type in {'.harness.logging.Syslog'}:
@@ -211,7 +198,20 @@ def deployments(
                     containers=[container],
                 ),
             ),
-            volumes=volumes,
+            volumes=[
+                dict(
+                    name=CONFIG,
+                    configMap=dict(
+                        name='{{ .Values.configName }}',
+                    ),
+                ),
+                dict(
+                    name=SECRET,
+                    secret=dict(
+                        name='{{ .Values.secretName }}',
+                    ),
+                ),
+            ],
         ),
     )
 
@@ -467,7 +467,6 @@ def main() -> None:
                                 Visibility(opt.visibility),
                                 Protocol(opt.protocol),
                                 Accessibility(opt.access),
-                                secure=opt.secure,
                             ))
                         elif opt.WhichOneof('type') == 'output':
                             outputs.append(Wire(
@@ -476,7 +475,6 @@ def main() -> None:
                                 Visibility(opt.visibility),
                                 Protocol(opt.protocol),
                                 Accessibility(opt.access),
-                                secure=opt.secure,
                             ))
 
         if not service_name or not repository:
