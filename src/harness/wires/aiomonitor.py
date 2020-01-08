@@ -1,6 +1,6 @@
 import asyncio
 
-from .. import http_pb2
+from .. import net_pb2
 
 from .base import Wire, WaitMixin
 
@@ -8,8 +8,8 @@ from .base import Wire, WaitMixin
 class MonitorWire(WaitMixin, Wire):
     _monitor = None
 
-    def configure(self, value: http_pb2.Server):
-        assert isinstance(value, http_pb2.Server), type(value)
+    def configure(self, value: net_pb2.Server):
+        assert isinstance(value, net_pb2.Server), type(value)
 
         from aiomonitor import Monitor, MONITOR_HOST, MONITOR_PORT
 

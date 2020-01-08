@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='harness.net',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x11harness/net.proto\x12\x0bharness.net\"$\n\x06Socket\x12\x0c\n\x04host\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\r\"\"\n\x04Pipe\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04mode\x18\x02 \x01(\r\"H\n\x07\x41\x64\x64ress\x12%\n\x06socket\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketH\x00\x12\x0e\n\x04pipe\x18\x02 \x01(\tH\x00\x42\x06\n\x04typeb\x06proto3')
+  serialized_pb=_b('\n\x11harness/net.proto\x12\x0bharness.net\"$\n\x06Socket\x12\x0c\n\x04host\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\r\"\"\n\x04Pipe\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04mode\x18\x02 \x01(\r\"H\n\x07\x41\x64\x64ress\x12%\n\x06socket\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketH\x00\x12\x0e\n\x04pipe\x18\x02 \x01(\tH\x00\x42\x06\n\x04type\"+\n\x06Server\x12!\n\x04\x62ind\x18\x01 \x01(\x0b\x32\x13.harness.net.Socketb\x06proto3')
 )
 
 
@@ -142,6 +142,37 @@ _ADDRESS = _descriptor.Descriptor(
   serialized_end=180,
 )
 
+
+_SERVER = _descriptor.Descriptor(
+  name='Server',
+  full_name='harness.net.Server',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='bind', full_name='harness.net.Server.bind', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=182,
+  serialized_end=225,
+)
+
 _ADDRESS.fields_by_name['socket'].message_type = _SOCKET
 _ADDRESS.oneofs_by_name['type'].fields.append(
   _ADDRESS.fields_by_name['socket'])
@@ -149,9 +180,11 @@ _ADDRESS.fields_by_name['socket'].containing_oneof = _ADDRESS.oneofs_by_name['ty
 _ADDRESS.oneofs_by_name['type'].fields.append(
   _ADDRESS.fields_by_name['pipe'])
 _ADDRESS.fields_by_name['pipe'].containing_oneof = _ADDRESS.oneofs_by_name['type']
+_SERVER.fields_by_name['bind'].message_type = _SOCKET
 DESCRIPTOR.message_types_by_name['Socket'] = _SOCKET
 DESCRIPTOR.message_types_by_name['Pipe'] = _PIPE
 DESCRIPTOR.message_types_by_name['Address'] = _ADDRESS
+DESCRIPTOR.message_types_by_name['Server'] = _SERVER
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Socket = _reflection.GeneratedProtocolMessageType('Socket', (_message.Message,), {
@@ -174,6 +207,13 @@ Address = _reflection.GeneratedProtocolMessageType('Address', (_message.Message,
   # @@protoc_insertion_point(class_scope:harness.net.Address)
   })
 _sym_db.RegisterMessage(Address)
+
+Server = _reflection.GeneratedProtocolMessageType('Server', (_message.Message,), {
+  'DESCRIPTOR' : _SERVER,
+  '__module__' : 'harness.net_pb2'
+  # @@protoc_insertion_point(class_scope:harness.net.Server)
+  })
+_sym_db.RegisterMessage(Server)
 
 
 # @@protoc_insertion_point(module_scope)

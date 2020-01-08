@@ -18,3 +18,7 @@ message Address {
         string pipe = 2;
     }
 }
+
+message Server {
+    Socket bind = 1;
+}

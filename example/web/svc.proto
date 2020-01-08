@@ -4,6 +4,7 @@ package example;
 
 import "harness/wire.proto";
 import "harness/postgres.proto";
+import "harness/net.proto";
 import "harness/http.proto";
 import "harness/logging.proto";
 
@@ -20,13 +21,15 @@ message Configuration {
         (harness.wire).input = "python/asyncpg:ConnectionWire",
         (harness.wire).access = EXTERNAL
     ];
-    harness.logging.Console console = 3 [(harness.wire).input = "python/logging:ConsoleWire"];
+    harness.logging.Console console = 3 [
+        (harness.wire).input = "python/logging:ConsoleWire"
+    ];
     harness.http.Server server = 4 [
         (harness.wire).output = "python/aiohttp:ServerWire",
         (harness.wire).visibility = PUBLIC,
         (harness.wire).protocol = HTTP
     ];
-    harness.http.Server monitor = 5 [
+    harness.net.Server monitor = 5 [
         (harness.wire).output = "python/aiomonitor:MonitorWire",
         (harness.wire).protocol = HTTP
     ];
