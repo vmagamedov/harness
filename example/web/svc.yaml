@@ -11,3 +11,8 @@ server:
     port: 9000
 console:
   level: INFO
+tracing:
+  service_name: web
+  address:
+    host: localhost
+    port: 6831

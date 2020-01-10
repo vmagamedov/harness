@@ -7,6 +7,7 @@ import harness.wires.aiohttp
 import harness.wires.aiomonitor
 import harness.wires.asyncpg
 import harness.wires.logging
+import harness.wires.opentelemetry.ext.jaeger
 
 from svc_pb2 import Configuration
 
@@ -23,3 +24,4 @@ class WiresIn:
     __wires_out_type__ = WiresOut
     db: harness.wires.asyncpg.ConnectionWire
     console: harness.wires.logging.ConsoleWire
+    tracing: harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire

@@ -18,3 +18,8 @@ console:
 prometheus:
   bind:
     port: 9000
+tracing:
+  service_name: grpc
+  address:
+    host: localhost
+    port: 6831

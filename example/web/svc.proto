@@ -7,6 +7,7 @@ import "harness/postgres.proto";
 import "harness/net.proto";
 import "harness/http.proto";
 import "harness/logging.proto";
+import "harness/tracing.proto";
 
 message Configuration {
     option (harness.service).name = "whisper";
@@ -24,12 +25,15 @@ message Configuration {
     harness.logging.Console console = 3 [
         (harness.wire).input = "python/logging:ConsoleWire"
     ];
-    harness.http.Server server = 4 [
+    harness.tracing.Exporter tracing = 4 [
+        (harness.wire).input = "python/opentelemetry.ext.jaeger:JaegerSpanExporterWire"
+    ];
+    harness.http.Server server = 5 [
         (harness.wire).output = "python/aiohttp:ServerWire",
         (harness.wire).visibility = PUBLIC,
         (harness.wire).protocol = HTTP
     ];
-    harness.net.Server monitor = 5 [
+    harness.net.Server monitor = 6 [
         (harness.wire).output = "python/aiomonitor:MonitorWire",
         (harness.wire).protocol = HTTP
     ];

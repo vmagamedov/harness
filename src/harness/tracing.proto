@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package harness.tracing;
+
+import "harness/net.proto";
+
+message Exporter {
+    string service_name = 1;
+    harness.net.Socket address = 2;
+}

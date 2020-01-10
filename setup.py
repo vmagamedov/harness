@@ -20,7 +20,12 @@ setup(
     package_dir={'': 'src'},
     license='BSD-3-Clause',
     python_requires='>=3.7',
-    install_requires=['protobuf', 'json-merge-patch', 'jsonpatch'],
+    install_requires=[
+        'protobuf',
+        'json-merge-patch',
+        'jsonpatch',
+        'opentelemetry-api',
+    ],
     entry_points={
         'console_scripts': [
             'protoc-gen-python_harness=harness.cli.generate:main',
@@ -35,6 +40,7 @@ setup(
             'python/aiohttp=harness.wires.aiohttp',
             'python/aiomonitor=harness.wires.aiomonitor',
             'python/apscheduler=harness.wires.apscheduler',
+            'python/opentelemetry.ext.jaeger=harness.wires.opentelemetry.ext.jaeger',
         ],
     },
     classifiers=[

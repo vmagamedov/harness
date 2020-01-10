@@ -6,6 +6,7 @@ from dataclasses import dataclass
 import harness.wires.asyncpg
 import harness.wires.grpclib
 import harness.wires.logging
+import harness.wires.opentelemetry.ext.jaeger
 import harness.wires.prometheus
 
 from svc_pb2 import Configuration
@@ -25,3 +26,4 @@ class WiresIn:
     taskqueue: harness.wires.grpclib.ChannelWire
     console: harness.wires.logging.ConsoleWire
     syslog: harness.wires.logging.SyslogWire
+    tracing: harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire

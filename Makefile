@@ -19,6 +19,7 @@ proto: clean
 	cd src && $(GEN) harness/grpc.proto
 	cd src && $(GEN) harness/http.proto
 	cd src && $(GEN) harness/redis.proto
+	cd src && $(GEN) harness/tracing.proto
 	cd example/grpc && $(GEN) --python_grpc_out=. --python_harness_out=. svc.proto
 	cd example/web && $(GEN) --python_harness_out=. svc.proto
 	cd example/sched && $(GEN) --python_harness_out=. svc.proto
