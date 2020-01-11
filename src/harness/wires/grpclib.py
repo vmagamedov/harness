@@ -4,7 +4,7 @@ from contextvars import ContextVar
 from typing_extensions import Protocol
 
 from opentelemetry.trace import tracer, SpanKind
-from opentelemetry.propagators import extract
+from opentelemetry.propagators import extract, inject
 
 from grpclib.server import Server
 from grpclib.client import Channel
@@ -26,13 +26,25 @@ class _IServable(Protocol):
 _Value = Union[str, bytes]
 _Metadata = NewType('_Metadata', 'MultiDict[_Value]')
 
+_channel_span = ContextVar('channel_span')
+
 
 async def _send_request(event: SendRequest) -> None:
-    pass
+    tracer_ = tracer()
+    span = tracer_.start_span(
+        event.method_name,
+        kind=SpanKind.CLIENT,
+        attributes={
+            "component": "grpc",
+            "grpc.method": event.method_name,
+        },
+    )
+    _channel_span.set(span)
+    inject(tracer_, type(event.metadata).__setitem__, event.metadata)
 
 
 async def _recv_trailing_metadata(event: RecvTrailingMetadata) -> None:
-    pass
+    _channel_span.get().end()
 
 
 class ChannelWire(Wire):
@@ -57,7 +69,7 @@ def _metadata_getter(metadata: _Metadata, header_name: str) -> List[str]:
     return metadata.getall(header_name, [])
 
 
-_current_span = ContextVar('span')
+_server_span = ContextVar('server_span')
 
 
 async def _recv_request(event: RecvRequest) -> None:
@@ -72,11 +84,11 @@ async def _recv_request(event: RecvRequest) -> None:
             "grpc.method": event.method_name,
         },
     )
-    _current_span.set(span)
+    _server_span.set(span)
 
 
 async def _send_trailing_metadata(event: SendTrailingMetadata) -> None:
-    _current_span.get().end()
+    _server_span.get().end()
 
 
 class ServerWire(Wire):

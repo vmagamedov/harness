@@ -1,3 +1,5 @@
+import asyncio
+
 from aiohttp import web
 from google.protobuf.empty_pb2 import Empty
 
@@ -10,8 +12,10 @@ from kirk_wires import WiresIn, WiresOut
 
 
 async def index(request):
-    reply = await request.app['scotty'].BeamMeUp(Empty())
-    return web.Response(text=f'Scotty: {reply}')
+    await asyncio.sleep(0.05)
+    await request.app['scotty'].BeamMeUp(Empty())
+    await asyncio.sleep(0.15)
+    return web.Response(text='Operation: complete')
 
 
 async def main(wires_in: WiresIn) -> WiresOut:

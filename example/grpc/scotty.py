@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from dataclasses import dataclass
 
@@ -19,8 +20,8 @@ class Scotty(ScottyBase):
     db: asyncpg.Connection
 
     async def BeamMeUp(self, stream: Stream[Empty, Empty]) -> None:
-        request = await stream.recv_message()
-        print(request)
+        await stream.recv_message()
+        await asyncio.sleep(0.1)
         await stream.send_message(Empty())
 
 
