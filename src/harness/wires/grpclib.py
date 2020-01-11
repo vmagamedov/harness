@@ -76,12 +76,7 @@ async def _recv_request(event: RecvRequest) -> None:
 
 
 async def _send_trailing_metadata(event: SendTrailingMetadata) -> None:
-    try:
-        span = _current_span.get()
-    except LookupError:
-        pass
-    else:
-        span.end()
+    _current_span.get().end()
 
 
 class ServerWire(Wire):
