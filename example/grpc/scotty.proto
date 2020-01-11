@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package example;
+package scotty;
 
 import "harness/wire.proto";
 import "harness/postgres.proto";
@@ -14,7 +14,6 @@ import "google/protobuf/empty.proto";
 message Configuration {
     bool debug = 1;
     harness.postgres.Connection db = 2 [(harness.wire).input = "python/asyncpg:ConnectionWire"];
-    harness.grpc.Channel taskqueue = 3 [(harness.wire).input = "python/grpclib:ChannelWire"];
     harness.logging.Console console = 4 [(harness.wire).input = "python/logging:ConsoleWire"];
     harness.logging.Syslog syslog = 5 [(harness.wire).input = "python/logging:SyslogWire"];
     harness.tracing.Exporter tracing = 6 [(harness.wire).input = "python/opentelemetry.ext.jaeger:JaegerSpanExporterWire"];
@@ -22,6 +21,6 @@ message Configuration {
     harness.http.Server prometheus = 8 [(harness.wire).output = "python/prometheus:ServerWire"];
 }
 
-service Example {
-    rpc Store (google.protobuf.Empty) returns (google.protobuf.Empty) {}
+service Scotty {
+    rpc BeamMeUp (google.protobuf.Empty) returns (google.protobuf.Empty) {}
 }

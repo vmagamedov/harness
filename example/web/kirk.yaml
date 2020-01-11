@@ -5,21 +5,18 @@ db:
   username: postgres
   password: postgres
   database: postgres
-taskqueue:
+scotty:
   address:
     host: localhost
     port: 50051
 server:
   bind:
-    host: 127.0.0.1
-    port: 50052
+    host: 0.0.0.0
+    port: 8000
 console:
   level: INFO
-prometheus:
-  bind:
-    port: 9000
 tracing:
-  service_name: grpc
+  service_name: kirk
   address:
     host: localhost
     port: 6831

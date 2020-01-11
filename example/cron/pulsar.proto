@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package example;
+package pulsar;
 
 import "harness/wire.proto";
 import "harness/redis.proto";

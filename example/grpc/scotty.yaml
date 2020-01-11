@@ -7,12 +7,15 @@ db:
   database: postgres
 server:
   bind:
-    host: 0.0.0.0
-    port: 9000
+    host: 127.0.0.1
+    port: 50051
 console:
   level: INFO
+prometheus:
+  bind:
+    port: 9000
 tracing:
-  service_name: web
+  service_name: scotty
   address:
     host: localhost
     port: 6831

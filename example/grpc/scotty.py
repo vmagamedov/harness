@@ -2,25 +2,23 @@ import logging
 from dataclasses import dataclass
 
 import asyncpg
-import grpclib.client
 import harness.wires.grpclib
 import harness.wires.prometheus
 from grpclib.server import Stream
 from google.protobuf.empty_pb2 import Empty
 
-from svc_grpc import ExampleBase
-from svc_wires import WiresIn, WiresOut
+from scotty_grpc import ScottyBase
+from scotty_wires import WiresIn, WiresOut
 
 
 log = logging.getLogger(__name__)
 
 
 @dataclass
-class Service(ExampleBase):
+class Scotty(ScottyBase):
     db: asyncpg.Connection
-    taskqueue: grpclib.client.Channel
 
-    async def Store(self, stream: Stream[Empty, Empty]) -> None:
+    async def BeamMeUp(self, stream: Stream[Empty, Empty]) -> None:
         request = await stream.recv_message()
         print(request)
         await stream.send_message(Empty())
@@ -28,11 +26,10 @@ class Service(ExampleBase):
 
 async def main(wires_in: WiresIn) -> WiresOut:
     log.info('Environment loaded')
-    service = Service(
+    scotty = Scotty(
         db=wires_in.db.connection,
-        taskqueue=wires_in.taskqueue.channel,
     )
     return WiresOut(
-        server=harness.wires.grpclib.ServerWire([service]),
+        server=harness.wires.grpclib.ServerWire([scotty]),
         prometheus=harness.wires.prometheus.ServerWire(),
     )
