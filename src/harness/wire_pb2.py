@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='harness',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x12harness/wire.proto\x12\x07harness\x1a google/protobuf/descriptor.proto\"\x84\x03\n\x0bHarnessWire\x12\x0f\n\x05input\x18\x01 \x01(\tH\x00\x12\x10\n\x06output\x18\x02 \x01(\tH\x00\x12\x33\n\nvisibility\x18\x03 \x01(\x0e\x32\x1f.harness.HarnessWire.Visibility\x12/\n\x08protocol\x18\x04 \x01(\x0e\x32\x1d.harness.HarnessWire.Protocol\x12\x32\n\x06\x61\x63\x63\x65ss\x18\x05 \x01(\x0e\x32\".harness.HarnessWire.Accessibility\"A\n\nVisibility\x12\x0b\n\x07PRIVATE\x10\x00\x12\x0c\n\x08HEADLESS\x10\x01\x12\x0c\n\x08INTERNAL\x10\x02\x12\n\n\x06PUBLIC\x10\x03\"\'\n\x08Protocol\x12\x07\n\x03TCP\x10\x00\x12\x08\n\x04HTTP\x10\x01\x12\x08\n\x04GRPC\x10\x02\"D\n\rAccessibility\x12\t\n\x05LOCAL\x10\x00\x12\r\n\tNAMESPACE\x10\x01\x12\x0b\n\x07\x43LUSTER\x10\x02\x12\x0c\n\x08\x45XTERNAL\x10\x03\x42\x06\n\x04type\"\xd8\x02\n\x0eHarnessService\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x30\n\x07release\x18\x02 \x01(\x0e\x32\x1f.harness.HarnessService.Release\x12\x12\n\nrepository\x18\x03 \x01(\t\x12\x34\n\tresources\x18\x04 \x01(\x0b\x32!.harness.HarnessService.Resources\x1a\'\n\x08Resource\x12\x0b\n\x03\x63pu\x18\x01 \x01(\t\x12\x0e\n\x06memory\x18\x02 \x01(\t\x1aq\n\tResources\x12\x32\n\x08requests\x18\x01 \x01(\x0b\x32 .harness.HarnessService.Resource\x12\x30\n\x06limits\x18\x02 \x01(\x0b\x32 .harness.HarnessService.Resource\" \n\x07Release\x12\n\n\x06SINGLE\x10\x00\x12\t\n\x05MULTI\x10\x01:B\n\x04wire\x12\x1d.google.protobuf.FieldOptions\x18\xd1\x0f \x01(\x0b\x32\x14.harness.HarnessWire:J\n\x07service\x12\x1f.google.protobuf.MessageOptions\x18\xd1\x0f \x01(\x0b\x32\x17.harness.HarnessService')
+  serialized_pb=_b('\n\x12harness/wire.proto\x12\x07harness\x1a google/protobuf/descriptor.proto\"\x84\x03\n\x0bHarnessWire\x12\x0f\n\x05input\x18\x01 \x01(\tH\x00\x12\x10\n\x06output\x18\x02 \x01(\tH\x00\x12\x33\n\nvisibility\x18\x03 \x01(\x0e\x32\x1f.harness.HarnessWire.Visibility\x12/\n\x08protocol\x18\x04 \x01(\x0e\x32\x1d.harness.HarnessWire.Protocol\x12\x32\n\x06\x61\x63\x63\x65ss\x18\x05 \x01(\x0e\x32\".harness.HarnessWire.Accessibility\"A\n\nVisibility\x12\x0b\n\x07PRIVATE\x10\x00\x12\x0c\n\x08HEADLESS\x10\x01\x12\x0c\n\x08INTERNAL\x10\x02\x12\n\n\x06PUBLIC\x10\x03\"\'\n\x08Protocol\x12\x07\n\x03TCP\x10\x00\x12\x08\n\x04HTTP\x10\x01\x12\x08\n\x04GRPC\x10\x02\"D\n\rAccessibility\x12\t\n\x05LOCAL\x10\x00\x12\r\n\tNAMESPACE\x10\x01\x12\x0b\n\x07\x43LUSTER\x10\x02\x12\x0c\n\x08\x45XTERNAL\x10\x03\x42\x06\n\x04type\"\x84\x02\n\x0eHarnessService\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x12\n\nrepository\x18\x02 \x01(\t\x12\x34\n\tresources\x18\x03 \x01(\x0b\x32!.harness.HarnessService.Resources\x1a\'\n\x08Resource\x12\x0b\n\x03\x63pu\x18\x01 \x01(\t\x12\x0e\n\x06memory\x18\x02 \x01(\t\x1aq\n\tResources\x12\x32\n\x08requests\x18\x01 \x01(\x0b\x32 .harness.HarnessService.Resource\x12\x30\n\x06limits\x18\x02 \x01(\x0b\x32 .harness.HarnessService.Resource:B\n\x04wire\x12\x1d.google.protobuf.FieldOptions\x18\xd1\x0f \x01(\x0b\x32\x14.harness.HarnessWire:J\n\x07service\x12\x1f.google.protobuf.MessageOptions\x18\xd1\x0f \x01(\x0b\x32\x17.harness.HarnessService')
   ,
   dependencies=[google_dot_protobuf_dot_descriptor__pb2.DESCRIPTOR,])
 
@@ -129,28 +129,6 @@ _HARNESSWIRE_ACCESSIBILITY = _descriptor.EnumDescriptor(
 )
 _sym_db.RegisterEnumDescriptor(_HARNESSWIRE_ACCESSIBILITY)
 
-_HARNESSSERVICE_RELEASE = _descriptor.EnumDescriptor(
-  name='Release',
-  full_name='harness.HarnessService.Release',
-  filename=None,
-  file=DESCRIPTOR,
-  values=[
-    _descriptor.EnumValueDescriptor(
-      name='SINGLE', index=0, number=0,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='MULTI', index=1, number=1,
-      serialized_options=None,
-      type=None),
-  ],
-  containing_type=None,
-  serialized_options=None,
-  serialized_start=769,
-  serialized_end=801,
-)
-_sym_db.RegisterEnumDescriptor(_HARNESSSERVICE_RELEASE)
-
 
 _HARNESSWIRE = _descriptor.Descriptor(
   name='HarnessWire',
@@ -250,8 +228,8 @@ _HARNESSSERVICE_RESOURCE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=613,
-  serialized_end=652,
+  serialized_start=563,
+  serialized_end=602,
 )
 
 _HARNESSSERVICE_RESOURCES = _descriptor.Descriptor(
@@ -287,8 +265,8 @@ _HARNESSSERVICE_RESOURCES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=654,
-  serialized_end=767,
+  serialized_start=604,
+  serialized_end=717,
 )
 
 _HARNESSSERVICE = _descriptor.Descriptor(
@@ -306,22 +284,15 @@ _HARNESSSERVICE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='release', full_name='harness.HarnessService.release', index=1,
-      number=2, type=14, cpp_type=8, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='repository', full_name='harness.HarnessService.repository', index=2,
-      number=3, type=9, cpp_type=9, label=1,
+      name='repository', full_name='harness.HarnessService.repository', index=1,
+      number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='resources', full_name='harness.HarnessService.resources', index=3,
-      number=4, type=11, cpp_type=10, label=1,
+      name='resources', full_name='harness.HarnessService.resources', index=2,
+      number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -331,7 +302,6 @@ _HARNESSSERVICE = _descriptor.Descriptor(
   ],
   nested_types=[_HARNESSSERVICE_RESOURCE, _HARNESSSERVICE_RESOURCES, ],
   enum_types=[
-    _HARNESSSERVICE_RELEASE,
   ],
   serialized_options=None,
   is_extendable=False,
@@ -340,7 +310,7 @@ _HARNESSSERVICE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=457,
-  serialized_end=801,
+  serialized_end=717,
 )
 
 _HARNESSWIRE.fields_by_name['visibility'].enum_type = _HARNESSWIRE_VISIBILITY
@@ -359,9 +329,7 @@ _HARNESSSERVICE_RESOURCE.containing_type = _HARNESSSERVICE
 _HARNESSSERVICE_RESOURCES.fields_by_name['requests'].message_type = _HARNESSSERVICE_RESOURCE
 _HARNESSSERVICE_RESOURCES.fields_by_name['limits'].message_type = _HARNESSSERVICE_RESOURCE
 _HARNESSSERVICE_RESOURCES.containing_type = _HARNESSSERVICE
-_HARNESSSERVICE.fields_by_name['release'].enum_type = _HARNESSSERVICE_RELEASE
 _HARNESSSERVICE.fields_by_name['resources'].message_type = _HARNESSSERVICE_RESOURCES
-_HARNESSSERVICE_RELEASE.containing_type = _HARNESSSERVICE
 DESCRIPTOR.message_types_by_name['HarnessWire'] = _HARNESSWIRE
 DESCRIPTOR.message_types_by_name['HarnessService'] = _HARNESSSERVICE
 DESCRIPTOR.extensions_by_name['wire'] = wire

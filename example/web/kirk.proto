@@ -12,7 +12,6 @@ import "harness/tracing.proto";
 
 message Configuration {
     option (harness.service).name = "whisper";
-    option (harness.service).release = MULTI;
     option (harness.service).repository = "registry.acme.dev/team/whisper";
     option (harness.service).resources.requests = {cpu: "300m" memory: "128Mi"};
     option (harness.service).resources.limits = {cpu: "1" memory: "192Mi"};
@@ -24,7 +23,8 @@ message Configuration {
         (harness.wire).access = EXTERNAL
     ];
     harness.grpc.Channel scotty = 3 [
-        (harness.wire).input = "python/grpclib:ChannelWire"
+        (harness.wire).input = "python/grpclib:ChannelWire",
+        (harness.wire).access = NAMESPACE
     ];
     harness.logging.Console console = 4 [
         (harness.wire).input = "python/logging:ConsoleWire"
