@@ -10,7 +10,7 @@ from google.protobuf.compiler.plugin_pb2 import CodeGeneratorResponse
 
 from grpclib.plugin.main import Buffer
 
-from ..wire_pb2 import HarnessWire
+from harness.wire_pb2 import HarnessWire
 
 
 ProtoFile = str
