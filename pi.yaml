@@ -1,0 +1,7 @@
+- !Service
+  name: jaeger
+  image: !DockerImage "jaegertracing/all-in-one:1.16"
+  ports:
+    - !Expose {port: 6831, as: 6831, proto: udp}
+    - !Expose {port: 6832, as: 6832, proto: udp}
+    - !Expose {port: 16686, as: 16686}
