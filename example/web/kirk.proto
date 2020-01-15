@@ -19,8 +19,8 @@ message Configuration {
 
     bool debug = 1;
 
-    harness.postgres.Connection db = 2 [
-        (harness.wire).input = "python/asyncpg:ConnectionWire",
+    harness.postgres.Pool db = 2 [
+        (harness.wire).input = "python/asyncpg:PoolWire",
         (harness.wire).access = EXTERNAL
     ];
     harness.grpc.Channel scotty = 3 [

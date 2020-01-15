@@ -5,6 +5,7 @@ db:
   username: postgres
   password: postgres
   database: postgres
+  min_size: 1
 server:
   bind:
     host: 127.0.0.1

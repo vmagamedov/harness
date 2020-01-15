@@ -22,7 +22,7 @@ class WiresOut:
 class WiresIn:
     __config__: Configuration
     __wires_out_type__ = WiresOut
-    db: harness.wires.asyncpg.ConnectionWire
+    db: harness.wires.asyncpg.PoolWire
     console: harness.wires.logging.ConsoleWire
     syslog: harness.wires.logging.SyslogWire
     tracing: harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire

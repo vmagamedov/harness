@@ -1,10 +1,9 @@
-import asyncio
 import logging
 from dataclasses import dataclass
 
-import asyncpg
 import harness.wires.grpclib
 import harness.wires.prometheus
+from asyncpg.pool import Pool
 from grpclib.server import Stream
 from google.protobuf.empty_pb2 import Empty
 
@@ -17,18 +16,19 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class Scotty(ScottyBase):
-    db: asyncpg.Connection
+    db: Pool
 
     async def BeamMeUp(self, stream: Stream[Empty, Empty]) -> None:
         await stream.recv_message()
-        await asyncio.sleep(0.1)
+        result = await self.db.fetchval('SELECT $1;', '42')
+        assert result == '42', result
         await stream.send_message(Empty())
 
 
 async def main(wires_in: WiresIn) -> WiresOut:
     log.info('Environment loaded')
     scotty = Scotty(
-        db=wires_in.db.connection,
+        db=wires_in.db.pool,
     )
     return WiresOut(
         server=harness.wires.grpclib.ServerWire([scotty]),

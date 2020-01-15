@@ -4,9 +4,11 @@ package harness.postgres;
 
 import "harness/net.proto";
 
-message Connection {
+message Pool {
     harness.net.Socket address = 1;
     string username = 2;
     string password = 3;
     string database = 4;
+    uint32 min_size = 5;
+    uint32 max_size = 6;
 }

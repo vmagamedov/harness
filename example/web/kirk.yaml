@@ -5,6 +5,7 @@ db:
   username: postgres
   password: postgres
   database: postgres
+  min_size: 1
 scotty:
   address:
     host: localhost
