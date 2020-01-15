@@ -26,7 +26,7 @@ class _IServable(Protocol):
 _Value = Union[str, bytes]
 _Metadata = NewType('_Metadata', 'MultiDict[_Value]')
 
-_channel_span = ContextVar('channel_span')
+_client_span = ContextVar('client_span')
 
 
 async def _send_request(event: SendRequest) -> None:
@@ -39,12 +39,12 @@ async def _send_request(event: SendRequest) -> None:
             "grpc.method": event.method_name,
         },
     )
-    _channel_span.set(span)
+    _client_span.set(span)
     inject(tracer_, type(event.metadata).__setitem__, event.metadata)
 
 
 async def _recv_trailing_metadata(event: RecvTrailingMetadata) -> None:
-    _channel_span.get().end()
+    _client_span.get().end()
 
 
 class ChannelWire(Wire):
@@ -58,9 +58,6 @@ class ChannelWire(Wire):
         listen(self.channel, SendRequest, _send_request)
         listen(self.channel, RecvTrailingMetadata, _recv_trailing_metadata)
 
-    async def __aenter__(self):
-        return self.channel
-
     def close(self):
         self.channel.close()
 
@@ -69,7 +66,7 @@ def _metadata_getter(metadata: _Metadata, header_name: str) -> List[str]:
     return metadata.getall(header_name, [])
 
 
-_server_span = ContextVar('server_span')
+_server_span_ctx = ContextVar('server_span_ctx')
 
 
 async def _recv_request(event: RecvRequest) -> None:
@@ -84,11 +81,13 @@ async def _recv_request(event: RecvRequest) -> None:
             "grpc.method": event.method_name,
         },
     )
-    _server_span.set(span)
+    span_ctx = tracer_.use_span(span, True)
+    span_ctx.__enter__()
+    _server_span_ctx.set(span_ctx)
 
 
 async def _send_trailing_metadata(event: SendTrailingMetadata) -> None:
-    _server_span.get().end()
+    _server_span_ctx.get().__exit__(None, None, None)
 
 
 class ServerWire(Wire):
