@@ -37,3 +37,6 @@ run_grpc:
 
 run_cron:
 	@PYTHONPATH=example/cron harness run pulsar example/cron/pulsar.yaml
+
+gen_web:
+	harness kube-gen example/web/kirk.proto example/web/kirk.yaml example/web/kirk.secret.yaml v1 --namespace=platform --instance=ua | pygmentize -l yaml | less -r
