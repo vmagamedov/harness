@@ -13,7 +13,7 @@ async def index(request):
     now = await request.app['db'].fetchval('SELECT now();')
     await request.app['scotty'].BeamMeUp(Empty())
     version = await request.app['db'].fetchval('SELECT version();')
-    return web.Response(text=f'Time: {now}\nPG Version: {version}\n')
+    return web.Response(text=f'PG Time: {now}\nPG Version: {version}\n')
 
 
 async def main(wires_in: WiresIn) -> WiresOut:
