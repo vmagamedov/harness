@@ -13,6 +13,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from harness import wire_pb2 as harness_dot_wire__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,8 +21,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='harness.net',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x11harness/net.proto\x12\x0bharness.net\"$\n\x06Socket\x12\x0c\n\x04host\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\r\"\"\n\x04Pipe\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04mode\x18\x02 \x01(\r\"H\n\x07\x41\x64\x64ress\x12%\n\x06socket\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketH\x00\x12\x0e\n\x04pipe\x18\x02 \x01(\tH\x00\x42\x06\n\x04type\"+\n\x06Server\x12!\n\x04\x62ind\x18\x01 \x01(\x0b\x32\x13.harness.net.Socketb\x06proto3')
-)
+  serialized_pb=_b('\n\x11harness/net.proto\x12\x0bharness.net\x1a\x12harness/wire.proto\"$\n\x06Socket\x12\x0c\n\x04host\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\r\"\"\n\x04Pipe\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04mode\x18\x02 \x01(\r\"H\n\x07\x41\x64\x64ress\x12%\n\x06socket\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketH\x00\x12\x0e\n\x04pipe\x18\x02 \x01(\tH\x00\x42\x06\n\x04type\"2\n\x06Server\x12(\n\x04\x62ind\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketB\x05\x8a}\x02 \x00\x62\x06proto3')
+  ,
+  dependencies=[harness_dot_wire__pb2.DESCRIPTOR,])
 
 
 
@@ -59,8 +61,8 @@ _SOCKET = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=34,
-  serialized_end=70,
+  serialized_start=54,
+  serialized_end=90,
 )
 
 
@@ -97,8 +99,8 @@ _PIPE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=72,
-  serialized_end=106,
+  serialized_start=92,
+  serialized_end=126,
 )
 
 
@@ -138,8 +140,8 @@ _ADDRESS = _descriptor.Descriptor(
       name='type', full_name='harness.net.Address.type',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=108,
-  serialized_end=180,
+  serialized_start=128,
+  serialized_end=200,
 )
 
 
@@ -156,7 +158,7 @@ _SERVER = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=_b('\212}\002 \000'), file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -169,8 +171,8 @@ _SERVER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=182,
-  serialized_end=225,
+  serialized_start=202,
+  serialized_end=252,
 )
 
 _ADDRESS.fields_by_name['socket'].message_type = _SOCKET
@@ -216,4 +218,5 @@ Server = _reflection.GeneratedProtocolMessageType('Server', (_message.Message,),
 _sym_db.RegisterMessage(Server)
 
 
+_SERVER.fields_by_name['bind']._options = None
 # @@protoc_insertion_point(module_scope)

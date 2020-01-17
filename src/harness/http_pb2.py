@@ -13,6 +13,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from harness import wire_pb2 as harness_dot_wire__pb2
 from harness import net_pb2 as harness_dot_net__pb2
 
 
@@ -21,9 +22,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='harness.http',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x12harness/http.proto\x12\x0charness.http\x1a\x11harness/net.proto\"2\n\nConnection\x12$\n\x07\x61\x64\x64ress\x18\x01 \x01(\x0b\x32\x13.harness.net.Socket\"+\n\x06Server\x12!\n\x04\x62ind\x18\x01 \x01(\x0b\x32\x13.harness.net.Socketb\x06proto3')
+  serialized_pb=_b('\n\x12harness/http.proto\x12\x0charness.http\x1a\x12harness/wire.proto\x1a\x11harness/net.proto\"9\n\nConnection\x12+\n\x07\x61\x64\x64ress\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketB\x05\x8a}\x02 \x01\"2\n\x06Server\x12(\n\x04\x62ind\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketB\x05\x8a}\x02 \x01\x62\x06proto3')
   ,
-  dependencies=[harness_dot_net__pb2.DESCRIPTOR,])
+  dependencies=[harness_dot_wire__pb2.DESCRIPTOR,harness_dot_net__pb2.DESCRIPTOR,])
 
 
 
@@ -41,7 +42,7 @@ _CONNECTION = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=_b('\212}\002 \001'), file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -54,8 +55,8 @@ _CONNECTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=55,
-  serialized_end=105,
+  serialized_start=75,
+  serialized_end=132,
 )
 
 
@@ -72,7 +73,7 @@ _SERVER = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=_b('\212}\002 \001'), file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -85,8 +86,8 @@ _SERVER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=107,
-  serialized_end=150,
+  serialized_start=134,
+  serialized_end=184,
 )
 
 _CONNECTION.fields_by_name['address'].message_type = harness_dot_net__pb2._SOCKET
@@ -110,4 +111,6 @@ Server = _reflection.GeneratedProtocolMessageType('Server', (_message.Message,),
 _sym_db.RegisterMessage(Server)
 
 
+_CONNECTION.fields_by_name['address']._options = None
+_SERVER.fields_by_name['bind']._options = None
 # @@protoc_insertion_point(module_scope)

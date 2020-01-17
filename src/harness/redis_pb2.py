@@ -13,6 +13,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from harness import wire_pb2 as harness_dot_wire__pb2
 from harness import net_pb2 as harness_dot_net__pb2
 
 
@@ -21,9 +22,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='harness.redis',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x13harness/redis.proto\x12\rharness.redis\x1a\x11harness/net.proto\">\n\nConnection\x12$\n\x07\x61\x64\x64ress\x18\x01 \x01(\x0b\x32\x13.harness.net.Socket\x12\n\n\x02\x64\x62\x18\x02 \x01(\x05\x62\x06proto3')
+  serialized_pb=_b('\n\x13harness/redis.proto\x12\rharness.redis\x1a\x12harness/wire.proto\x1a\x11harness/net.proto\"E\n\nConnection\x12+\n\x07\x61\x64\x64ress\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketB\x05\x8a}\x02 \x00\x12\n\n\x02\x64\x62\x18\x02 \x01(\x05\x62\x06proto3')
   ,
-  dependencies=[harness_dot_net__pb2.DESCRIPTOR,])
+  dependencies=[harness_dot_wire__pb2.DESCRIPTOR,harness_dot_net__pb2.DESCRIPTOR,])
 
 
 
@@ -41,7 +42,7 @@ _CONNECTION = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=_b('\212}\002 \000'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='db', full_name='harness.redis.Connection.db', index=1,
       number=2, type=5, cpp_type=1, label=1,
@@ -61,8 +62,8 @@ _CONNECTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=57,
-  serialized_end=119,
+  serialized_start=77,
+  serialized_end=146,
 )
 
 _CONNECTION.fields_by_name['address'].message_type = harness_dot_net__pb2._SOCKET
@@ -77,4 +78,5 @@ Connection = _reflection.GeneratedProtocolMessageType('Connection', (_message.Me
 _sym_db.RegisterMessage(Connection)
 
 
+_CONNECTION.fields_by_name['address']._options = None
 # @@protoc_insertion_point(module_scope)

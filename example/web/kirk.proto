@@ -34,11 +34,9 @@ message Configuration {
     ];
     harness.http.Server server = 6 [
         (harness.wire).output = "python/aiohttp:ServerWire",
-        (harness.wire).visibility = PUBLIC,
-        (harness.wire).protocol = HTTP
+        (harness.wire).visibility = PUBLIC
     ];
     harness.net.Server monitor = 7 [
-        (harness.wire).output = "python/aiomonitor:MonitorWire",
-        (harness.wire).protocol = HTTP
+        (harness.wire).output = "python/aiomonitor:MonitorWire"
     ];
 }

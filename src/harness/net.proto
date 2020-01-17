@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package harness.net;
 
+import "harness/wire.proto";
+
 message Socket {
     string host = 1;
     uint32 port = 2;
@@ -20,5 +22,5 @@ message Address {
 }
 
 message Server {
-    Socket bind = 1;
+    Socket bind = 1 [(harness.wire).protocol = TCP];
 }

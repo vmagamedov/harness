@@ -2,12 +2,13 @@ syntax = "proto3";
 
 package harness.http;
 
+import "harness/wire.proto";
 import "harness/net.proto";
 
 message Connection {
-    harness.net.Socket address = 1;
+    harness.net.Socket address = 1 [(harness.wire).protocol = HTTP];
 }
 
 message Server {
-    harness.net.Socket bind = 1;
+    harness.net.Socket bind = 1 [(harness.wire).protocol = HTTP];
 }

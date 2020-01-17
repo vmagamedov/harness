@@ -13,6 +13,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from harness import wire_pb2 as harness_dot_wire__pb2
 from harness import net_pb2 as harness_dot_net__pb2
 
 
@@ -21,9 +22,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='harness.postgres',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x16harness/postgres.proto\x12\x10harness.postgres\x1a\x11harness/net.proto\"\x86\x01\n\x04Pool\x12$\n\x07\x61\x64\x64ress\x18\x01 \x01(\x0b\x32\x13.harness.net.Socket\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x10\n\x08password\x18\x03 \x01(\t\x12\x10\n\x08\x64\x61tabase\x18\x04 \x01(\t\x12\x10\n\x08min_size\x18\x05 \x01(\r\x12\x10\n\x08max_size\x18\x06 \x01(\rb\x06proto3')
+  serialized_pb=_b('\n\x16harness/postgres.proto\x12\x10harness.postgres\x1a\x12harness/wire.proto\x1a\x11harness/net.proto\"\x8d\x01\n\x04Pool\x12+\n\x07\x61\x64\x64ress\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketB\x05\x8a}\x02 \x00\x12\x10\n\x08username\x18\x02 \x01(\t\x12\x10\n\x08password\x18\x03 \x01(\t\x12\x10\n\x08\x64\x61tabase\x18\x04 \x01(\t\x12\x10\n\x08min_size\x18\x05 \x01(\r\x12\x10\n\x08max_size\x18\x06 \x01(\rb\x06proto3')
   ,
-  dependencies=[harness_dot_net__pb2.DESCRIPTOR,])
+  dependencies=[harness_dot_wire__pb2.DESCRIPTOR,harness_dot_net__pb2.DESCRIPTOR,])
 
 
 
@@ -41,7 +42,7 @@ _POOL = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=_b('\212}\002 \000'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='username', full_name='harness.postgres.Pool.username', index=1,
       number=2, type=9, cpp_type=9, label=1,
@@ -89,8 +90,8 @@ _POOL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=64,
-  serialized_end=198,
+  serialized_start=84,
+  serialized_end=225,
 )
 
 _POOL.fields_by_name['address'].message_type = harness_dot_net__pb2._SOCKET
@@ -105,4 +106,5 @@ Pool = _reflection.GeneratedProtocolMessageType('Pool', (_message.Message,), {
 _sym_db.RegisterMessage(Pool)
 
 
+_POOL.fields_by_name['address']._options = None
 # @@protoc_insertion_point(module_scope)

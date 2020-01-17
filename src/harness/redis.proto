@@ -2,9 +2,10 @@ syntax = "proto3";
 
 package harness.redis;
 
+import "harness/wire.proto";
 import "harness/net.proto";
 
 message Connection {
-    harness.net.Socket address = 1;
+    harness.net.Socket address = 1 [(harness.wire).protocol = TCP];
     int32 db = 2;
 }

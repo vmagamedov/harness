@@ -2,10 +2,11 @@ syntax = "proto3";
 
 package harness.postgres;
 
+import "harness/wire.proto";
 import "harness/net.proto";
 
 message Pool {
-    harness.net.Socket address = 1;
+    harness.net.Socket address = 1 [(harness.wire).protocol = TCP];
     string username = 2;
     string password = 3;
     string database = 4;

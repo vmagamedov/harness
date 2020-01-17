@@ -17,6 +17,7 @@ from google.protobuf.json_format import ParseDict
 from google.protobuf.descriptor_pb2 import FileDescriptorSet
 from google.protobuf.message_factory import GetMessages
 
+from ..net_pb2 import Socket
 from ..wire_pb2 import HarnessService, HarnessWire
 
 from .utils import load_config
@@ -52,12 +53,19 @@ class Accessibility(Enum):
 
 
 @dataclass
+class SocketValue:
+    host: str
+    port: int
+    protocol: Protocol
+
+
+@dataclass
 class Wire:
     name: str
     type: str
     visibility: Visibility
-    protocol: Protocol
     access: Accessibility
+    socket: Optional[SocketValue]
 
 
 @dataclass
@@ -70,10 +78,10 @@ class Resource:
 class ConfigurationInfo:
     name: str
     repository: str
-    inputs: List[Wire]
-    outputs: List[Wire]
     requests: Optional[Resource]
     limits: Optional[Resource]
+    inputs: List[Wire]
+    outputs: List[Wire]
 
 
 @dataclass
@@ -178,10 +186,10 @@ def gen_deployments(ctx: 'Context'):
         container_ports = container['ports'] = []
         for wire in ctx.outputs:
             container_port = dict(
-                name=wire.protocol.istio_name(wire.name),
-                containerPort=ctx.wire_port_num(wire),
+                name=wire.socket.protocol.istio_name(wire.name),
+                containerPort=wire.socket.port,
             )
-            protocol = wire.protocol.k8s_name()
+            protocol = wire.socket.protocol.k8s_name()
             if protocol != 'TCP':
                 container_port['protocol'] = protocol
             container_ports.append(container_port)
@@ -189,26 +197,26 @@ def gen_deployments(ctx: 'Context'):
     for wire in ctx.outputs:
         if wire.visibility not in {Visibility.PUBLIC, Visibility.INTERNAL}:
             continue
-        if wire.protocol is Protocol.HTTP:
+        if wire.socket.protocol is Protocol.HTTP:
             container['readinessProbe'] = dict(
                 httpGet=dict(
                     path='/health/ready',
-                    port=wire.protocol.istio_name(wire.name),
+                    port=wire.socket.protocol.istio_name(wire.name),
                 ),
             )
             container['livenessProbe'] = dict(
                 httpGet=dict(
                     path='/health/live',
-                    port=wire.protocol.istio_name(wire.name),
+                    port=wire.socket.protocol.istio_name(wire.name),
                 ),
             )
-        elif wire.protocol is Protocol.GRPC:
+        elif wire.socket.protocol is Protocol.GRPC:
             container['readinessProbe'] = dict(
                 exec=dict(
                     command=[
                         'grpc_health_probe',
                         '-addr',
-                        f'localhost:{ctx.wire_port_num(wire)}',
+                        f'localhost:{wire.socket.port}',
                     ],
                 ),
             )
@@ -281,11 +289,11 @@ def gen_deployments(ctx: 'Context'):
 def gen_services(ctx: 'Context'):
     def _k8s_svc_port(wire: Wire):
         k8s_port = dict(
-            name=wire.protocol.istio_name(wire.name),
-            port=ctx.wire_port_num(wire),
-            targetPort=wire.protocol.istio_name(wire.name),
+            name=wire.socket.protocol.istio_name(wire.name),
+            port=wire.socket.port,
+            targetPort=wire.socket.protocol.istio_name(wire.name),
         )
-        protocol = wire.protocol.k8s_name()
+        protocol = wire.socket.protocol.k8s_name()
         if protocol != 'TCP':
             k8s_port['protocol'] = protocol
         return k8s_port
@@ -328,8 +336,12 @@ def gen_services(ctx: 'Context'):
 
 
 def gen_virtualservices(ctx: 'Context'):
-    internal_wires = [w for w in ctx.outputs if w.visibility is Visibility.INTERNAL]
-    public_wires = [w for w in ctx.outputs if w.visibility is Visibility.PUBLIC]
+    internal_wires = [
+        w for w in ctx.outputs if w.visibility is Visibility.INTERNAL
+    ]
+    public_wires = [
+        w for w in ctx.outputs if w.visibility is Visibility.PUBLIC
+    ]
     if not internal_wires and not public_wires:
         return
 
@@ -357,12 +369,12 @@ def gen_virtualservices(ctx: 'Context'):
             hosts=hosts,
             http=[
                 dict(
-                    match=[dict(port=ctx.wire_port_num(wire))],
+                    match=[dict(port=wire.socket.port)],
                     route=[
                         dict(
                             destination=dict(
                                 host=ctx.full_name(),
-                                port=dict(number=ctx.wire_port_num(wire)),
+                                port=dict(number=wire.socket.port),
                             )
                         )
                     ],
@@ -390,8 +402,8 @@ def gen_gateways(ctx: 'Context'):
             servers=[
                 dict(
                     port=dict(
-                        number=ctx.wire_port_num(wire),
-                        protocol=wire.protocol.istio_type(),
+                        number=wire.socket.port,
+                        protocol=wire.socket.protocol.istio_type(),
                     ),
                     hosts=[ctx.public_domain],
                 )
@@ -450,7 +462,7 @@ def gen_serviceentries(ctx: 'Context'):
                 location='MESH_EXTERNAL',
                 ports=[dict(
                     number=getattr(ctx.config, wire.name).address.port,
-                    protocol=wire.protocol.istio_type(),
+                    protocol=wire.socket.protocol.istio_type(),
                 )],
             ),
         )
@@ -527,17 +539,8 @@ CONFIG_NAME = 'Configuration'
 
 
 def get_configuration_info(config: Message) -> Optional[ConfigurationInfo]:
-    config_descriptor = config.DESCRIPTOR
-
-    service_name = None
-    repository = None
-    requests = None
-    limits = None
-
-    outputs = []
-    inputs = []
-
-    for _, opt in config_descriptor.GetOptions().ListFields():
+    requests, limits = None, None
+    for _, opt in config.DESCRIPTOR.GetOptions().ListFields():
         if isinstance(opt, HarnessService):
             service_name = opt.name
             repository = opt.repository
@@ -552,37 +555,57 @@ def get_configuration_info(config: Message) -> Optional[ConfigurationInfo]:
                         cpu=opt.resources.limits.cpu or None,
                         memory=opt.resources.limits.memory or None,
                     )
-    for f in config_descriptor.fields:
-        for _, opt in f.GetOptions().ListFields():
-            if isinstance(opt, HarnessWire):
-                if opt.WhichOneof('type') == 'input':
-                    inputs.append(Wire(
-                        f.name,
-                        f.message_type.full_name,
-                        Visibility(opt.visibility),
-                        Protocol(opt.protocol),
-                        Accessibility(opt.access),
-                    ))
-                elif opt.WhichOneof('type') == 'output':
-                    outputs.append(Wire(
-                        f.name,
-                        f.message_type.full_name,
-                        Visibility(opt.visibility),
-                        Protocol(opt.protocol),
-                        Accessibility(opt.access),
-                    ))
-
-    if service_name and repository:
-        return ConfigurationInfo(
-            service_name,
-            repository=repository,
-            inputs=inputs,
-            outputs=outputs,
-            requests=requests,
-            limits=limits,
-        )
+            break
     else:
-        return None
+        return
+
+    inputs, outputs = [], []
+    for f in config.DESCRIPTOR.fields:
+        for _, opt in f.GetOptions().ListFields():
+            if not isinstance(opt, HarnessWire):
+                continue
+            socket_value = None
+            for ff in f.message_type.fields:
+                if ff.message_type is not None:
+                    protocol = None
+                    ff_options = ff.GetOptions()
+                    for _, ff_opt in ff_options.ListFields():
+                        if isinstance(ff_opt, HarnessWire):
+                            protocol = Protocol(ff_opt.protocol)
+                            break
+                    if protocol is None:
+                        continue
+                    assert (ff.message_type.full_name
+                            == Socket.DESCRIPTOR.full_name), ff
+                    ff_val = getattr(getattr(config, f.name), ff.name)
+                    socket_value = SocketValue(
+                        ff_val.host, ff_val.port, protocol,
+                    )
+            if socket_value is not None:
+                wire = Wire(
+                    f.name,
+                    f.message_type.full_name,
+                    Visibility(opt.visibility),
+                    Accessibility(opt.access),
+                    socket_value,
+                )
+                if opt.WhichOneof('type') == 'input':
+                    inputs.append(wire)
+                elif opt.WhichOneof('type') == 'output':
+                    outputs.append(wire)
+
+    return ConfigurationInfo(
+        service_name,
+        repository=repository,
+        requests=requests,
+        limits=limits,
+        inputs=inputs,
+        outputs=outputs,
+    )
+
+
+def _ver(content_bytes):
+    return hashlib.new('sha1', content_bytes).hexdigest()[:8]
 
 
 def kube_gen(args):
@@ -596,7 +619,7 @@ def kube_gen(args):
         if args.secret_merge is not None:
             stack.enter_context(closing(args.secret_merge))
             secret_merge_bytes = args.secret_merge.read()
-            secret_merge_version = hashlib.new('sha1', secret_merge_bytes).hexdigest()[:8]
+            secret_merge_version = _ver(secret_merge_bytes)
             secret_merge_content = secret_merge_bytes.decode('utf-8')
         else:
             secret_merge_version = None
@@ -605,7 +628,7 @@ def kube_gen(args):
         if args.secret_patch is not None:
             stack.enter_context(closing(args.secret_patch))
             secret_patch_bytes = args.secret_patch.read()
-            secret_patch_version = hashlib.new('sha1', secret_patch_bytes).hexdigest()[:8]
+            secret_patch_version = _ver(secret_patch_bytes)
             secret_patch_content = secret_patch_bytes.decode('utf-8')
         else:
             secret_patch_version = None
