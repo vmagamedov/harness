@@ -12,6 +12,7 @@ from dataclasses import dataclass, fields
 import yaml
 import pkg_resources
 from grpc_tools import protoc
+from google.protobuf.message import Message
 from google.protobuf.json_format import ParseDict
 from google.protobuf.descriptor_pb2 import FileDescriptorSet
 from google.protobuf.message_factory import GetMessages
@@ -522,7 +523,12 @@ def load(proto_file, proto_path=None):
     return FileDescriptorSet.FromString(content)
 
 
-def get_configuration_info(config_descriptor) -> Optional[ConfigurationInfo]:
+CONFIG_NAME = 'Configuration'
+
+
+def get_configuration_info(config: Message) -> Optional[ConfigurationInfo]:
+    config_descriptor = config.DESCRIPTOR
+
     service_name = None
     repository = None
     requests = None
@@ -531,7 +537,7 @@ def get_configuration_info(config_descriptor) -> Optional[ConfigurationInfo]:
     outputs = []
     inputs = []
 
-    for _, opt in config_descriptor.options.ListFields():
+    for _, opt in config_descriptor.GetOptions().ListFields():
         if isinstance(opt, HarnessService):
             service_name = opt.name
             repository = opt.repository
@@ -546,13 +552,13 @@ def get_configuration_info(config_descriptor) -> Optional[ConfigurationInfo]:
                         cpu=opt.resources.limits.cpu or None,
                         memory=opt.resources.limits.memory or None,
                     )
-    for f in config_descriptor.field:
-        for _, opt in f.options.ListFields():
+    for f in config_descriptor.fields:
+        for _, opt in f.GetOptions().ListFields():
             if isinstance(opt, HarnessWire):
                 if opt.WhichOneof('type') == 'input':
                     inputs.append(Wire(
                         f.name,
-                        f.type_name,
+                        f.message_type.full_name,
                         Visibility(opt.visibility),
                         Protocol(opt.protocol),
                         Accessibility(opt.access),
@@ -560,7 +566,7 @@ def get_configuration_info(config_descriptor) -> Optional[ConfigurationInfo]:
                 elif opt.WhichOneof('type') == 'output':
                     outputs.append(Wire(
                         f.name,
-                        f.type_name,
+                        f.message_type.full_name,
                         Visibility(opt.visibility),
                         Protocol(opt.protocol),
                         Accessibility(opt.access),
@@ -593,7 +599,6 @@ def kube_gen(args):
             secret_merge_version = hashlib.new('sha1', secret_merge_bytes).hexdigest()[:8]
             secret_merge_content = secret_merge_bytes.decode('utf-8')
         else:
-            secret_merge_bytes = None
             secret_merge_version = None
             secret_merge_content = None
 
@@ -603,18 +608,17 @@ def kube_gen(args):
             secret_patch_version = hashlib.new('sha1', secret_patch_bytes).hexdigest()[:8]
             secret_patch_content = secret_patch_bytes.decode('utf-8')
         else:
-            secret_patch_bytes = None
             secret_patch_version = None
             secret_patch_content = None
 
     config_data = load_config(
-        config_bytes, secret_merge_bytes, secret_patch_bytes,
+        config_content, secret_merge_content, secret_patch_content,
     )
 
     file_descriptor, = (f for f in file_descriptor_set.file
                         if args.proto.endswith(f.name))
     for message_type in file_descriptor.message_type:
-        if message_type.name == 'Configuration':
+        if message_type.name == CONFIG_NAME:
             configuration_descriptor = message_type
             break
     else:
@@ -631,7 +635,7 @@ def kube_gen(args):
     ParseDict(config_data, config)
     # TODO: validate config
 
-    config_info = get_configuration_info(configuration_descriptor)
+    config_info = get_configuration_info(config)
     ctx = Context(
         config=config,
         version=args.version,
