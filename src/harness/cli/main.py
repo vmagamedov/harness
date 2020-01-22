@@ -5,9 +5,8 @@ def main():
     parser = argparse.ArgumentParser()
     subparser = parser.add_subparsers()
 
-    from . import run, kube
+    from . import kube
 
-    run.add_commands(subparser)
     kube.add_commands(subparser)
 
     args = parser.parse_args()

@@ -5,3 +5,15 @@
     - !Expose {port: 6831, as: 6831, proto: udp}
     - !Expose {port: 6832, as: 6832, proto: udp}
     - !Expose {port: 16686, as: 16686}
+
+# python
+- run: >
+  ./harness-entry /etc/config/config.yaml
+      --merge /etc/config-merge/config.yaml
+      --patch /etc/config-patch/config.yaml
+  working_dir: /app
+
+# node.js
+- run: npm run start -- /etc/config/config.yaml
+    --merge /etc/config-merge/config.yaml
+    --patch /etc/config-patch/config.yaml

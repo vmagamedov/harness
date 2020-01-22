@@ -9,20 +9,19 @@ import harness.wires.logging
 import harness.wires.opentelemetry.ext.jaeger
 import harness.wires.prometheus
 
-from scotty_pb2 import Configuration
+import scotty_pb2
+
+
+@dataclass
+class WiresIn:
+    config: scotty_pb2.Configuration
+    db: harness.wires.asyncpg.PoolWire
+    console: harness.wires.logging.ConsoleWire
+    syslog: harness.wires.logging.SyslogWire
+    tracing: harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire
 
 
 @dataclass
 class WiresOut:
     server: harness.wires.grpclib.ServerWire
     prometheus: harness.wires.prometheus.ServerWire
-
-
-@dataclass
-class WiresIn:
-    __config__: Configuration
-    __wires_out_type__ = WiresOut
-    db: harness.wires.asyncpg.PoolWire
-    console: harness.wires.logging.ConsoleWire
-    syslog: harness.wires.logging.SyslogWire
-    tracing: harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire

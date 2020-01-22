@@ -9,6 +9,7 @@ clean:
 	rm -f example/grpc/$(GENERATED)
 	rm -f example/web/$(GENERATED)
 	rm -f example/cron/$(GENERATED)
+	rm -f example/complex/spock/$(GENERATED)
 	rm -f src/harness/$(GENERATED)
 
 proto: clean
@@ -23,6 +24,7 @@ proto: clean
 	cd example/web && $(GEN) --python_harness_out=. kirk.proto
 	cd example/grpc && $(GEN) --python_grpc_out=. --python_harness_out=. scotty.proto
 	cd example/cron && $(GEN) --python_harness_out=. pulsar.proto
+	cd example/complex && $(GEN) --python_harness_out=. spock/service.proto
 
 release: proto
 	./scripts/release_check.sh
@@ -30,13 +32,13 @@ release: proto
 	python setup.py sdist
 
 run_web:
-	@PYTHONPATH=example/web:example/grpc harness run kirk example/web/kirk.yaml
+	@PYTHONPATH=example/web:example/grpc python example/web/entrypoint.py example/web/kirk.yaml
 
 run_grpc:
-	@PYTHONPATH=example/grpc harness run scotty example/grpc/scotty.yaml
+	@PYTHONPATH=example/grpc python example/grpc/entrypoint.py example/grpc/scotty.yaml
 
 run_cron:
-	@PYTHONPATH=example/cron harness run pulsar example/cron/pulsar.yaml
+	@PYTHONPATH=example/cron python example/cron/entrypoint.py example/cron/pulsar.yaml
 
 gen_web:
 	harness kube-gen example/web/kirk.proto example/web/kirk.yaml example/web/kirk.secret.yaml v1 --namespace=platform --instance=ua | pygmentize -l yaml | less -r

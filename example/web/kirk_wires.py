@@ -10,20 +10,19 @@ import harness.wires.grpclib
 import harness.wires.logging
 import harness.wires.opentelemetry.ext.jaeger
 
-from kirk_pb2 import Configuration
+import kirk_pb2
+
+
+@dataclass
+class WiresIn:
+    config: kirk_pb2.Configuration
+    db: harness.wires.asyncpg.PoolWire
+    scotty: harness.wires.grpclib.ChannelWire
+    console: harness.wires.logging.ConsoleWire
+    tracing: harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire
 
 
 @dataclass
 class WiresOut:
     server: harness.wires.aiohttp.ServerWire
     monitor: harness.wires.aiomonitor.MonitorWire
-
-
-@dataclass
-class WiresIn:
-    __config__: Configuration
-    __wires_out_type__ = WiresOut
-    db: harness.wires.asyncpg.PoolWire
-    scotty: harness.wires.grpclib.ChannelWire
-    console: harness.wires.logging.ConsoleWire
-    tracing: harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire
