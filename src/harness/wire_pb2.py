@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='harness',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x12harness/wire.proto\x12\x07harness\x1a google/protobuf/descriptor.proto\"\x84\x03\n\x0bHarnessWire\x12\x0f\n\x05input\x18\x01 \x01(\tH\x00\x12\x10\n\x06output\x18\x02 \x01(\tH\x00\x12\x33\n\nvisibility\x18\x03 \x01(\x0e\x32\x1f.harness.HarnessWire.Visibility\x12/\n\x08protocol\x18\x04 \x01(\x0e\x32\x1d.harness.HarnessWire.Protocol\x12\x32\n\x06\x61\x63\x63\x65ss\x18\x05 \x01(\x0e\x32\".harness.HarnessWire.Accessibility\"A\n\nVisibility\x12\x0b\n\x07PRIVATE\x10\x00\x12\x0c\n\x08HEADLESS\x10\x01\x12\x0c\n\x08INTERNAL\x10\x02\x12\n\n\x06PUBLIC\x10\x03\"\'\n\x08Protocol\x12\x07\n\x03TCP\x10\x00\x12\x08\n\x04HTTP\x10\x01\x12\x08\n\x04GRPC\x10\x02\"D\n\rAccessibility\x12\t\n\x05LOCAL\x10\x00\x12\r\n\tNAMESPACE\x10\x01\x12\x0b\n\x07\x43LUSTER\x10\x02\x12\x0c\n\x08\x45XTERNAL\x10\x03\x42\x06\n\x04type\"\x9e\x03\n\x0eHarnessService\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x32\n\x08language\x18\x02 \x01(\x0e\x32 .harness.HarnessService.Language\x12\x34\n\tcontainer\x18\x03 \x01(\x0b\x32!.harness.HarnessService.Container\x1a\'\n\x08Resource\x12\x0b\n\x03\x63pu\x18\x01 \x01(\t\x12\x0e\n\x06memory\x18\x02 \x01(\t\x1aq\n\tResources\x12\x32\n\x08requests\x18\x01 \x01(\x0b\x32 .harness.HarnessService.Resource\x12\x30\n\x06limits\x18\x02 \x01(\x0b\x32 .harness.HarnessService.Resource\x1aU\n\tContainer\x12\x12\n\nrepository\x18\x02 \x01(\t\x12\x34\n\tresources\x18\x03 \x01(\x0b\x32!.harness.HarnessService.Resources\"!\n\x08Language\x12\t\n\x05UNSET\x10\x00\x12\n\n\x06PYTHON\x10\x01:B\n\x04wire\x12\x1d.google.protobuf.FieldOptions\x18\xd1\x0f \x01(\x0b\x32\x14.harness.HarnessWire:J\n\x07service\x12\x1f.google.protobuf.MessageOptions\x18\xd1\x0f \x01(\x0b\x32\x17.harness.HarnessService')
+  serialized_pb=_b('\n\x12harness/wire.proto\x12\x07harness\x1a google/protobuf/descriptor.proto\"\x84\x03\n\x0bHarnessWire\x12\x0f\n\x05input\x18\x01 \x01(\tH\x00\x12\x10\n\x06output\x18\x02 \x01(\tH\x00\x12\x33\n\nvisibility\x18\x03 \x01(\x0e\x32\x1f.harness.HarnessWire.Visibility\x12/\n\x08protocol\x18\x04 \x01(\x0e\x32\x1d.harness.HarnessWire.Protocol\x12\x32\n\x06\x61\x63\x63\x65ss\x18\x05 \x01(\x0e\x32\".harness.HarnessWire.Accessibility\"A\n\nVisibility\x12\x0b\n\x07PRIVATE\x10\x00\x12\x0c\n\x08HEADLESS\x10\x01\x12\x0c\n\x08INTERNAL\x10\x02\x12\n\n\x06PUBLIC\x10\x03\"\'\n\x08Protocol\x12\x07\n\x03TCP\x10\x00\x12\x08\n\x04HTTP\x10\x01\x12\x08\n\x04GRPC\x10\x02\"D\n\rAccessibility\x12\t\n\x05LOCAL\x10\x00\x12\r\n\tNAMESPACE\x10\x01\x12\x0b\n\x07\x43LUSTER\x10\x02\x12\x0c\n\x08\x45XTERNAL\x10\x03\x42\x06\n\x04type\"\x9e\x03\n\x0eHarnessService\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x32\n\x08language\x18\x02 \x01(\x0e\x32 .harness.HarnessService.Language\x12\x34\n\tcontainer\x18\x03 \x01(\x0b\x32!.harness.HarnessService.Container\x1a\'\n\x08Resource\x12\x0b\n\x03\x63pu\x18\x01 \x01(\t\x12\x0e\n\x06memory\x18\x02 \x01(\t\x1aq\n\tResources\x12\x32\n\x08requests\x18\x01 \x01(\x0b\x32 .harness.HarnessService.Resource\x12\x30\n\x06limits\x18\x02 \x01(\x0b\x32 .harness.HarnessService.Resource\x1aU\n\tContainer\x12\x12\n\nrepository\x18\x01 \x01(\t\x12\x34\n\tresources\x18\x02 \x01(\x0b\x32!.harness.HarnessService.Resources\"!\n\x08Language\x12\t\n\x05UNSET\x10\x00\x12\n\n\x06PYTHON\x10\x01:B\n\x04wire\x12\x1d.google.protobuf.FieldOptions\x18\xd1\x0f \x01(\x0b\x32\x14.harness.HarnessWire:J\n\x07service\x12\x1f.google.protobuf.MessageOptions\x18\xd1\x0f \x01(\x0b\x32\x17.harness.HarnessService')
   ,
   dependencies=[google_dot_protobuf_dot_descriptor__pb2.DESCRIPTOR,])
 
@@ -300,14 +300,14 @@ _HARNESSSERVICE_CONTAINER = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='repository', full_name='harness.HarnessService.Container.repository', index=0,
-      number=2, type=9, cpp_type=9, label=1,
+      number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='resources', full_name='harness.HarnessService.Container.resources', index=1,
-      number=3, type=11, cpp_type=10, label=1,
+      number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,

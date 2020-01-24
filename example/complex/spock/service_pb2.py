@@ -22,7 +22,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='spock',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x13spock/service.proto\x12\x05spock\x1a\x12harness/wire.proto\x1a\x15harness/logging.proto\"\xbc\x01\n\rConfiguration\x12J\n\x07\x63onsole\x18\x03 \x01(\x0b\x32\x18.harness.logging.ConsoleB\x1f\x8a}\x1c\n\x1apython/logging:ConsoleWire:_\x8a}\t\n\x07whisper\x8a}\x02\x10\x01\x8a}\"\x1a \x12\x1eregistry.acme.dev/team/whisper\x8a}\x13\x1a\x11\x1a\x0f\n\r\n\x04\x33\x30\x30m\x12\x05\x31\x32\x38Mi\x8a}\x10\x1a\x0e\x1a\x0c\x12\n\n\x01\x31\x12\x05\x31\x36\x30Mib\x06proto3')
+  serialized_pb=_b('\n\x13spock/service.proto\x12\x05spock\x1a\x12harness/wire.proto\x1a\x15harness/logging.proto\"\xbc\x01\n\rConfiguration\x12J\n\x07\x63onsole\x18\x03 \x01(\x0b\x32\x18.harness.logging.ConsoleB\x1f\x8a}\x1c\n\x1apython/logging:ConsoleWire:_\x8a}\t\n\x07whisper\x8a}\x02\x10\x01\x8a}\"\x1a \n\x1eregistry.acme.dev/team/whisper\x8a}\x13\x1a\x11\x12\x0f\n\r\n\x04\x33\x30\x30m\x12\x05\x31\x32\x38Mi\x8a}\x10\x1a\x0e\x12\x0c\x12\n\n\x01\x31\x12\x05\x31\x36\x30Mib\x06proto3')
   ,
   dependencies=[harness_dot_wire__pb2.DESCRIPTOR,harness_dot_logging__pb2.DESCRIPTOR,])
 
@@ -49,7 +49,7 @@ _CONFIGURATION = _descriptor.Descriptor(
   nested_types=[],
   enum_types=[
   ],
-  serialized_options=_b('\212}\t\n\007whisper\212}\002\020\001\212}\"\032 \022\036registry.acme.dev/team/whisper\212}\023\032\021\032\017\n\r\n\004300m\022\005128Mi\212}\020\032\016\032\014\022\n\n\0011\022\005160Mi'),
+  serialized_options=_b('\212}\t\n\007whisper\212}\002\020\001\212}\"\032 \n\036registry.acme.dev/team/whisper\212}\023\032\021\022\017\n\r\n\004300m\022\005128Mi\212}\020\032\016\022\014\022\n\n\0011\022\005160Mi'),
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
