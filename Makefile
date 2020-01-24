@@ -11,6 +11,7 @@ clean:
 	rm -f example/cron/$(GENERATED)
 	rm -f example/complex/spock/$(GENERATED)
 	rm -f src/harness/$(GENERATED)
+	rm -f src/validate/$(GENERATED)
 
 proto: clean
 	cd src && $(GEN) harness/wire.proto
@@ -21,6 +22,7 @@ proto: clean
 	cd src && $(GEN) harness/http.proto
 	cd src && $(GEN) harness/redis.proto
 	cd src && $(GEN) harness/tracing.proto
+	cd src && $(GEN) validate/validate.proto
 	cd example/web && $(GEN) --python_harness_out=. kirk.proto
 	cd example/grpc && $(GEN) --python_grpc_out=. --python_harness_out=. scotty.proto
 	cd example/cron && $(GEN) --python_harness_out=. pulsar.proto
