@@ -19,8 +19,7 @@ from google.protobuf.message_factory import GetMessages
 
 from ..net_pb2 import Socket
 from ..wire_pb2 import HarnessService, HarnessWire
-
-from .utils import load_config
+from ..runtime._utils import load_config
 
 
 class Protocol(Enum):

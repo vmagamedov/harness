@@ -7,7 +7,7 @@ from dataclasses import fields
 from grpclib.utils import graceful_exit
 from google.protobuf.json_format import ParseDict
 
-from ..cli.utils import load_config
+from ._utils import load_config
 
 
 _CT = TypeVar('_CT')
