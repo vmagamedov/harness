@@ -2,8 +2,9 @@ import re
 from abc import ABC, abstractmethod
 from typing import Union
 
-from google.protobuf.descriptor import Descriptor, FieldDescriptor
 from grpclib.plugin.main import Buffer
+from google.protobuf.message import Message
+from google.protobuf.descriptor import Descriptor, FieldDescriptor
 
 from validate import validate_pb2
 
@@ -88,8 +89,7 @@ class ConstMixin:
     def visit_const(self, value):
         self.buf.add(f'if p.{self.field_name} != {value}:')
         with self.buf.indent():
-            err_gen(self.buf,
-                    f'{self.field_name} length does not equal {value}')
+            err_gen(self.buf, f'{self.field_name} not equal to {value}')
 
 
 class InMixin:
@@ -362,3 +362,17 @@ def file_gen(message):
         if len(buf._lines) == initial_size:
             buf.add('pass')
     return buf.content()
+
+
+_validators = {}
+
+
+def validate(message: Message):
+    key = message.DESCRIPTOR.full_name
+    try:
+        func = _validators[key]
+    except KeyError:
+        locals_ = {}
+        exec(file_gen(message), CTX, locals_)
+        func = _validators[key] = locals_['validate']
+    return func(message)

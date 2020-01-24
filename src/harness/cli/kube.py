@@ -514,12 +514,17 @@ def gen_secrets(ctx: 'Context'):
 
 def load(proto_file, proto_path=None):
     wkt_protos = pkg_resources.resource_filename('grpc_tools', '_proto')
+    validate_protos = str(Path(
+        pkg_resources.resource_filename('validate', 'validate.proto'))
+        .parent.parent
+    )
     harness_protos = str(Path(__file__).parent.parent.parent.absolute())
     with tempfile.NamedTemporaryFile() as f:
         args = [
             'grpc_tools.protoc',
             '--include_imports',
             f'--proto_path={wkt_protos}',
+            f'--proto_path={validate_protos}',
             f'--proto_path={harness_protos}',
             f'--proto_path={Path(proto_file).parent}',
             f'--descriptor_set_out={f.name}',
