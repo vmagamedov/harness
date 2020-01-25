@@ -107,54 +107,77 @@ class FieldVisitor(ABC):
             visit_fn(rule_value)
 
 
-class ConstMixin:
+class Coerce:
+    field_name: str
+
+    def field_value(self):
+        return f'p.{self.field_name}'
+
+    def rule_value(self, value):
+        return str(value)
+
+    def rule_value_repr(self, value):
+        return str(value)
+
+
+class ConstMixin(Coerce):
     buf: Buffer
     field_name: str
 
     def visit_const(self, value):
-        self.buf.add(f'if p.{self.field_name} != {value}:')
+        self.buf.add(f'if {self.field_value()} != {self.rule_value(value)}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} not equal to {value}')
+            err_gen(self.buf, f'{self.field_name} not equal to {self.rule_value_repr(value)}')
 
 
-class InMixin:
+class InMixin(Coerce):
     buf: Buffer
     field_name: str
 
+    def _set(self, value):
+        return '{{' + ', '.join([self.rule_value(i) for i in value]) + '}}'
+
+    def _set_repr(self, value):
+        return '{{' + ', '.join([self.rule_value_repr(i) for i in value]) + '}}'
+
     def visit_in(self, value):
-        self.buf.add(f'if p.{self.field_name} not in {value}:')
+        value_set = self._set(value)
+        value_set_repr = self._set_repr(value)
+        self.buf.add(f'if {self.field_value()} not in {value_set}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} not in {value}')
+            err_gen(self.buf, f'{self.field_name} not in {value_set_repr}')
 
     def visit_not_in(self, value):
-        self.buf.add(f'if p.{self.field_name} in {value}:')
+        value_set = self._set(value)
+        value_set_repr = self._set_repr(value)
+        self.buf.add(f'if {self.field_value()} in {value_set}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} in {value}')
+            err_gen(self.buf, f'{self.field_name} in {value_set_repr}')
 
 
-class ComparatorMixin:
+class ComparatorMixin(Coerce):
     buf: Buffer
     field_name: str
 
     def visit_lt(self, value):
-        self.buf.add(f'if not p.{self.field_name} < {value}:')
+        self.buf.add(f'if not {self.field_value()} < {self.rule_value(value)}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} is not lesser than {value}')
+            err_gen(self.buf, f'{self.field_name} is not lesser than {self.rule_value_repr(value)}')
 
     def visit_lte(self, value):
-        self.buf.add(f'if not p.{self.field_name} <= {value}:')
+        self.buf.add(f'if not {self.field_value()} <= {self.rule_value(value)}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} is not lesser than or equal to {value}')
+            err_gen(self.buf, f'{self.field_name} is not lesser than or equal to {self.rule_value_repr(value)}')
 
     def visit_gt(self, value):
-        self.buf.add(f'if not p.{self.field_name} > {value}:')
+        self.buf.add(f'if not {self.field_value()} > {self.rule_value(value)}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} is not greater than {value}')
+            err_gen(self.buf, f'{self.field_name} is not greater than {self.rule_value_repr(value)}')
 
     def visit_gte(self, value):
-        self.buf.add(f'if not p.{self.field_name} >= {value}:')
+        self.buf.add(f'if not {self.field_value()} >= {self.rule_value(value)}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} is not greater than or equal to {value}')
+            err_gen(self.buf, f'{self.field_name} is not greater than or equal to {self.rule_value_repr(value)}')
 
 
 class SizableMixin:
@@ -347,36 +370,27 @@ class MessageRules(MessageMixin, FieldVisitor):
         pass
 
 
-class TimestampRules(MessageMixin, FieldVisitor):
+class TimeCoerce(Coerce):
+
+    def field_value(self):
+        return f'sec(p.{self.field_name})'
+
+    def rule_value(self, value):
+        return f'dec("{dec_repr(value)}")'
+
+    def rule_value_repr(self, value):
+        return value.ToJsonString()
+
+
+class DurationRules(TimeCoerce, MessageMixin, ConstMixin, ComparatorMixin, InMixin, FieldVisitor):
+    rule_descriptor = validate_pb2.DurationRules.DESCRIPTOR
+
+
+class TimestampRules(TimeCoerce, MessageMixin, ConstMixin, ComparatorMixin, FieldVisitor):
     rule_descriptor = validate_pb2.TimestampRules.DESCRIPTOR
 
     lt_now: bool
     gt_now: bool
-
-    def visit_const(self, value):
-        self.buf.add(f'if sec(p.{self.field_name}) != dec("{dec_repr(value)}"):')
-        with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} not equal to {value.ToJsonString()}')
-
-    def visit_lt(self, value):
-        self.buf.add(f'if not sec(p.{self.field_name}) < dec("{dec_repr(value)}"):')
-        with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} is not lesser than {value.ToJsonString()}')
-
-    def visit_lte(self, value):
-        self.buf.add(f'if not sec(p.{self.field_name}) <= dec("{dec_repr(value)}"):')
-        with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} is not lesser than {value.ToJsonString()}')
-
-    def visit_gt(self, value):
-        self.buf.add(f'if not sec(p.{self.field_name}) > dec("{dec_repr(value)}"):')
-        with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} is not lesser than {value.ToJsonString()}')
-
-    def visit_gte(self, value):
-        self.buf.add(f'if not sec(p.{self.field_name}) >= dec("{dec_repr(value)}"):')
-        with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} is not lesser than {value.ToJsonString()}')
 
     def visit_lt_now(self, _):
         pass
@@ -390,19 +404,19 @@ class TimestampRules(MessageMixin, FieldVisitor):
         elif self.gt_now:
             self.visit_within_future(value)
         else:
-            self.buf.add(f'if not abs(sec(p.{self.field_name}) - now()) < dec("{dec_repr(value)}"):')
+            self.buf.add(f'if not abs({self.field_value()} - now()) < {self.rule_value(value)}:')
             with self.buf.indent():
-                err_gen(self.buf, f'{self.field_name} is not within {value.ToJsonString()} from now')
+                err_gen(self.buf, f'{self.field_name} is not within {self.rule_value_repr(value)} from now')
 
     def visit_within_past(self, value):
-        self.buf.add(f'if not (0 < now() - sec(p.{self.field_name}) < dec("{dec_repr(value)}")):')
+        self.buf.add(f'if not (0 < now() - {self.field_value()} < {self.rule_value(value)}):')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} is not within {value.ToJsonString()} in the past')
+            err_gen(self.buf, f'{self.field_name} is not within {self.rule_value_repr(value)} in the past')
 
     def visit_within_future(self, value):
-        self.buf.add(f'if not (0 < sec(p.{self.field_name}) - now() < dec("{dec_repr(value)}")):')
+        self.buf.add(f'if not (0 < {self.field_value()} - now() < {self.rule_value(value)}):')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} is not within {value.ToJsonString()} in the future')
+            err_gen(self.buf, f'{self.field_name} is not within {self.rule_value_repr(value)} in the future')
 
     def dispatch(self, rules):
         self.lt_now = rules.lt_now
@@ -426,6 +440,7 @@ TYPES = {r.rule_descriptor.full_name: r for r in [
     Bool,
     String,
     Bytes,
+    DurationRules,
     TimestampRules,
 ]}
 
@@ -480,10 +495,10 @@ _validators = {}
 
 def validate(message: Message):
     key = message.DESCRIPTOR.full_name
-    try:
-        func = _validators[key]
-    except KeyError:
+    func = _validators.get(key, None)
+    if func is None:
         locals_ = {}
-        exec(file_gen(message), CTX, locals_)
+        source = file_gen(message)
+        exec(source, CTX, locals_)
         func = _validators[key] = locals_['validate']
     return func(message)

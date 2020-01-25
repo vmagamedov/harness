@@ -75,7 +75,7 @@ def test_timestamp_lt(message_type, timestamp_type):
         validate(message_type(value=timestamp_type(seconds=1000)))
 
 
-def test_timestamp_within(message_type, timestamp_type, duration_type):
+def test_timestamp_within(message_type, timestamp_type):
     """
     google.protobuf.Timestamp value = 1 [
         (validate.rules).timestamp.within = {seconds: 60}
@@ -93,3 +93,26 @@ def test_timestamp_within(message_type, timestamp_type, duration_type):
         validate(message_type(value=value))
     value.seconds = valid_seconds
     validate(message_type(value=value))
+
+
+def test_duration_in(message_type, duration_type):
+    """
+    google.protobuf.Duration value = 1 [
+        (validate.rules).duration.in = {seconds: 60},
+        (validate.rules).duration.in = {seconds: 30}
+    ];
+    """
+    validate(message_type(value=duration_type(seconds=60)))
+    with pytest.raises(ValidationFailed, match='value not in {60s, 30s}'):
+        validate(message_type(value=duration_type(seconds=120)))
+
+
+def test_duration_lte(message_type, duration_type):
+    """
+    google.protobuf.Duration value = 1 [
+        (validate.rules).duration.lte = {seconds: 60}
+    ];
+    """
+    validate(message_type(value=duration_type(seconds=60)))
+    with pytest.raises(ValidationFailed, match='value is not lesser than or equal to 60s'):
+        validate(message_type(value=duration_type(seconds=60, nanos=1)))
