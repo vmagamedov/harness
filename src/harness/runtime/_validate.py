@@ -13,7 +13,7 @@ class ValidationFailed(ValueError):
     pass
 
 
-class WellKnown:
+class Format:
 
     def check_email(self, field_name, value: str):
         raise NotImplementedError('Not implemented')
@@ -46,7 +46,7 @@ class WellKnown:
 CTX = {
     're': re,
     'ValidationFailed': ValidationFailed,
-    'wk': WellKnown(),
+    'fmt': Format(),
 }
 
 
@@ -254,31 +254,31 @@ class String(CommonString, ConstMixin, InMixin, SizableMixin, FieldVisitor):
             err_gen(self.buf, f'{self.field_name} does not match pattern {value}')
 
     def visit_email(self, _):
-        self.buf.add(f'wk.check_email(p.{self.field_name})')
+        self.buf.add(f'fmt.check_email(p.{self.field_name})')
 
     def visit_hostname(self, _):
-        self.buf.add(f'wk.check_hostname(p.{self.field_name})')
+        self.buf.add(f'fmt.check_hostname(p.{self.field_name})')
 
     def visit_ip(self, _):
-        self.buf.add(f'wk.check_ip(p.{self.field_name})')
+        self.buf.add(f'fmt.check_ip(p.{self.field_name})')
 
     def visit_ipv4(self, _):
-        self.buf.add(f'wk.check_ipv4(p.{self.field_name})')
+        self.buf.add(f'fmt.check_ipv4(p.{self.field_name})')
 
     def visit_ipv6(self, _):
-        self.buf.add(f'wk.check_ipv6(p.{self.field_name})')
+        self.buf.add(f'fmt.check_ipv6(p.{self.field_name})')
 
     def visit_uri(self, _):
-        self.buf.add(f'wk.check_uri(p.{self.field_name})')
+        self.buf.add(f'fmt.check_uri(p.{self.field_name})')
 
     def visit_uri_ref(self, _):
-        self.buf.add(f'wk.check_uri_ref(p.{self.field_name})')
+        self.buf.add(f'fmt.check_uri_ref(p.{self.field_name})')
 
     def visit_address(self, _):
-        self.buf.add(f'wk.check_address(p.{self.field_name})')
+        self.buf.add(f'fmt.check_address(p.{self.field_name})')
 
     def visit_uuid(self, _):
-        self.buf.add(f'wk.check_uuid(p.{self.field_name})')
+        self.buf.add(f'fmt.check_uuid(p.{self.field_name})')
 
 
 class Bytes(CommonString, ConstMixin, InMixin, SizableMixin, FieldVisitor):
@@ -295,13 +295,13 @@ class Bytes(CommonString, ConstMixin, InMixin, SizableMixin, FieldVisitor):
                 err_gen(self.buf, f'{self.field_name} does not match pattern {value_bytes!r}')
 
     def visit_ip(self, _):
-        self.buf.add(f'wk.check_ip(p.{self.field_name})')
+        self.buf.add(f'fmt.check_ip(p.{self.field_name})')
 
     def visit_ipv4(self, _):
-        self.buf.add(f'wk.check_ipv4(p.{self.field_name})')
+        self.buf.add(f'fmt.check_ipv4(p.{self.field_name})')
 
     def visit_ipv6(self, _):
-        self.buf.add(f'wk.check_ipv6(p.{self.field_name})')
+        self.buf.add(f'fmt.check_ipv6(p.{self.field_name})')
 
 
 TYPES = {r.rule_descriptor.full_name: r for r in [
