@@ -1,10 +1,13 @@
 import re
 from abc import ABC, abstractmethod
 from typing import Union
+from decimal import Decimal
 
 from grpclib.plugin.main import Buffer
 from google.protobuf.message import Message
 from google.protobuf.descriptor import Descriptor, FieldDescriptor
+from google.protobuf.duration_pb2 import Duration
+from google.protobuf.timestamp_pb2 import Timestamp
 
 from validate import validate_pb2
 
@@ -43,10 +46,31 @@ class Format:
         raise NotImplementedError('Not implemented')
 
 
+def dec(value: str):
+    return Decimal(value)
+
+
+def dec_repr(value: Union[Timestamp, Duration]):
+    return f'{value.seconds}.{value.nanos:09d}'
+
+
+def sec(value: Union[Timestamp, Duration]):
+    return Decimal(dec_repr(value))
+
+
+def now():
+    ts = Timestamp()
+    ts.GetCurrentTime()
+    return sec(ts)
+
+
 CTX = {
     're': re,
     'ValidationFailed': ValidationFailed,
     'fmt': Format(),
+    'sec': sec,
+    'now': now,
+    'dec': dec,
 }
 
 
@@ -67,13 +91,14 @@ class FieldVisitor(ABC):
 
     def dispatch(self, rules):
         for field in self.rule_descriptor.fields:
-            rule_value = getattr(rules, field.name)
             if field.label == FieldDescriptor.LABEL_REPEATED:
+                rule_value = getattr(rules, field.name)
                 if not rule_value:
                     continue
             else:
                 if not rules.HasField(field.name):
                     continue
+                rule_value = getattr(rules, field.name)
             try:
                 visit_fn = getattr(self, f'visit_{field.name}')
             except AttributeError:
@@ -304,6 +329,87 @@ class Bytes(CommonString, ConstMixin, InMixin, SizableMixin, FieldVisitor):
         self.buf.add(f'fmt.check_ipv6(p.{self.field_name})')
 
 
+class MessageMixin:
+    buf: Buffer
+    field_name: str
+
+    def visit_required(self, _):
+        self.buf.add(f'if not p.HasField("{self.field_name}"):')
+        with self.buf.indent():
+            err_gen(self.buf, f'{self.field_name} is required')
+
+
+class MessageRules(MessageMixin, FieldVisitor):
+    rule_descriptor = validate_pb2.MessageRules.DESCRIPTOR
+
+    def visit_skip(self, _):
+        # This option is handled explicitly outside
+        pass
+
+
+class TimestampRules(MessageMixin, FieldVisitor):
+    rule_descriptor = validate_pb2.TimestampRules.DESCRIPTOR
+
+    lt_now: bool
+    gt_now: bool
+
+    def visit_const(self, value):
+        self.buf.add(f'if sec(p.{self.field_name}) != dec("{dec_repr(value)}"):')
+        with self.buf.indent():
+            err_gen(self.buf, f'{self.field_name} not equal to {value.ToJsonString()}')
+
+    def visit_lt(self, value):
+        self.buf.add(f'if not sec(p.{self.field_name}) < dec("{dec_repr(value)}"):')
+        with self.buf.indent():
+            err_gen(self.buf, f'{self.field_name} is not lesser than {value.ToJsonString()}')
+
+    def visit_lte(self, value):
+        self.buf.add(f'if not sec(p.{self.field_name}) <= dec("{dec_repr(value)}"):')
+        with self.buf.indent():
+            err_gen(self.buf, f'{self.field_name} is not lesser than {value.ToJsonString()}')
+
+    def visit_gt(self, value):
+        self.buf.add(f'if not sec(p.{self.field_name}) > dec("{dec_repr(value)}"):')
+        with self.buf.indent():
+            err_gen(self.buf, f'{self.field_name} is not lesser than {value.ToJsonString()}')
+
+    def visit_gte(self, value):
+        self.buf.add(f'if not sec(p.{self.field_name}) >= dec("{dec_repr(value)}"):')
+        with self.buf.indent():
+            err_gen(self.buf, f'{self.field_name} is not lesser than {value.ToJsonString()}')
+
+    def visit_lt_now(self, _):
+        pass
+
+    def visit_gt_now(self, _):
+        pass
+
+    def visit_within(self, value):
+        if self.lt_now:
+            self.visit_within_past(value)
+        elif self.gt_now:
+            self.visit_within_future(value)
+        else:
+            self.buf.add(f'if not abs(sec(p.{self.field_name}) - now()) < dec("{dec_repr(value)}"):')
+            with self.buf.indent():
+                err_gen(self.buf, f'{self.field_name} is not within {value.ToJsonString()} from now')
+
+    def visit_within_past(self, value):
+        self.buf.add(f'if not (0 < now() - sec(p.{self.field_name}) < dec("{dec_repr(value)}")):')
+        with self.buf.indent():
+            err_gen(self.buf, f'{self.field_name} is not within {value.ToJsonString()} in the past')
+
+    def visit_within_future(self, value):
+        self.buf.add(f'if not (0 < sec(p.{self.field_name}) - now() < dec("{dec_repr(value)}")):')
+        with self.buf.indent():
+            err_gen(self.buf, f'{self.field_name} is not within {value.ToJsonString()} in the future')
+
+    def dispatch(self, rules):
+        self.lt_now = rules.lt_now
+        self.gt_now = rules.gt_now
+        super().dispatch(rules)
+
+
 TYPES = {r.rule_descriptor.full_name: r for r in [
     Float,
     Double,
@@ -320,19 +426,24 @@ TYPES = {r.rule_descriptor.full_name: r for r in [
     Bool,
     String,
     Bytes,
+    TimestampRules,
 ]}
 
 
 def field_gen(buf, field):
-    if field.message_type is None:
-        for opt, opt_value in field.GetOptions().ListFields():
-            if opt.full_name == "validate.rules":
-                type_ = opt_value.WhichOneof('type')
-                rule_value = getattr(opt_value, type_)
+    for opt, opt_value in field.GetOptions().ListFields():
+        if opt.full_name == "validate.rules":
+            if opt_value.HasField('message'):
+                assert field.message_type
+                if opt_value.message.skip:
+                    continue
+                else:
+                    MessageRules(buf, field.name).dispatch(opt_value.message)
+            oneof_type = opt_value.WhichOneof('type')
+            if oneof_type:
+                rule_value = getattr(opt_value, oneof_type)
                 generator = TYPES[rule_value.DESCRIPTOR.full_name]
                 generator(buf, field.name).dispatch(rule_value)
-    else:
-        pass
 
 
 def file_gen(message):
