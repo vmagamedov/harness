@@ -1,7 +1,8 @@
 import re
 from abc import ABC, abstractmethod
-from typing import Union
+from typing import Union, List
 from decimal import Decimal
+from collections import Counter
 
 from grpclib.plugin.main import Buffer
 from google.protobuf.message import Message
@@ -71,24 +72,44 @@ CTX = {
     'sec': sec,
     'now': now,
     'dec': dec,
+    'Counter': Counter,
 }
 
 
-def err_gen(buf, message):
-    buf.add(f'raise ValidationFailed({message!r})')
+def err_gen(buf, message, **ctx):
+    message_repr = repr(message)
+    if ctx:
+        ctx_items = ', '.join(
+            '{}={}'.format(key, val) for key, val in ctx.items()
+        )
+        message_repr += f'.format({ctx_items})'
+    buf.add(f'raise ValidationFailed({message_repr})')
 
 
 class FieldVisitor(ABC):
 
-    def __init__(self, buf: Buffer, field: FieldDescriptor) -> None:
+    def __init__(self, buf: Buffer, field: FieldDescriptor, code_path: List[str], proto_path: List[str]) -> None:
         self.buf = buf
         self.field = field
-        self.field_name = field.name
+        self.code_path = code_path
+        self.proto_path = proto_path
 
     @property
     @abstractmethod
     def rule_descriptor(self) -> Descriptor:
         pass
+
+    def field_value(self):
+        return '.'.join(self.code_path)
+
+    def proto_name(self):
+        return ''.join(self.proto_path)
+
+    def rule_value(self, value):
+        return repr(value)
+
+    def rule_value_repr(self, value):
+        return repr(value)
 
     def dispatch(self, rules):
         for field in self.rule_descriptor.fields:
@@ -103,35 +124,21 @@ class FieldVisitor(ABC):
             try:
                 visit_fn = getattr(self, f'visit_{field.name}')
             except AttributeError:
-                # FIXME: remove this when all validators implemented
-                continue
+                raise NotImplementedError(field.full_name)
             visit_fn(rule_value)
 
 
-class Coerce:
-    field_name: str
-
-    def field_value(self):
-        return f'p.{self.field_name}'
-
-    def rule_value(self, value):
-        return str(value)
-
-    def rule_value_repr(self, value):
-        return str(value)
-
-
-class ConstMixin(Coerce):
+class ConstMixin:
     buf: Buffer
     field_name: str
 
     def visit_const(self, value):
         self.buf.add(f'if {self.field_value()} != {self.rule_value(value)}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} not equal to {self.rule_value_repr(value)}')
+            err_gen(self.buf, f'{self.proto_name()} not equal to {self.rule_value_repr(value)}')
 
 
-class InMixin(Coerce):
+class InMixin:
     buf: Buffer
     field_name: str
 
@@ -146,39 +153,39 @@ class InMixin(Coerce):
         value_set_repr = self._set_repr(value)
         self.buf.add(f'if {self.field_value()} not in {value_set}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} not in {value_set_repr}')
+            err_gen(self.buf, f'{self.proto_name()} not in {value_set_repr}')
 
     def visit_not_in(self, value):
         value_set = self._set(value)
         value_set_repr = self._set_repr(value)
         self.buf.add(f'if {self.field_value()} in {value_set}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} in {value_set_repr}')
+            err_gen(self.buf, f'{self.proto_name()} in {value_set_repr}')
 
 
-class ComparatorMixin(Coerce):
+class ComparatorMixin:
     buf: Buffer
     field_name: str
 
     def visit_lt(self, value):
         self.buf.add(f'if not {self.field_value()} < {self.rule_value(value)}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} is not lesser than {self.rule_value_repr(value)}')
+            err_gen(self.buf, f'{self.proto_name()} is not lesser than {self.rule_value_repr(value)}')
 
     def visit_lte(self, value):
         self.buf.add(f'if not {self.field_value()} <= {self.rule_value(value)}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} is not lesser than or equal to {self.rule_value_repr(value)}')
+            err_gen(self.buf, f'{self.proto_name()} is not lesser than or equal to {self.rule_value_repr(value)}')
 
     def visit_gt(self, value):
         self.buf.add(f'if not {self.field_value()} > {self.rule_value(value)}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} is not greater than {self.rule_value_repr(value)}')
+            err_gen(self.buf, f'{self.proto_name()} is not greater than {self.rule_value_repr(value)}')
 
     def visit_gte(self, value):
         self.buf.add(f'if not {self.field_value()} >= {self.rule_value(value)}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} is not greater than or equal to {self.rule_value_repr(value)}')
+            err_gen(self.buf, f'{self.proto_name()} is not greater than or equal to {self.rule_value_repr(value)}')
 
 
 class SizableMixin:
@@ -186,20 +193,20 @@ class SizableMixin:
     field_name: str
 
     def visit_len(self, value):
-        self.buf.add(f'if len(p.{self.field_name}) != {value}:')
+        self.buf.add(f'if len({self.field_value()}) != {value}:')
         with self.buf.indent():
             err_gen(self.buf,
-                    f'{self.field_name} length does not equal {value}')
+                    f'{self.proto_name()} length does not equal {value}')
 
     def visit_min_len(self, value):
-        self.buf.add(f'if len(p.{self.field_name}) < {value}:')
+        self.buf.add(f'if len({self.field_value()}) < {value}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} length is less than {value}')
+            err_gen(self.buf, f'{self.proto_name()} length is less than {value}')
 
     def visit_max_len(self, value):
-        self.buf.add(f'if len(p.{self.field_name}) > {value}:')
+        self.buf.add(f'if len({self.field_value()}) > {value}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} length is more than {value}')
+            err_gen(self.buf, f'{self.proto_name()} length is more than {value}')
 
 
 class Float(ConstMixin, InMixin, ComparatorMixin, FieldVisitor):
@@ -259,75 +266,75 @@ class CommonString:
     field_name: str
 
     def visit_prefix(self, value):
-        self.buf.add(f'if not p.{self.field_name}.startswith({value}):')
+        self.buf.add(f'if not {self.field_value()}.startswith({value}):')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} does not start with prefix {value}')
+            err_gen(self.buf, f'{self.proto_name()} does not start with prefix {value}')
 
     def visit_suffix(self, value):
-        self.buf.add(f'if not p.{self.field_name}.endswith({value}):')
+        self.buf.add(f'if not {self.field_value()}.endswith({value}):')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} does not end with suffix {value}')
+            err_gen(self.buf, f'{self.proto_name()} does not end with suffix {value}')
 
     def visit_contains(self, value):
-        self.buf.add(f'if {value} not in p.{self.field_name}:')
+        self.buf.add(f'if {value} not in {self.field_value()}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} does not contain {value}')
+            err_gen(self.buf, f'{self.proto_name()} does not contain {value}')
 
     def visit_not_contains(self, value):
-        self.buf.add(f'if {value} in p.{self.field_name}:')
+        self.buf.add(f'if {value} in {self.field_value()}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} contains {value}')
+            err_gen(self.buf, f'{self.proto_name()} contains {value}')
 
 
 class String(CommonString, ConstMixin, InMixin, SizableMixin, FieldVisitor):
     rule_descriptor = validate_pb2.StringRules.DESCRIPTOR
 
     def visit_len_bytes(self, value):
-        self.buf.add(f'if len(p.{self.field_name}.encode("utf-8")) != {value}:')
+        self.buf.add(f'if len({self.field_value()}.encode("utf-8")) != {value}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} bytes count does not equal {value}')
+            err_gen(self.buf, f'{self.proto_name()} bytes count does not equal {value}')
 
     def visit_min_bytes(self, value):
-        self.buf.add(f'if len(p.{self.field_name}.encode("utf-8")) < {value}:')
+        self.buf.add(f'if len({self.field_value()}.encode("utf-8")) < {value}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} bytes count is less than {value}')
+            err_gen(self.buf, f'{self.proto_name()} bytes count is less than {value}')
 
     def visit_max_bytes(self, value):
-        self.buf.add(f'if len(p.{self.field_name}.encode("utf-8")) > {value}:')
+        self.buf.add(f'if len({self.field_value()}.encode("utf-8")) > {value}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} bytes count is more than {value}')
+            err_gen(self.buf, f'{self.proto_name()} bytes count is more than {value}')
 
     def visit_pattern(self, value):
-        self.buf.add(f'if re.search({value}, p.{self.field_name}) is None:')
+        self.buf.add(f'if re.search({value}, {self.field_value()}) is None:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} does not match pattern {value}')
+            err_gen(self.buf, f'{self.proto_name()} does not match pattern {value}')
 
     def visit_email(self, _):
-        self.buf.add(f'fmt.check_email(p.{self.field_name})')
+        self.buf.add(f'fmt.check_email({self.field_value()})')
 
     def visit_hostname(self, _):
-        self.buf.add(f'fmt.check_hostname(p.{self.field_name})')
+        self.buf.add(f'fmt.check_hostname({self.field_value()})')
 
     def visit_ip(self, _):
-        self.buf.add(f'fmt.check_ip(p.{self.field_name})')
+        self.buf.add(f'fmt.check_ip({self.field_value()})')
 
     def visit_ipv4(self, _):
-        self.buf.add(f'fmt.check_ipv4(p.{self.field_name})')
+        self.buf.add(f'fmt.check_ipv4({self.field_value()})')
 
     def visit_ipv6(self, _):
-        self.buf.add(f'fmt.check_ipv6(p.{self.field_name})')
+        self.buf.add(f'fmt.check_ipv6({self.field_value()})')
 
     def visit_uri(self, _):
-        self.buf.add(f'fmt.check_uri(p.{self.field_name})')
+        self.buf.add(f'fmt.check_uri({self.field_value()})')
 
     def visit_uri_ref(self, _):
-        self.buf.add(f'fmt.check_uri_ref(p.{self.field_name})')
+        self.buf.add(f'fmt.check_uri_ref({self.field_value()})')
 
     def visit_address(self, _):
-        self.buf.add(f'fmt.check_address(p.{self.field_name})')
+        self.buf.add(f'fmt.check_address({self.field_value()})')
 
     def visit_uuid(self, _):
-        self.buf.add(f'fmt.check_uuid(p.{self.field_name})')
+        self.buf.add(f'fmt.check_uuid({self.field_value()})')
 
 
 class Bytes(CommonString, ConstMixin, InMixin, SizableMixin, FieldVisitor):
@@ -337,20 +344,20 @@ class Bytes(CommonString, ConstMixin, InMixin, SizableMixin, FieldVisitor):
         try:
             value_bytes = value.encode('ascii')
         except UnicodeEncodeError:
-            err_gen(self.buf, f'{self.field_name} has invalid validation pattern {value}')
+            err_gen(self.buf, f'{self.proto_name()} has invalid validation pattern {value}')
         else:
-            self.buf.add(f'if re.search({value_bytes!r}, p.{self.field_name}) is None:')
+            self.buf.add(f'if re.search({value_bytes!r}, {self.field_value()}) is None:')
             with self.buf.indent():
-                err_gen(self.buf, f'{self.field_name} does not match pattern {value_bytes!r}')
+                err_gen(self.buf, f'{self.proto_name()} does not match pattern {value_bytes!r}')
 
     def visit_ip(self, _):
-        self.buf.add(f'fmt.check_ip(p.{self.field_name})')
+        self.buf.add(f'fmt.check_ip({self.field_value()})')
 
     def visit_ipv4(self, _):
-        self.buf.add(f'fmt.check_ipv4(p.{self.field_name})')
+        self.buf.add(f'fmt.check_ipv4({self.field_value()})')
 
     def visit_ipv6(self, _):
-        self.buf.add(f'fmt.check_ipv6(p.{self.field_name})')
+        self.buf.add(f'fmt.check_ipv6({self.field_value()})')
 
 
 class EnumRules(ConstMixin, InMixin, FieldVisitor):
@@ -359,9 +366,39 @@ class EnumRules(ConstMixin, InMixin, FieldVisitor):
     def visit_defined_only(self, _):
         ids = [e.number for e in self.field.enum_type.values]
         ids_repr = '{{' + ', '.join(map(repr, ids)) + '}}'
-        self.buf.add(f'if p.{self.field_name} not in {ids_repr}:')
+        self.buf.add(f'if {self.field_value()} not in {ids_repr}:')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} is not defined')
+            err_gen(self.buf, f'{self.proto_name()} is not defined')
+
+
+class RepeatedRules(FieldVisitor):
+    rule_descriptor = validate_pb2.RepeatedRules.DESCRIPTOR
+
+    def visit_min_items(self, value: int):
+        self.buf.add(f'if len({self.field_value()}) < {value}:')
+        with self.buf.indent():
+            err_gen(self.buf, f'{self.proto_name()} items count is less than {value}')
+
+    def visit_max_items(self, value: int):
+        self.buf.add(f'if len({self.field_value()}) > {value}:')
+        with self.buf.indent():
+            err_gen(self.buf, f'{self.proto_name()} items count is more than {value}')
+
+    def visit_unique(self, _):
+        self.buf.add(f'if len(set({self.field_value()})) < len({self.field_value()}):')
+        with self.buf.indent():
+            repeated = f'[i for i, count in Counter({self.field_value()}).items() if count > 1]'
+            err_gen(self.buf, f'{self.proto_name()} must contain unique items; repeated items: {{{{repeated}}}}', repeated=repeated)
+
+    def visit_items(self, value: validate_pb2.FieldRules):
+        self.buf.add(f'for item in {self.field_value()}:')
+        with self.buf.indent():
+            proto_path = self.proto_path + ['[]']
+            dispatch_field(self.buf, self.field, ['item'], proto_path, value)
+
+
+class MapRules(FieldVisitor):
+    rule_descriptor = validate_pb2.MapRules.DESCRIPTOR
 
 
 class MessageMixin:
@@ -369,9 +406,10 @@ class MessageMixin:
     field_name: str
 
     def visit_required(self, _):
-        self.buf.add(f'if not p.HasField("{self.field_name}"):')
+        has_field = '.'.join(self.path + ['HasField'])
+        self.buf.add(f'if not {has_field}("{self.field_name}"):')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} is required')
+            err_gen(self.buf, f'{self.proto_name()} is required')
 
 
 class MessageRules(MessageMixin, FieldVisitor):
@@ -382,10 +420,10 @@ class MessageRules(MessageMixin, FieldVisitor):
         pass
 
 
-class TimeCoerce(Coerce):
+class TimeCoerce:
 
     def field_value(self):
-        return f'sec(p.{self.field_name})'
+        return f'sec({super().field_value()})'
 
     def rule_value(self, value):
         return f'dec("{dec_repr(value)}")'
@@ -418,17 +456,17 @@ class TimestampRules(TimeCoerce, MessageMixin, ConstMixin, ComparatorMixin, Fiel
         else:
             self.buf.add(f'if not abs({self.field_value()} - now()) < {self.rule_value(value)}:')
             with self.buf.indent():
-                err_gen(self.buf, f'{self.field_name} is not within {self.rule_value_repr(value)} from now')
+                err_gen(self.buf, f'{self.proto_name()} is not within {self.rule_value_repr(value)} from now')
 
     def visit_within_past(self, value):
         self.buf.add(f'if not (0 < now() - {self.field_value()} < {self.rule_value(value)}):')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} is not within {self.rule_value_repr(value)} in the past')
+            err_gen(self.buf, f'{self.proto_name()} is not within {self.rule_value_repr(value)} in the past')
 
     def visit_within_future(self, value):
         self.buf.add(f'if not (0 < {self.field_value()} - now() < {self.rule_value(value)}):')
         with self.buf.indent():
-            err_gen(self.buf, f'{self.field_name} is not within {self.rule_value_repr(value)} in the future')
+            err_gen(self.buf, f'{self.proto_name()} is not within {self.rule_value_repr(value)} in the future')
 
     def dispatch(self, rules):
         self.lt_now = rules.lt_now
@@ -453,25 +491,31 @@ TYPES = {r.rule_descriptor.full_name: r for r in [
     String,
     Bytes,
     EnumRules,
+    RepeatedRules,
+    MapRules,
     DurationRules,
     TimestampRules,
 ]}
 
 
-def field_gen(buf, field):
+def dispatch_field(buf, field, code_path, proto_path, opt_value):
+    if opt_value.HasField('message'):
+        assert field.message_type
+        if opt_value.message.skip:
+            return
+        else:
+            MessageRules(buf, field.name).dispatch(opt_value.message)
+    oneof_type = opt_value.WhichOneof('type')
+    if oneof_type:
+        rule_value = getattr(opt_value, oneof_type)
+        generator = TYPES[rule_value.DESCRIPTOR.full_name]
+        generator(buf, field, code_path, proto_path).dispatch(rule_value)
+
+
+def field_gen(buf, field, code_path, proto_path):
     for opt, opt_value in field.GetOptions().ListFields():
         if opt.full_name == "validate.rules":
-            if opt_value.HasField('message'):
-                assert field.message_type
-                if opt_value.message.skip:
-                    continue
-                else:
-                    MessageRules(buf, field.name).dispatch(opt_value.message)
-            oneof_type = opt_value.WhichOneof('type')
-            if oneof_type:
-                rule_value = getattr(opt_value, oneof_type)
-                generator = TYPES[rule_value.DESCRIPTOR.full_name]
-                generator(buf, field).dispatch(rule_value)
+            dispatch_field(buf, field, code_path, proto_path, opt_value)
 
 
 def file_gen(message):
@@ -489,7 +533,7 @@ def file_gen(message):
                 ctrl = 'elif' if i else 'if'
                 buf.add(f"{ctrl} __{oneof.name} == '{field.name}':")
                 with buf.indent():
-                    field_gen(buf, field)
+                    field_gen(buf, field, ['p', field.name], [field.name])
             for opt, opt_value in oneof.GetOptions().ListFields():
                 if opt.name == 'required' and opt_value:
                     buf.add(f"else:")
@@ -497,7 +541,7 @@ def file_gen(message):
                         err_gen(buf, f'Oneof {oneof.name} is required')
         for field in message.DESCRIPTOR.fields:
             if not field.containing_oneof:
-                field_gen(buf, field)
+                field_gen(buf, field, ['p', field.name], [field.name])
         if len(buf._lines) == initial_size:
             buf.add('pass')
     return buf.content()
