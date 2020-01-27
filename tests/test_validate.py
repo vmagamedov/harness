@@ -143,8 +143,26 @@ def test_repeated_unique(message_type):
 
 def test_repeated_items(message_type):
     """
-    repeated int32 value = 1 [(validate.rules).repeated.items.int32.lt = 5];
+    repeated int32 field = 1 [(validate.rules).repeated.items.int32.lt = 5];
     """
-    validate(message_type(value=[1, 2, 3, 4]))
-    with pytest.raises(ValidationFailed, match='value\\[\\] is not lesser than 5'):
-        validate(message_type(value=[1, 2, 3, 4, 5]))
+    validate(message_type(field=[1, 2, 3, 4]))
+    with pytest.raises(ValidationFailed, match='field\\[\\] is not lesser than 5'):
+        validate(message_type(field=[1, 2, 3, 4, 5]))
+
+
+def test_map_key(message_type):
+    """
+    map<string, int32> field = 1 [(validate.rules).map.keys.string.min_len = 3];
+    """
+    validate(message_type(field={'test': 42}))
+    with pytest.raises(ValidationFailed, match='field<key> length is less than 3'):
+        validate(message_type(field={'t': 42}))
+
+
+def test_map_values(message_type):
+    """
+    map<string, int32> field = 1 [(validate.rules).map.values.int32.const = 42];
+    """
+    validate(message_type(field={'test': 42}))
+    with pytest.raises(ValidationFailed, match='field<value> not equal to 42'):
+        validate(message_type(field={'test': 43}))

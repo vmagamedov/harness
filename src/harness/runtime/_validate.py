@@ -400,6 +400,33 @@ class RepeatedRules(FieldVisitor):
 class MapRules(FieldVisitor):
     rule_descriptor = validate_pb2.MapRules.DESCRIPTOR
 
+    def visit_min_pairs(self, value: int):
+        self.buf.add(f'if len({self.field_value()}) < {value}:')
+        with self.buf.indent():
+            err_gen(self.buf, f'{self.proto_name()} needs to contain at least {value} items')
+
+    def visit_max_pairs(self, value: int):
+        self.buf.add(f'if len({self.field_value()}) > {value}:')
+        with self.buf.indent():
+            err_gen(self.buf, f'{self.proto_name()} can contain at most {value} items')
+
+    def visit_no_sparse(self, _):
+        # no_sparse validation is not implemented because protobuf maps
+        # cannot be sparse in Python
+        pass
+
+    def visit_keys(self, value: validate_pb2.FieldRules):
+        self.buf.add(f'for key in {self.field_value()}.keys():')
+        with self.buf.indent():
+            proto_path = self.proto_path + ['<key>']
+            dispatch_field(self.buf, self.field, ['key'], proto_path, value)
+
+    def visit_values(self, value: validate_pb2.FieldRules):
+        self.buf.add(f'for value in {self.field_value()}.values():')
+        with self.buf.indent():
+            proto_path = self.proto_path + ['<value>']
+            dispatch_field(self.buf, self.field, ['value'], proto_path, value)
+
 
 class MessageMixin:
     buf: Buffer
