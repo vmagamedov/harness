@@ -447,6 +447,24 @@ class MessageRules(MessageMixin, FieldVisitor):
         pass
 
 
+class AnyRules(MessageMixin, InMixin, FieldVisitor):
+    rule_descriptor = validate_pb2.AnyRules.DESCRIPTOR
+
+    def field_value(self):
+        return f'{super().field_value()}.type_url'
+
+    def proto_name(self):
+        return f'{super().proto_name()}.type_url'
+
+    def visit_in(self, value):
+        self.buf.add('print(p.field.type_url)')
+        value_set = self._set(value)
+        value_set_repr = self._set_repr(value)
+        self.buf.add(f'if {self.field_value()} not in {value_set}:')
+        with self.buf.indent():
+            err_gen(self.buf, f'{self.proto_name()} not in {value_set_repr}')
+
+
 class TimeCoerce:
 
     def field_value(self):
@@ -520,6 +538,7 @@ TYPES = {r.rule_descriptor.full_name: r for r in [
     EnumRules,
     RepeatedRules,
     MapRules,
+    AnyRules,
     DurationRules,
     TimestampRules,
 ]}

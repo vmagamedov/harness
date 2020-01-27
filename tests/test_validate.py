@@ -1,6 +1,8 @@
 import tempfile
 
 import pytest
+from google.protobuf import any_pb2
+from google.protobuf import struct_pb2
 from google.protobuf.message_factory import GetMessages
 
 from harness.cli.kube import load
@@ -26,6 +28,7 @@ def message_factory(package, content):
         + 'import "validate/validate.proto"; '
         + 'import "google/protobuf/timestamp.proto"; '
         + 'import "google/protobuf/duration.proto"; '
+        + 'import "google/protobuf/any.proto"; '
         + f'message Message {{ {content} }}'
     )
     with tempfile.NamedTemporaryFile(suffix='.proto') as proto_file:
@@ -46,13 +49,18 @@ def message_type(message_types, package):
 
 
 @pytest.fixture()
-def timestamp_type(message_types, package):
+def timestamp_type(message_types):
     return message_types['google.protobuf.Timestamp']
 
 
 @pytest.fixture()
-def duration_type(message_types, package):
+def duration_type(message_types):
     return message_types['google.protobuf.Duration']
+
+
+@pytest.fixture()
+def any_type(message_types):
+    return message_types['google.protobuf.Any']
 
 
 def test_float_const(message_type):
@@ -166,3 +174,16 @@ def test_map_values(message_type):
     validate(message_type(field={'test': 42}))
     with pytest.raises(ValidationFailed, match='field<value> not equal to 42'):
         validate(message_type(field={'test': 43}))
+
+
+def test_any_in(message_type, any_type, duration_type, timestamp_type):
+    """
+    google.protobuf.Any field = 1 [(validate.rules).any.in = "type.googleapis.com/google.protobuf.Duration"];
+    """
+    any_1 = any_type()
+    any_1.Pack(duration_type(seconds=42))
+    validate(message_type(field=any_1))
+    with pytest.raises(ValidationFailed, match='field.type_url not in'):
+        any_2 = any_type()
+        any_2.Pack(timestamp_type(seconds=42))
+        validate(message_type(field=any_2))
