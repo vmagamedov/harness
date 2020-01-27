@@ -65,17 +65,6 @@ def now():
     return sec(ts)
 
 
-CTX = {
-    're': re,
-    'ValidationFailed': ValidationFailed,
-    'fmt': Format(),
-    'sec': sec,
-    'now': now,
-    'dec': dec,
-    'Counter': Counter,
-}
-
-
 def err_gen(buf, message, **ctx):
     message_repr = repr(message)
     if ctx:
@@ -562,11 +551,28 @@ def field_gen(buf, field, code_path, proto_path):
     for opt, opt_value in field.GetOptions().ListFields():
         if opt.full_name == "validate.rules":
             dispatch_field(buf, field, code_path, proto_path, opt_value)
+            if opt_value.HasField('message'):
+                if opt_value.message.skip:
+                    return
+
+    if field.message_type:
+        for opt, opt_value in field.message_type.GetOptions().ListFields():
+            if opt.full_name == 'google.protobuf.MessageOptions.map_entry' and opt_value is True:
+                return
+        field_value = '.'.join(code_path)
+        if field.label == FieldDescriptor.LABEL_REPEATED:
+            buf.add(f'for item in {field_value}:')
+            with buf.indent():
+                buf.add(f'validate(item)')
+        else:
+            buf.add(f'if {field_value} is not None:')
+            with buf.indent():
+                buf.add(f'validate({field_value})')
 
 
 def file_gen(message):
     buf = Buffer()
-    buf.add('def validate(p):')
+    buf.add('def _validate(p):')
     initial_size = len(buf._lines)
     with buf.indent():
         for opt, opt_value in message.DESCRIPTOR.GetOptions().ListFields():
@@ -603,5 +609,17 @@ def validate(message: Message):
         locals_ = {}
         source = file_gen(message)
         exec(source, CTX, locals_)
-        func = _validators[key] = locals_['validate']
+        func = _validators[key] = locals_['_validate']
     return func(message)
+
+
+CTX = {
+    're': re,
+    'ValidationFailed': ValidationFailed,
+    'fmt': Format(),
+    'sec': sec,
+    'now': now,
+    'dec': dec,
+    'Counter': Counter,
+    'validate': validate,
+}

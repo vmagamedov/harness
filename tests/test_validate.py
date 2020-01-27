@@ -187,3 +187,25 @@ def test_any_in(message_type, any_type, duration_type, timestamp_type):
         any_2 = any_type()
         any_2.Pack(timestamp_type(seconds=42))
         validate(message_type(field=any_2))
+
+
+def test_nested(message_type):
+    """
+    message Inner {
+        string value = 1 [(validate.rules).string.const = "valid"];
+    }
+    Inner field = 1;
+    """
+    validate(message_type(field=dict(value="valid")))
+    with pytest.raises(ValidationFailed, match="value not equal to 'valid'"):
+        validate(message_type(field=dict(value="invalid")))
+
+
+def test_nested_skip(message_type):
+    """
+    message Inner {
+        string value = 1 [(validate.rules).string.const = "valid"];
+    }
+    Inner field = 1 [(validate.rules).message.skip = true];
+    """
+    validate(message_type(field=dict(value="invalid")))
