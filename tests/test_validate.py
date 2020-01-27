@@ -116,3 +116,17 @@ def test_duration_lte(message_type, duration_type):
     validate(message_type(value=duration_type(seconds=60)))
     with pytest.raises(ValidationFailed, match='value is not lesser than or equal to 60s'):
         validate(message_type(value=duration_type(seconds=60, nanos=1)))
+
+
+def test_enum_defined_only(message_type):
+    """
+    enum Foo {
+        A = 0;
+        B = 1;
+    }
+    Foo value = 1 [(validate.rules).enum.defined_only = true];
+    """
+    validate(message_type())
+    validate(message_type(value=1))
+    with pytest.raises(ValidationFailed, match='value is not defined'):
+        validate(message_type(value=2))

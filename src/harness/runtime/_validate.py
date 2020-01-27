@@ -80,9 +80,10 @@ def err_gen(buf, message):
 
 class FieldVisitor(ABC):
 
-    def __init__(self, buf: Buffer, field_name: str) -> None:
+    def __init__(self, buf: Buffer, field: FieldDescriptor) -> None:
         self.buf = buf
-        self.field_name = field_name
+        self.field = field
+        self.field_name = field.name
 
     @property
     @abstractmethod
@@ -352,6 +353,17 @@ class Bytes(CommonString, ConstMixin, InMixin, SizableMixin, FieldVisitor):
         self.buf.add(f'fmt.check_ipv6(p.{self.field_name})')
 
 
+class EnumRules(ConstMixin, InMixin, FieldVisitor):
+    rule_descriptor = validate_pb2.EnumRules.DESCRIPTOR
+
+    def visit_defined_only(self, _):
+        ids = [e.number for e in self.field.enum_type.values]
+        ids_repr = '{{' + ', '.join(map(repr, ids)) + '}}'
+        self.buf.add(f'if p.{self.field_name} not in {ids_repr}:')
+        with self.buf.indent():
+            err_gen(self.buf, f'{self.field_name} is not defined')
+
+
 class MessageMixin:
     buf: Buffer
     field_name: str
@@ -440,6 +452,7 @@ TYPES = {r.rule_descriptor.full_name: r for r in [
     Bool,
     String,
     Bytes,
+    EnumRules,
     DurationRules,
     TimestampRules,
 ]}
@@ -458,7 +471,7 @@ def field_gen(buf, field):
             if oneof_type:
                 rule_value = getattr(opt_value, oneof_type)
                 generator = TYPES[rule_value.DESCRIPTOR.full_name]
-                generator(buf, field.name).dispatch(rule_value)
+                generator(buf, field).dispatch(rule_value)
 
 
 def file_gen(message):
