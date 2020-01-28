@@ -1,3 +1,4 @@
+import sys
 import hashlib
 import tempfile
 from enum import Enum
@@ -20,6 +21,7 @@ from google.protobuf.message_factory import GetMessages
 from ..net_pb2 import Socket
 from ..wire_pb2 import HarnessService, HarnessWire
 from ..runtime._utils import load_config
+from ..runtime._validate import validate, ValidationError
 
 
 class Protocol(Enum):
@@ -547,19 +549,20 @@ def get_configuration_info(config: Message) -> Optional[ConfigurationInfo]:
     for _, opt in config.DESCRIPTOR.GetOptions().ListFields():
         if isinstance(opt, HarnessService):
             service_name = opt.name
-            repository = opt.repository
-            if opt.resources is not None:
-                if opt.resources.requests is not None:
-                    requests = Resource(
-                        cpu=opt.resources.requests.cpu or None,
-                        memory=opt.resources.requests.memory or None,
-                    )
-                if opt.resources.limits is not None:
-                    limits = Resource(
-                        cpu=opt.resources.limits.cpu or None,
-                        memory=opt.resources.limits.memory or None,
-                    )
-            break
+            if opt.container:
+                repository = opt.container.repository
+                if opt.container.resources is not None:
+                    if opt.container.resources.requests is not None:
+                        requests = Resource(
+                            cpu=opt.container.resources.requests.cpu or None,
+                            memory=opt.container.resources.requests.memory or None,
+                        )
+                    if opt.container.resources.limits is not None:
+                        limits = Resource(
+                            cpu=opt.container.resources.limits.cpu or None,
+                            memory=opt.container.resources.limits.memory or None,
+                        )
+                break
     else:
         return
 
@@ -660,7 +663,11 @@ def kube_gen(args):
     config_cls = message_classes[config_full_name]
     config = config_cls()
     ParseDict(config_data, config)
-    # TODO: validate config
+    try:
+        validate(config)
+    except ValidationError as err:
+        print(f'config validation failed: {err}', file=sys.stderr)
+        return -1
 
     config_info = get_configuration_info(config)
     ctx = Context(

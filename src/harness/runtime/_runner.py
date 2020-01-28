@@ -8,6 +8,7 @@ from grpclib.utils import graceful_exit
 from google.protobuf.json_format import ParseDict
 
 from ._utils import load_config
+from ._validate import validate
 
 
 _CT = TypeVar('_CT')
@@ -105,6 +106,7 @@ class Runner(Generic[_CT, _WI, _WO]):
         config_data = load_config(config_content, merge_content, patch_content)
         config = self._config_type()
         ParseDict(config_data, config)
+        validate(config)
 
         asyncio.run(self._wrapper(main_func, config))
         return 0

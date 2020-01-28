@@ -1,3 +1,4 @@
+import sys
 import argparse
 
 
@@ -11,6 +12,6 @@ def main():
 
     args = parser.parse_args()
     if 'func' in args:
-        args.func(args)
+        sys.exit(args.func(args) or 0)
     else:
         parser.print_help()
