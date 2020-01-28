@@ -1,8 +1,10 @@
 import re
+import ipaddress
 from abc import ABC, abstractmethod
 from typing import Union, List
 from decimal import Decimal
 from collections import Counter
+from email.headerregistry import AddressHeader
 
 from grpclib.plugin.main import Buffer
 from google.protobuf.message import Message
@@ -18,21 +20,53 @@ class ValidationError(ValueError):
 
 
 class Format:
+    # Taken from Django 3.0.2: django.core.validators.URLValidator
+    _host_re = re.compile(
+        r'('
+        # hostname
+        r'[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?'
+        # domain
+        r'(?:\.(?!-)[a-z0-9-]{1,63}(?<!-))*'
+        # tld
+        r'\.(?!-)(?:[a-z-]{2,63})(?<!-)\.?'
+        # special
+        r'|localhost)',
+        re.IGNORECASE,
+    )
 
     def check_email(self, field_name, value: str):
-        raise NotImplementedError('Not implemented')
+        result = {}
+        AddressHeader.parse(value, result)
+        defects = result['defects']
+        if defects:
+            errors = '\n'.join(f' - {str(defect)}' for defect in defects)
+            raise ValidationError(f'{field_name} contains invalid email address:\n{errors}')
+
+        groups = result['groups']
+        if len(groups) > 1 or len(groups[0].addresses) > 1:
+            raise ValidationError(f'{field_name} contains more than one email address')
 
     def check_hostname(self, field_name, value: str):
-        raise NotImplementedError('Not implemented')
+        if self._host_re.match(value) is None:
+            raise ValidationError(f'{field_name} contains invalid hostname')
 
     def check_ip(self, field_name, value: Union[str, bytes]):
-        raise NotImplementedError('Not implemented')
+        try:
+            ipaddress.ip_address(value)
+        except ValueError:
+            raise ValidationError(f'{field_name} contains invalid IP address') from None
 
     def check_ipv4(self, field_name, value: Union[str, bytes]):
-        raise NotImplementedError('Not implemented')
+        try:
+            ipaddress.IPv4Address(value)
+        except ValueError:
+            raise ValidationError(f'{field_name} contains invalid IPv4 address') from None
 
     def check_ipv6(self, field_name, value: Union[str, bytes]):
-        raise NotImplementedError('Not implemented')
+        try:
+            ipaddress.IPv6Address(value)
+        except ValueError:
+            raise ValidationError(f'{field_name} contains invalid IPv6 address') from None
 
     def check_uri(self, field_name, value: str):
         raise NotImplementedError('Not implemented')
@@ -296,31 +330,31 @@ class StringRules(CommonStringRules, ConstRulesMixin, InRulesMixin, SizableRules
             err_gen(self.buf, f'{self.proto_name()} does not match pattern {value}')
 
     def visit_email(self, _):
-        self.buf.add(f'fmt.check_email({self.field_value()})')
+        self.buf.add(f'fmt.check_email({self.proto_name()!r}, {self.field_value()})')
 
     def visit_hostname(self, _):
-        self.buf.add(f'fmt.check_hostname({self.field_value()})')
+        self.buf.add(f'fmt.check_hostname({self.proto_name()!r}, {self.field_value()})')
 
     def visit_ip(self, _):
-        self.buf.add(f'fmt.check_ip({self.field_value()})')
+        self.buf.add(f'fmt.check_ip({self.proto_name()!r}, {self.field_value()})')
 
     def visit_ipv4(self, _):
-        self.buf.add(f'fmt.check_ipv4({self.field_value()})')
+        self.buf.add(f'fmt.check_ipv4({self.proto_name()!r}, {self.field_value()})')
 
     def visit_ipv6(self, _):
-        self.buf.add(f'fmt.check_ipv6({self.field_value()})')
+        self.buf.add(f'fmt.check_ipv6({self.proto_name()!r}, {self.field_value()})')
 
     def visit_uri(self, _):
-        self.buf.add(f'fmt.check_uri({self.field_value()})')
+        self.buf.add(f'fmt.check_uri({self.proto_name()!r}, {self.field_value()})')
 
     def visit_uri_ref(self, _):
-        self.buf.add(f'fmt.check_uri_ref({self.field_value()})')
+        self.buf.add(f'fmt.check_uri_ref({self.proto_name()!r}, {self.field_value()})')
 
     def visit_address(self, _):
-        self.buf.add(f'fmt.check_address({self.field_value()})')
+        self.buf.add(f'fmt.check_address({self.proto_name()!r}, {self.field_value()})')
 
     def visit_uuid(self, _):
-        self.buf.add(f'fmt.check_uuid({self.field_value()})')
+        self.buf.add(f'fmt.check_uuid({self.proto_name()!r}, {self.field_value()})')
 
 
 class BytesRules(CommonStringRules, ConstRulesMixin, InRulesMixin, SizableRulesMixin, FieldRules):
@@ -337,13 +371,13 @@ class BytesRules(CommonStringRules, ConstRulesMixin, InRulesMixin, SizableRulesM
                 err_gen(self.buf, f'{self.proto_name()} does not match pattern {value_bytes!r}')
 
     def visit_ip(self, _):
-        self.buf.add(f'fmt.check_ip({self.field_value()})')
+        self.buf.add(f'fmt.check_ip({self.proto_name()!r}, {self.field_value()})')
 
     def visit_ipv4(self, _):
-        self.buf.add(f'fmt.check_ipv4({self.field_value()})')
+        self.buf.add(f'fmt.check_ipv4({self.proto_name()!r}, {self.field_value()})')
 
     def visit_ipv6(self, _):
-        self.buf.add(f'fmt.check_ipv6({self.field_value()})')
+        self.buf.add(f'fmt.check_ipv6({self.proto_name()!r}, {self.field_value()})')
 
 
 class EnumRules(ConstRulesMixin, InRulesMixin, FieldRules):

@@ -1,4 +1,5 @@
 import tempfile
+from ipaddress import ip_address
 
 import pytest
 from google.protobuf.message_factory import GetMessages
@@ -244,3 +245,97 @@ def test_message_required(message_type):
     validate(message_type(field=dict(value='test')))
     with pytest.raises(ValidationError, match="field is required"):
         validate(message_type())
+
+
+def test_email(message_type):
+    """
+    string field = 1 [(validate.rules).string.email = true];
+    """
+    validate(message_type(field="admin@example.com"))
+    validate(message_type(field="Jean-Luc Picard <jean-luc.pickard@starfleet.milkyway>"))
+    with pytest.raises(ValidationError, match='field contains invalid email address:\n - add-spec local part with no domain'):
+        validate(message_type(field="example.com"))
+    with pytest.raises(ValidationError, match='field contains more than one email address'):
+        validate(message_type(field="foo@example.com, bar@example.com"))
+
+
+def test_hostname(message_type):
+    """
+    string field = 1 [(validate.rules).string.hostname = true];
+    """
+    validate(message_type(field="example.com"))
+    validate(message_type(field="Example.com"))
+    with pytest.raises(ValidationError, match='field contains invalid hostname'):
+        validate(message_type(field="-example.com"))
+
+
+def test_string_ip(message_type):
+    """
+    string field = 1 [(validate.rules).string.ip = true];
+    """
+    validate(message_type(field="0.0.0.0"))
+    validate(message_type(field="127.0.0.1"))
+    validate(message_type(field="::1"))
+    validate(message_type(field="2001:0db8:85a3:0000:0000:8a2e:0370:7334"))
+    with pytest.raises(ValidationError, match='field contains invalid IP address'):
+        validate(message_type(field="0.0.0"))
+
+
+def test_string_ipv4(message_type):
+    """
+    string field = 1 [(validate.rules).string.ipv4 = true];
+    """
+    validate(message_type(field="0.0.0.0"))
+    validate(message_type(field="127.0.0.1"))
+    with pytest.raises(ValidationError, match='field contains invalid IPv4 address'):
+        validate(message_type(field="0.0.0"))
+    with pytest.raises(ValidationError, match='field contains invalid IPv4 address'):
+        validate(message_type(field="2001:0db8:85a3:0000:0000:8a2e:0370:7334"))
+
+
+def test_string_ipv6(message_type):
+    """
+    string field = 1 [(validate.rules).string.ipv6 = true];
+    """
+    validate(message_type(field="::1"))
+    validate(message_type(field="2001:0db8:85a3:0000:0000:8a2e:0370:7334"))
+    with pytest.raises(ValidationError, match='field contains invalid IPv6 address'):
+        validate(message_type(field="2001:0db8:85a3:0000:0000:8a2e:0370:733."))
+    with pytest.raises(ValidationError, match='field contains invalid IPv6 address'):
+        validate(message_type(field="127.0.0.1"))
+
+
+def test_bytes_ip(message_type):
+    """
+    bytes field = 1 [(validate.rules).bytes.ip = true];
+    """
+    validate(message_type(field=ip_address("0.0.0.0").packed))
+    validate(message_type(field=ip_address("127.0.0.1").packed))
+    validate(message_type(field=ip_address("::1").packed))
+    validate(message_type(field=ip_address("2001:0db8:85a3:0000:0000:8a2e:0370:7334").packed))
+    with pytest.raises(ValidationError, match='field contains invalid IP address'):
+        validate(message_type(field=ip_address("0.0.0.0").packed[:-1]))
+
+
+def test_bytes_ipv4(message_type):
+    """
+    bytes field = 1 [(validate.rules).bytes.ipv4 = true];
+    """
+    validate(message_type(field=ip_address("0.0.0.0").packed))
+    validate(message_type(field=ip_address("127.0.0.1").packed))
+    with pytest.raises(ValidationError, match='field contains invalid IPv4 address'):
+        validate(message_type(field=b'deadbeef'))
+    with pytest.raises(ValidationError, match='field contains invalid IPv4 address'):
+        validate(message_type(field=ip_address("2001:0db8:85a3:0000:0000:8a2e:0370:7334").packed))
+
+
+def test_bytes_ipv6(message_type):
+    """
+    bytes field = 1 [(validate.rules).bytes.ipv6 = true];
+    """
+    validate(message_type(field=ip_address("::1").packed))
+    validate(message_type(field=ip_address("2001:0db8:85a3:0000:0000:8a2e:0370:7334").packed))
+    with pytest.raises(ValidationError, match='field contains invalid IPv6 address'):
+        validate(message_type(field=b'deadbeef'))
+    with pytest.raises(ValidationError, match='field contains invalid IPv6 address'):
+        validate(message_type(field=ip_address("127.0.0.1").packed))
