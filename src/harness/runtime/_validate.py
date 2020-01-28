@@ -13,7 +13,7 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from validate import validate_pb2
 
 
-class ValidationFailed(ValueError):
+class ValidationError(ValueError):
     pass
 
 
@@ -72,21 +72,14 @@ def err_gen(buf, message, **ctx):
             '{}={}'.format(key, val) for key, val in ctx.items()
         )
         message_repr += f'.format({ctx_items})'
-    buf.add(f'raise ValidationFailed({message_repr})')
+    buf.add(f'raise {ValidationError.__name__}({message_repr})')
 
 
-class FieldVisitor(ABC):
-
-    def __init__(self, buf: Buffer, field: FieldDescriptor, code_path: List[str], proto_path: List[str]) -> None:
-        self.buf = buf
-        self.field = field
-        self.code_path = code_path
-        self.proto_path = proto_path
-
-    @property
-    @abstractmethod
-    def rule_descriptor(self) -> Descriptor:
-        pass
+class FieldRulesBase:
+    buf: Buffer
+    field: FieldDescriptor
+    code_path: List[str]
+    proto_path: List[str]
 
     def field_value(self):
         return '.'.join(self.code_path)
@@ -99,6 +92,20 @@ class FieldVisitor(ABC):
 
     def rule_value_repr(self, value):
         return repr(value)
+
+
+class FieldRules(FieldRulesBase, ABC):
+
+    def __init__(self, buf: Buffer, field: FieldDescriptor, code_path: List[str], proto_path: List[str]) -> None:
+        self.buf = buf
+        self.field = field
+        self.code_path = code_path
+        self.proto_path = proto_path
+
+    @property
+    @abstractmethod
+    def rule_descriptor(self) -> Descriptor:
+        pass
 
     def dispatch(self, rules):
         for field in self.rule_descriptor.fields:
@@ -117,9 +124,7 @@ class FieldVisitor(ABC):
             visit_fn(rule_value)
 
 
-class ConstMixin:
-    buf: Buffer
-    field_name: str
+class ConstRulesMixin(FieldRulesBase):
 
     def visit_const(self, value):
         self.buf.add(f'if {self.field_value()} != {self.rule_value(value)}:')
@@ -127,9 +132,7 @@ class ConstMixin:
             err_gen(self.buf, f'{self.proto_name()} not equal to {self.rule_value_repr(value)}')
 
 
-class InMixin:
-    buf: Buffer
-    field_name: str
+class InRulesMixin(FieldRulesBase):
 
     def _set(self, value):
         return '{{' + ', '.join([self.rule_value(i) for i in value]) + '}}'
@@ -152,9 +155,7 @@ class InMixin:
             err_gen(self.buf, f'{self.proto_name()} in {value_set_repr}')
 
 
-class ComparatorMixin:
-    buf: Buffer
-    field_name: str
+class ComparatorRulesMixin(FieldRulesBase):
 
     def visit_lt(self, value):
         self.buf.add(f'if not {self.field_value()} < {self.rule_value(value)}:')
@@ -177,9 +178,7 @@ class ComparatorMixin:
             err_gen(self.buf, f'{self.proto_name()} is not greater than or equal to {self.rule_value_repr(value)}')
 
 
-class SizableMixin:
-    buf: Buffer
-    field_name: str
+class SizableRulesMixin(FieldRulesBase):
 
     def visit_len(self, value):
         self.buf.add(f'if len({self.field_value()}) != {value}:')
@@ -198,61 +197,59 @@ class SizableMixin:
             err_gen(self.buf, f'{self.proto_name()} length is more than {value}')
 
 
-class Float(ConstMixin, InMixin, ComparatorMixin, FieldVisitor):
+class FloatRules(ConstRulesMixin, InRulesMixin, ComparatorRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.FloatRules.DESCRIPTOR
 
 
-class Double(ConstMixin, InMixin, ComparatorMixin, FieldVisitor):
+class DoubleRules(ConstRulesMixin, InRulesMixin, ComparatorRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.DoubleRules.DESCRIPTOR
 
 
-class Int32(ConstMixin, InMixin, ComparatorMixin, FieldVisitor):
+class Int32Rules(ConstRulesMixin, InRulesMixin, ComparatorRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.Int32Rules.DESCRIPTOR
 
 
-class Int64(ConstMixin, InMixin, ComparatorMixin, FieldVisitor):
+class Int64Rules(ConstRulesMixin, InRulesMixin, ComparatorRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.Int64Rules.DESCRIPTOR
 
 
-class UInt32(ConstMixin, InMixin, ComparatorMixin, FieldVisitor):
+class UInt32Rules(ConstRulesMixin, InRulesMixin, ComparatorRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.UInt32Rules.DESCRIPTOR
 
 
-class UInt64(ConstMixin, InMixin, ComparatorMixin, FieldVisitor):
+class UInt64Rules(ConstRulesMixin, InRulesMixin, ComparatorRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.UInt64Rules.DESCRIPTOR
 
 
-class SInt32(ConstMixin, InMixin, ComparatorMixin, FieldVisitor):
+class SInt32Rules(ConstRulesMixin, InRulesMixin, ComparatorRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.SInt32Rules.DESCRIPTOR
 
 
-class SInt64(ConstMixin, InMixin, ComparatorMixin, FieldVisitor):
+class SInt64Rules(ConstRulesMixin, InRulesMixin, ComparatorRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.SInt64Rules.DESCRIPTOR
 
 
-class Fixed32(ConstMixin, InMixin, ComparatorMixin, FieldVisitor):
+class Fixed32Rules(ConstRulesMixin, InRulesMixin, ComparatorRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.Fixed32Rules.DESCRIPTOR
 
 
-class Fixed64(ConstMixin, InMixin, ComparatorMixin, FieldVisitor):
+class Fixed64Rules(ConstRulesMixin, InRulesMixin, ComparatorRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.Fixed64Rules.DESCRIPTOR
 
 
-class SFixed32(ConstMixin, InMixin, ComparatorMixin, FieldVisitor):
+class SFixed32Rules(ConstRulesMixin, InRulesMixin, ComparatorRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.SFixed32Rules.DESCRIPTOR
 
 
-class SFixed64(ConstMixin, InMixin, ComparatorMixin, FieldVisitor):
+class SFixed64Rules(ConstRulesMixin, InRulesMixin, ComparatorRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.SFixed64Rules.DESCRIPTOR
 
 
-class Bool(ConstMixin, FieldVisitor):
+class BoolRules(ConstRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.BoolRules.DESCRIPTOR
 
 
-class CommonString:
-    buf: Buffer
-    field_name: str
+class CommonStringRules(FieldRulesBase):
 
     def visit_prefix(self, value):
         self.buf.add(f'if not {self.field_value()}.startswith({value}):')
@@ -275,7 +272,7 @@ class CommonString:
             err_gen(self.buf, f'{self.proto_name()} contains {value}')
 
 
-class String(CommonString, ConstMixin, InMixin, SizableMixin, FieldVisitor):
+class StringRules(CommonStringRules, ConstRulesMixin, InRulesMixin, SizableRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.StringRules.DESCRIPTOR
 
     def visit_len_bytes(self, value):
@@ -326,7 +323,7 @@ class String(CommonString, ConstMixin, InMixin, SizableMixin, FieldVisitor):
         self.buf.add(f'fmt.check_uuid({self.field_value()})')
 
 
-class Bytes(CommonString, ConstMixin, InMixin, SizableMixin, FieldVisitor):
+class BytesRules(CommonStringRules, ConstRulesMixin, InRulesMixin, SizableRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.BytesRules.DESCRIPTOR
 
     def visit_pattern(self, value):
@@ -349,7 +346,7 @@ class Bytes(CommonString, ConstMixin, InMixin, SizableMixin, FieldVisitor):
         self.buf.add(f'fmt.check_ipv6({self.field_value()})')
 
 
-class EnumRules(ConstMixin, InMixin, FieldVisitor):
+class EnumRules(ConstRulesMixin, InRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.EnumRules.DESCRIPTOR
 
     def visit_defined_only(self, _):
@@ -360,7 +357,7 @@ class EnumRules(ConstMixin, InMixin, FieldVisitor):
             err_gen(self.buf, f'{self.proto_name()} is not defined')
 
 
-class RepeatedRules(FieldVisitor):
+class RepeatedRules(FieldRules):
     rule_descriptor = validate_pb2.RepeatedRules.DESCRIPTOR
 
     def visit_min_items(self, value: int):
@@ -386,7 +383,7 @@ class RepeatedRules(FieldVisitor):
             dispatch_field(self.buf, self.field, ['item'], proto_path, value)
 
 
-class MapRules(FieldVisitor):
+class MapRules(FieldRules):
     rule_descriptor = validate_pb2.MapRules.DESCRIPTOR
 
     def visit_min_pairs(self, value: int):
@@ -417,18 +414,17 @@ class MapRules(FieldVisitor):
             dispatch_field(self.buf, self.field, ['value'], proto_path, value)
 
 
-class MessageMixin:
-    buf: Buffer
-    field_name: str
+class MessageRulesMixin(FieldRulesBase):
 
     def visit_required(self, _):
-        has_field = '.'.join(self.path + ['HasField'])
-        self.buf.add(f'if not {has_field}("{self.field_name}"):')
+        container = '.'.join(self.code_path[:-1])
+        field_name = self.code_path[-1]
+        self.buf.add(f'if not {container}.HasField({field_name!r}):')
         with self.buf.indent():
             err_gen(self.buf, f'{self.proto_name()} is required')
 
 
-class MessageRules(MessageMixin, FieldVisitor):
+class MessageRules(MessageRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.MessageRules.DESCRIPTOR
 
     def visit_skip(self, _):
@@ -436,7 +432,7 @@ class MessageRules(MessageMixin, FieldVisitor):
         pass
 
 
-class AnyRules(MessageMixin, InMixin, FieldVisitor):
+class AnyRules(MessageRulesMixin, InRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.AnyRules.DESCRIPTOR
 
     def field_value(self):
@@ -454,7 +450,7 @@ class AnyRules(MessageMixin, InMixin, FieldVisitor):
             err_gen(self.buf, f'{self.proto_name()} not in {value_set_repr}')
 
 
-class TimeCoerce:
+class TimeFormatMixin(FieldRulesBase):
 
     def field_value(self):
         return f'sec({super().field_value()})'
@@ -466,20 +462,24 @@ class TimeCoerce:
         return value.ToJsonString()
 
 
-class DurationRules(TimeCoerce, MessageMixin, ConstMixin, ComparatorMixin, InMixin, FieldVisitor):
+class DurationRules(TimeFormatMixin, MessageRulesMixin, ConstRulesMixin, ComparatorRulesMixin, InRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.DurationRules.DESCRIPTOR
 
 
-class TimestampRules(TimeCoerce, MessageMixin, ConstMixin, ComparatorMixin, FieldVisitor):
+class TimestampRules(TimeFormatMixin, MessageRulesMixin, ConstRulesMixin, ComparatorRulesMixin, FieldRules):
     rule_descriptor = validate_pb2.TimestampRules.DESCRIPTOR
 
     lt_now: bool
     gt_now: bool
 
     def visit_lt_now(self, _):
+        # this rule is used only in conjunction with "within" rule, and handled
+        # in visit_within method
         pass
 
     def visit_gt_now(self, _):
+        # this rule is used only in conjunction with "within" rule, and handled
+        # in visit_within method
         pass
 
     def visit_within(self, value):
@@ -508,22 +508,22 @@ class TimestampRules(TimeCoerce, MessageMixin, ConstMixin, ComparatorMixin, Fiel
         super().dispatch(rules)
 
 
-TYPES = {r.rule_descriptor.full_name: r for r in [
-    Float,
-    Double,
-    Int32,
-    Int64,
-    UInt32,
-    UInt64,
-    SInt32,
-    SInt64,
-    Fixed32,
-    Fixed64,
-    SFixed32,
-    SFixed64,
-    Bool,
-    String,
-    Bytes,
+FIELD_RULE_TYPES = {r.rule_descriptor.full_name: r for r in [
+    FloatRules,
+    DoubleRules,
+    Int32Rules,
+    Int64Rules,
+    UInt32Rules,
+    UInt64Rules,
+    SInt32Rules,
+    SInt64Rules,
+    Fixed32Rules,
+    Fixed64Rules,
+    SFixed32Rules,
+    SFixed64Rules,
+    BoolRules,
+    StringRules,
+    BytesRules,
     EnumRules,
     RepeatedRules,
     MapRules,
@@ -536,14 +536,11 @@ TYPES = {r.rule_descriptor.full_name: r for r in [
 def dispatch_field(buf, field, code_path, proto_path, opt_value):
     if opt_value.HasField('message'):
         assert field.message_type
-        if opt_value.message.skip:
-            return
-        else:
-            MessageRules(buf, field.name).dispatch(opt_value.message)
+        MessageRules(buf, field, code_path, proto_path).dispatch(opt_value.message)
     oneof_type = opt_value.WhichOneof('type')
     if oneof_type:
         rule_value = getattr(opt_value, oneof_type)
-        generator = TYPES[rule_value.DESCRIPTOR.full_name]
+        generator = FIELD_RULE_TYPES[rule_value.DESCRIPTOR.full_name]
         generator(buf, field, code_path, proto_path).dispatch(rule_value)
 
 
@@ -552,6 +549,7 @@ def field_gen(buf, field, code_path, proto_path):
         if opt.full_name == "validate.rules":
             dispatch_field(buf, field, code_path, proto_path, opt_value)
             if opt_value.HasField('message'):
+                assert field.message_type
                 if opt_value.message.skip:
                     return
 
@@ -573,7 +571,7 @@ def field_gen(buf, field, code_path, proto_path):
 def file_gen(message):
     buf = Buffer()
     buf.add('def _validate(p):')
-    initial_size = len(buf._lines)
+    pos = len(buf._lines)
     with buf.indent():
         for opt, opt_value in message.DESCRIPTOR.GetOptions().ListFields():
             if opt.full_name == "validate.disabled" and opt_value:
@@ -585,7 +583,10 @@ def file_gen(message):
                 ctrl = 'elif' if i else 'if'
                 buf.add(f"{ctrl} __{oneof.name} == '{field.name}':")
                 with buf.indent():
+                    inner_pos = len(buf._lines)
                     field_gen(buf, field, ['p', field.name], [field.name])
+                    if len(buf._lines) == inner_pos:
+                        buf.add('pass')
             for opt, opt_value in oneof.GetOptions().ListFields():
                 if opt.name == 'required' and opt_value:
                     buf.add(f"else:")
@@ -594,9 +595,13 @@ def file_gen(message):
         for field in message.DESCRIPTOR.fields:
             if not field.containing_oneof:
                 field_gen(buf, field, ['p', field.name], [field.name])
-        if len(buf._lines) == initial_size:
+        if len(buf._lines) == pos:
             buf.add('pass')
     return buf.content()
+
+
+def _validate_disabled(message: Message):
+    pass
 
 
 _validators = {}
@@ -606,20 +611,23 @@ def validate(message: Message):
     key = message.DESCRIPTOR.full_name
     func = _validators.get(key, None)
     if func is None:
-        locals_ = {}
         source = file_gen(message)
-        exec(source, CTX, locals_)
-        func = _validators[key] = locals_['_validate']
+        if source is not None:
+            locals_ = {}
+            exec(source, CTX, locals_)
+            func = _validators[key] = locals_['_validate']
+        else:
+            func = _validators[key] = _validate_disabled
     return func(message)
 
 
 CTX = {
     're': re,
-    'ValidationFailed': ValidationFailed,
+    ValidationError.__name__: ValidationError,
     'fmt': Format(),
     'sec': sec,
     'now': now,
     'dec': dec,
     'Counter': Counter,
-    'validate': validate,
+    validate.__name__: validate,
 }

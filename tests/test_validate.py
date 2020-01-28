@@ -1,12 +1,10 @@
 import tempfile
 
 import pytest
-from google.protobuf import any_pb2
-from google.protobuf import struct_pb2
 from google.protobuf.message_factory import GetMessages
 
 from harness.cli.kube import load
-from harness.runtime._validate import validate, ValidationFailed
+from harness.runtime._validate import validate, ValidationError
 
 
 _counter = 1
@@ -63,12 +61,37 @@ def any_type(message_types):
     return message_types['google.protobuf.Any']
 
 
+def test_disabled(message_type):
+    """
+    message Inner {
+        option (validate.disabled) = true;
+        string value = 1 [(validate.rules).string.const = "valid"];
+    }
+    Inner field = 1;
+    """
+    validate(message_type(field=dict(value="invalid")))
+
+
+def test_oneof_required(message_type):
+    """
+    oneof type {
+        option (validate.required) = true;
+        string foo = 1;
+        int32 bar = 2;
+    }
+    """
+    validate(message_type(foo="test"))
+    validate(message_type(bar=42))
+    with pytest.raises(ValidationError, match='Oneof type is required'):
+        validate(message_type())
+
+
 def test_float_const(message_type):
     """
     float value = 1 [(validate.rules).float.const = 4.2];
     """
     validate(message_type(value=4.2))
-    with pytest.raises(ValidationFailed, match='value not equal to'):
+    with pytest.raises(ValidationError, match='value not equal to'):
         validate(message_type(value=2.4))
 
 
@@ -79,7 +102,7 @@ def test_timestamp_lt(message_type, timestamp_type):
     ];
     """
     validate(message_type(value=timestamp_type(seconds=999)))
-    with pytest.raises(ValidationFailed, match='is not lesser than'):
+    with pytest.raises(ValidationError, match='is not lesser than'):
         validate(message_type(value=timestamp_type(seconds=1000)))
 
 
@@ -93,10 +116,10 @@ def test_timestamp_within(message_type, timestamp_type):
     value.GetCurrentTime()
     validate(message_type(value=value))
     valid_seconds = value.seconds
-    with pytest.raises(ValidationFailed, match='value is not within 60s from now'):
+    with pytest.raises(ValidationError, match='value is not within 60s from now'):
         value.seconds = valid_seconds - 100
         validate(message_type(value=value))
-    with pytest.raises(ValidationFailed, match='value is not within 60s from now'):
+    with pytest.raises(ValidationError, match='value is not within 60s from now'):
         value.seconds = valid_seconds - 100
         validate(message_type(value=value))
     value.seconds = valid_seconds
@@ -111,7 +134,7 @@ def test_duration_in(message_type, duration_type):
     ];
     """
     validate(message_type(value=duration_type(seconds=60)))
-    with pytest.raises(ValidationFailed, match='value not in {60s, 30s}'):
+    with pytest.raises(ValidationError, match='value not in {60s, 30s}'):
         validate(message_type(value=duration_type(seconds=120)))
 
 
@@ -122,7 +145,7 @@ def test_duration_lte(message_type, duration_type):
     ];
     """
     validate(message_type(value=duration_type(seconds=60)))
-    with pytest.raises(ValidationFailed, match='value is not lesser than or equal to 60s'):
+    with pytest.raises(ValidationError, match='value is not lesser than or equal to 60s'):
         validate(message_type(value=duration_type(seconds=60, nanos=1)))
 
 
@@ -136,7 +159,7 @@ def test_enum_defined_only(message_type):
     """
     validate(message_type())
     validate(message_type(value=1))
-    with pytest.raises(ValidationFailed, match='value is not defined'):
+    with pytest.raises(ValidationError, match='value is not defined'):
         validate(message_type(value=2))
 
 
@@ -145,7 +168,7 @@ def test_repeated_unique(message_type):
     repeated int32 value = 1 [(validate.rules).repeated.unique = true];
     """
     validate(message_type(value=[1, 2, 3]))
-    with pytest.raises(ValidationFailed, match='value must contain unique items; repeated items: \\[2, 3\\]'):
+    with pytest.raises(ValidationError, match='value must contain unique items; repeated items: \\[2, 3\\]'):
         validate(message_type(value=[1, 2, 3, 2, 4, 3, 5]))
 
 
@@ -154,7 +177,7 @@ def test_repeated_items(message_type):
     repeated int32 field = 1 [(validate.rules).repeated.items.int32.lt = 5];
     """
     validate(message_type(field=[1, 2, 3, 4]))
-    with pytest.raises(ValidationFailed, match='field\\[\\] is not lesser than 5'):
+    with pytest.raises(ValidationError, match='field\\[\\] is not lesser than 5'):
         validate(message_type(field=[1, 2, 3, 4, 5]))
 
 
@@ -163,7 +186,7 @@ def test_map_key(message_type):
     map<string, int32> field = 1 [(validate.rules).map.keys.string.min_len = 3];
     """
     validate(message_type(field={'test': 42}))
-    with pytest.raises(ValidationFailed, match='field<key> length is less than 3'):
+    with pytest.raises(ValidationError, match='field<key> length is less than 3'):
         validate(message_type(field={'t': 42}))
 
 
@@ -172,7 +195,7 @@ def test_map_values(message_type):
     map<string, int32> field = 1 [(validate.rules).map.values.int32.const = 42];
     """
     validate(message_type(field={'test': 42}))
-    with pytest.raises(ValidationFailed, match='field<value> not equal to 42'):
+    with pytest.raises(ValidationError, match='field<value> not equal to 42'):
         validate(message_type(field={'test': 43}))
 
 
@@ -183,7 +206,7 @@ def test_any_in(message_type, any_type, duration_type, timestamp_type):
     any_1 = any_type()
     any_1.Pack(duration_type(seconds=42))
     validate(message_type(field=any_1))
-    with pytest.raises(ValidationFailed, match='field.type_url not in'):
+    with pytest.raises(ValidationError, match='field.type_url not in'):
         any_2 = any_type()
         any_2.Pack(timestamp_type(seconds=42))
         validate(message_type(field=any_2))
@@ -197,11 +220,11 @@ def test_nested(message_type):
     Inner field = 1;
     """
     validate(message_type(field=dict(value="valid")))
-    with pytest.raises(ValidationFailed, match="value not equal to 'valid'"):
+    with pytest.raises(ValidationError, match="value not equal to 'valid'"):
         validate(message_type(field=dict(value="invalid")))
 
 
-def test_nested_skip(message_type):
+def test_message_skip(message_type):
     """
     message Inner {
         string value = 1 [(validate.rules).string.const = "valid"];
@@ -209,3 +232,15 @@ def test_nested_skip(message_type):
     Inner field = 1 [(validate.rules).message.skip = true];
     """
     validate(message_type(field=dict(value="invalid")))
+
+
+def test_message_required(message_type):
+    """
+    message Inner {
+        string value = 1;
+    }
+    Inner field = 1 [(validate.rules).message.required = true];
+    """
+    validate(message_type(field=dict(value='test')))
+    with pytest.raises(ValidationError, match="field is required"):
+        validate(message_type())
