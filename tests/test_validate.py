@@ -339,3 +339,46 @@ def test_bytes_ipv6(message_type):
         validate(message_type(field=b'deadbeef'))
     with pytest.raises(ValidationError, match='field contains invalid IPv6 address'):
         validate(message_type(field=ip_address("127.0.0.1").packed))
+
+
+def test_address(message_type):
+    """
+    string field = 1 [(validate.rules).string.address = true];
+    """
+    validate(message_type(field="::1"))
+    validate(message_type(field="127.0.0.1"))
+    validate(message_type(field="Example.com"))
+    with pytest.raises(ValidationError, match='field contains invalid address'):
+        validate(message_type(field="invalid"))
+
+
+def test_uri(message_type):
+    """
+    string field = 1 [(validate.rules).string.uri = true];
+    """
+    validate(message_type(field="http://google.com"))
+    validate(message_type(field="http://127.0.0.1/page.html#fragment"))
+    with pytest.raises(ValidationError, match='field contains invalid URI'):
+        validate(message_type(field="/local/path"))
+
+
+def test_uri_ref(message_type):
+    """
+    string field = 1 [(validate.rules).string.uri_ref = true];
+    """
+    validate(message_type(field="http://google.com"))
+    validate(message_type(field="/local/path"))
+    with pytest.raises(ValidationError, match='field contains invalid URI-reference'):
+        validate(message_type(field="\\invalid\\path"))
+
+
+def test_uuid(message_type):
+    """
+    string field = 1 [(validate.rules).string.uuid = true];
+    """
+    validate(message_type(field="adbf3fd4-6a41-41a8-b5c1-df09adc3a9b3"))
+    validate(message_type(field="ADBF3FD4-6A41-41A8-B5C1-DF09ADC3A9B3"))
+    with pytest.raises(ValidationError, match='field contains invalid UUID'):
+        validate(message_type(field="adbf3fd46a4141a8b5c1df09adc3a9b3"))
+    with pytest.raises(ValidationError, match='field contains invalid UUID'):
+        validate(message_type(field="adbf3fd4-6a41-41a8-b5c1-df09adc3a9b3-ext"))

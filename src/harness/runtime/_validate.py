@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from typing import Union, List
 from decimal import Decimal
 from collections import Counter
+from urllib.parse import urlparse
 from email.headerregistry import AddressHeader
 
 from grpclib.plugin.main import Buffer
@@ -20,8 +21,12 @@ class ValidationError(ValueError):
 
 
 class Format:
-    # Taken from Django 3.0.2: django.core.validators.URLValidator
-    _host_re = re.compile(
+    # Based on Django 3.0.2: django.core.validators.URLValidator
+    _scheme = r'^(?:[a-z0-9\.\-\+]*)://'
+    _user = r'(?:[^\s:@/]+(?::[^\s:@/]*)?@)?'
+    _ipv4 = r'(?:25[0-5]|2[0-4]\d|[0-1]?\d?\d)(?:\.(?:25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}'
+    _ipv6 = r'\[[0-9a-f:\.]+\]'  # (simple regex, validated later)
+    _host = (
         r'('
         # hostname
         r'[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?'
@@ -30,7 +35,24 @@ class Format:
         # tld
         r'\.(?!-)(?:[a-z-]{2,63})(?<!-)\.?'
         # special
-        r'|localhost)',
+        r'|localhost)'
+    )
+    _addr = r'(?:' + _ipv4 + '|' + _ipv6 + '|' + _host + ')'
+    _port = r'(?::\d{2,5})?'
+    _resource = r'(?:[/?#][^\s]*)?'
+    _uri = _scheme + _user + _addr + _port + _resource
+    _uri_ref = r'(?:' + _scheme + _user + _addr + _port + ')?' + _resource
+
+    _host_re = re.compile('^' + _host + '$', re.IGNORECASE)
+    _uri_re = re.compile('^' + _uri + '$', re.IGNORECASE)
+    _uri_ref_re = re.compile('^' + _uri_ref + '$', re.IGNORECASE)
+
+    _uuid_re = re.compile(
+        '^[0-9a-f]{8}'
+        '-[0-9a-f]{4}'
+        '-[0-9a-f]{4}'
+        '-[0-9a-f]{4}'
+        '-[0-9a-f]{12}$',
         re.IGNORECASE,
     )
 
@@ -69,16 +91,33 @@ class Format:
             raise ValidationError(f'{field_name} contains invalid IPv6 address') from None
 
     def check_uri(self, field_name, value: str):
-        raise NotImplementedError('Not implemented')
+        if not self._uri_re.match(value):
+            raise ValidationError(f'{field_name} contains invalid URI')
+        url = urlparse(value)
+        assert url.hostname, url
+        self.check_address(field_name, url.hostname)
 
     def check_uri_ref(self, field_name, value: str):
-        raise NotImplementedError('Not implemented')
+        if not self._uri_ref_re.match(value):
+            raise ValidationError(f'{field_name} contains invalid URI-reference')
+        url = urlparse(value)
+        if url.hostname:
+            self.check_address(field_name, url.hostname)
 
     def check_address(self, field_name, value: str):
-        raise NotImplementedError('Not implemented')
+        if self._host_re.match(value) is None:
+            try:
+                ipaddress.ip_address(value)
+                return
+            except ValueError:
+                pass
+        else:
+            return
+        raise ValidationError(f'{field_name} contains invalid address')
 
     def check_uuid(self, field_name, value: str):
-        raise NotImplementedError('Not implemented')
+        if self._uuid_re.match(value) is None:
+            raise ValidationError(f'{field_name} contains invalid UUID') from None
 
 
 def dec(value: str):
