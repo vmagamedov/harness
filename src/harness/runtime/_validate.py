@@ -642,14 +642,14 @@ def field_gen(buf, field, code_path, proto_path):
 
 
 def file_gen(message):
+    for opt, opt_value in message.DESCRIPTOR.GetOptions().ListFields():
+        if opt.full_name == "validate.disabled" and opt_value:
+            return
+
     buf = Buffer()
     buf.add('def _validate(p):')
     pos = len(buf._lines)
     with buf.indent():
-        for opt, opt_value in message.DESCRIPTOR.GetOptions().ListFields():
-            if opt.full_name == "validate.disabled" and opt_value:
-                buf.add('return')
-                return
         for oneof in message.DESCRIPTOR.oneofs:
             buf.add(f"__{oneof.name} = p.WhichOneof('{oneof.name}')")
             for i, field in enumerate(oneof.fields):
