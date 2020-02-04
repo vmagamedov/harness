@@ -1,3 +1,11 @@
+"""
+    aiomonitor
+    ==========
+
+    Wires for the aiomonitor_ project.
+
+    .. _aiomonitor: https://github.com/aio-libs/aiomonitor
+"""
 import asyncio
 
 from .. import net_pb2

@@ -1,3 +1,11 @@
+"""
+    grpclib
+    =======
+
+    Wires for the grpclib_ project.
+
+    .. _grpclib: https://github.com/vmagamedov/grpclib
+"""
 from typing import TYPE_CHECKING, List, Any, NewType, Union
 from contextvars import ContextVar
 

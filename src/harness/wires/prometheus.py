@@ -1,3 +1,11 @@
+"""
+    prometheus
+    ==========
+
+    Wires for the prometheus_client_ project.
+
+    .. _prometheus_client: https://github.com/prometheus/client_python
+"""
 from .. import http_pb2
 
 from .base import Wire, WaitMixin

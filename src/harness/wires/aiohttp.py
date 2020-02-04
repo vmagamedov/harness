@@ -1,5 +1,14 @@
+"""
+    aiohttp
+    =======
+
+    Wires for the aiohttp_ project.
+
+    .. _aiohttp: https://github.com/aio-libs/aiohttp
+"""
 from http import HTTPStatus
-from typing import TYPE_CHECKING, Callable, Awaitable, List, Dict
+from typing import TYPE_CHECKING, Callable, Awaitable, List, Dict, Optional
+from logging import Logger
 
 from aiohttp.web_runner import AppRunner, TCPSite
 from aiohttp.web_request import Request
@@ -89,11 +98,23 @@ async def _opentracing_middleware(
 
 
 class ServerWire(WaitMixin, Wire):
+    """
+    Output wire to start HTTP server and serve aiohttp application.
+    """
     _runner = None
     _site = None
     _site_factory = None
 
-    def __init__(self, app: 'Application', *, access_log=None):
+    def __init__(
+        self, app: 'Application', *, access_log: Optional[Logger] = None,
+    ) -> None:
+        """
+        :Configurable by: ``harness.http.Server`` from :doc:`/http.proto`
+
+        :param app: configured :py:class:`aiohttp:aiohttp.web.Application`
+            to run
+        :param access_log: enable access logs by providing a logger instance
+        """
         self._app = app
         self._access_log = access_log
 

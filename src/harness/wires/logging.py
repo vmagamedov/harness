@@ -1,3 +1,10 @@
+"""
+    logging
+    =======
+
+    Wires for the standard ``logging`` library.
+
+"""
 import logging
 
 from .. import logging_pb2

@@ -1,3 +1,11 @@
+"""
+    apscheduler
+    ===========
+
+    Wires for the apscheduler_ project.
+
+    .. _apscheduler: https://github.com/agronholm/apscheduler
+"""
 from typing import TYPE_CHECKING
 
 from .. import redis_pb2
