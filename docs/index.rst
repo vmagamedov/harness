@@ -2,7 +2,9 @@
   :hidden:
 
   configuration
+  code-generation
   runtime
+  reference
 
 .. toctree::
   :hidden:
@@ -13,7 +15,7 @@
 Introduction
 ~~~~~~~~~~~~
 
-Harness is a language-agnostic meta-framework for building a serverless-style
+Harness is a language-neutral meta-framework for building a serverless-style
 services:
 
   - it lets you glue together other frameworks, libraries and your own code to
@@ -21,7 +23,7 @@ services:
   - serverless means that Harness ships with a :doc:`runtime <runtime>`, which
     you can use to run your services
   - you can use Harness to generate deploy configuration for your services
-  - to make all this happen, Harness uses a language-agnostic self-describing
+  - to make all this happen, Harness uses a language-neutral self-describing
     :doc:`configuration format <configuration>`
 
 Motivation
