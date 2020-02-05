@@ -6,7 +6,8 @@ Protocols
 
 .. toctree::
 
-  http.proto
+  harness/net
+  harness/http
 
 Python
 ~~~~~~

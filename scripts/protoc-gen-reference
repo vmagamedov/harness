@@ -1,0 +1,123 @@
+#!/usr/bin/env python3
+import os
+import sys
+from io import StringIO
+from typing import Optional, List
+from dataclasses import dataclass
+
+from google.protobuf.descriptor_pb2 import FieldDescriptorProto
+from google.protobuf.compiler.plugin_pb2 import CodeGeneratorRequest
+from google.protobuf.compiler.plugin_pb2 import CodeGeneratorResponse
+
+
+@dataclass
+class Field:
+    name: str
+    type: Optional[str]
+    repeated: bool = False
+    comment: Optional[str] = None
+
+
+@dataclass
+class Message:
+    name: str
+    full_name: str
+    fields: List[Field]
+    comment: Optional[str] = None
+
+
+@dataclass
+class Module:
+    input_name: str
+    output_name: str
+    messages: List[Message]
+
+
+SCALARS = {
+    FieldDescriptorProto.TYPE_STRING: 'string',
+    FieldDescriptorProto.TYPE_UINT32: 'uint32',
+}
+
+
+def main():
+    with os.fdopen(sys.stdin.fileno(), 'rb') as inp:
+        request = CodeGeneratorRequest.FromString(inp.read())
+
+    modules = {}
+    for pf in request.proto_file:
+        if not pf.name.startswith('harness/'):
+            continue
+
+        messages = []
+        for mt in pf.message_type:
+            fields = []
+            for f in mt.field:
+                if f.type_name:
+                    type_ = f.type_name[1:]
+                else:
+                    type_ = SCALARS.get(f.type, 'unknown')
+                fields.append(Field(
+                    f.name,
+                    type_,
+                    repeated=f.label == FieldDescriptorProto.LABEL_REPEATED,
+                ))
+            messages.append(Message(
+                name=mt.name,
+                full_name=f'{pf.package}.{mt.name}',
+                fields=fields,
+            ))
+
+        if not pf.source_code_info:
+            continue
+
+        for loc in pf.source_code_info.location:
+            if loc.leading_comments:
+                if len(loc.path) == 2:
+                    p1, i1 = loc.path
+                    if p1 == 4:
+                        messages[i1].comment = loc.leading_comments
+                elif len(loc.path) == 4:
+                    p1, i1, p2, i2 = loc.path
+                    if p1 == 4 and p2 == 2:
+                        messages[i1].fields[i2].comment = loc.leading_comments
+
+        output_name = pf.name.replace('.proto', '.rst')
+        modules[pf.name] = Module(
+            input_name=pf.name,
+            output_name=output_name,
+            messages=messages,
+        )
+
+    response = CodeGeneratorResponse()
+    for name in request.file_to_generate:
+        buf = StringIO()
+        module = modules[name]
+        title = module.input_name
+        print(title, file=buf)
+        print('=' * len(title), file=buf)
+        print('', file=buf)
+        for message in module.messages:
+            print(f'.. proto:message:: {message.full_name}', file=buf)
+            print('', file=buf)
+            if message.comment:
+                print(f'  {message.comment.strip()}', file=buf)
+                print('', file=buf)
+            for field in message.fields:
+                name_type = 'repeated ' if field.repeated else ''
+                name_type += f'{field.type} {field.name}'
+                print(f'  .. proto:field:: {name_type}', file=buf)
+                print('', file=buf)
+                if field.comment:
+                    print(f'    {field.comment.strip()}', file=buf)
+                    print('', file=buf)
+
+        module_rst = response.file.add()
+        module_rst.name = module.output_name
+        module_rst.content = buf.getvalue()
+
+    with os.fdopen(sys.stdout.fileno(), 'wb') as out:
+        out.write(response.SerializeToString())
+
+
+if __name__ == '__main__':
+    main()

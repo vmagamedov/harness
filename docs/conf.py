@@ -5,6 +5,7 @@ author = 'Vladimir Magamedov'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
+    'sphinx_ext_protobuf',
 ]
 
 autoclass_content = 'both'

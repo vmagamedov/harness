@@ -33,6 +33,14 @@ release: proto
 	rm -rf harness.egg-info
 	python setup.py sdist
 
+reference:
+	protoc --plugin=scripts/protoc-gen-reference -Isrc --reference_out=docs \
+	  src/harness/net.proto \
+	  src/harness/http.proto
+
+docs: reference
+	PYTHONPATH=docs sphinx-build docs build
+
 run_web:
 	@PYTHONPATH=example/web:example/grpc python example/web/entrypoint.py example/web/kirk.yaml
 

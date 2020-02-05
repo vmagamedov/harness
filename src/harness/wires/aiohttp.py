@@ -109,7 +109,7 @@ class ServerWire(WaitMixin, Wire):
         self, app: 'Application', *, access_log: Optional[Logger] = None,
     ) -> None:
         """
-        :Configurable by: ``harness.http.Server`` from :doc:`/http.proto`
+        :Configurable by: :proto:message:`harness.http.Server`
 
         :param app: configured :py:class:`aiohttp:aiohttp.web.Application`
             to run
