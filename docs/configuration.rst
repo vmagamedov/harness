@@ -2,9 +2,8 @@ Configuration
 =============
 
 Harness uses `Protocol Buffers`_ as a language-neutral and extensible interface
-definition language to define configuration.
-
-Example:
+definition language to define configuration. Such configuration looks like
+this:
 
 .. code-block:: protobuf
 
@@ -28,5 +27,8 @@ Example:
           (harness.wire).output = "python/aiohttp:ServerWire"
       ];
   }
+
+Secrets
+~~~~~~~
 
 .. _Protocol Buffers: https://developers.google.com/protocol-buffers
