@@ -24,6 +24,18 @@ from ..runtime._utils import load_config
 from ..runtime._validate import validate, ValidationError
 
 
+@dataclass
+class Runtime:
+    entrypoint: List[str]
+
+
+RUNTIMES = {
+    'python': Runtime(
+        entrypoint=['python3', '/app/entrypoint.py'],
+    ),
+}
+
+
 class Protocol(Enum):
     TCP = HarnessWire.TCP
     HTTP = HarnessWire.HTTP
@@ -90,6 +102,8 @@ class Context(ConfigurationInfo):
     config: dict
     version: str
 
+    entrypoint: List[str]
+
     config_content: str
     config_version: str
     config_volume = 'config'
@@ -147,12 +161,7 @@ def gen_deployments(ctx: 'Context'):
     labels = ctx.labels()
     labels['app.kubernetes.io/version'] = ctx.version
 
-    command = [
-        'harness',
-        'run',
-        'svc',
-        '/etc/config/config.yaml',
-    ]
+    command = ctx.entrypoint + ['/etc/config/config.yaml']
     if ctx.secret_merge_content is not None:
         command.extend(['--merge', '/etc/config-merge/config.yaml'])
     if ctx.secret_patch_content is not None:
@@ -641,6 +650,8 @@ def kube_gen(args):
             secret_patch_version = None
             secret_patch_content = None
 
+    runtime = RUNTIMES[args.runtime]
+
     config_data = load_config(
         config_content, secret_merge_content, secret_patch_content,
     )
@@ -673,6 +684,7 @@ def kube_gen(args):
     ctx = Context(
         config=config,
         version=args.version,
+        entrypoint=runtime.entrypoint,
         config_content=config_content,
         config_version=config_version,
         secret_merge_content=secret_merge_content,
@@ -701,6 +713,7 @@ def add_commands(subparsers):
     kube_gen_parser = subparsers.add_parser('kube-gen')
     kube_gen_parser.add_argument('-I', '--proto-path', action='append')
     kube_gen_parser.add_argument('proto')
+    kube_gen_parser.add_argument('runtime', choices=frozenset(RUNTIMES.keys()))
     kube_gen_parser.add_argument('config', type=FileType('rb'))
     kube_gen_parser.add_argument('version')
     kube_gen_parser.add_argument('--instance', default=None)
