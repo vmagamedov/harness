@@ -7,15 +7,11 @@ from google.protobuf.compiler.plugin_pb2 import CodeGeneratorResponse
 from harness.wire_pb2 import HarnessWire, HarnessService
 
 from . import python
-from .types import Context, WireIn, WireOut
+from .types import Configuration, WireIn, WireOut
 
 
-LANGUAGES = {
-    'python': HarnessService.PYTHON,
-}
-
-RENDERER = {
-    HarnessService.PYTHON: python.render,
+RUNTIMES = {
+    'python': python.render,
 }
 
 
@@ -43,29 +39,19 @@ def process_file(proto_file, response, params):
             else:
                 continue
 
-    if 'language' in params:
-        params_language = params['language']
-        if params_language not in LANGUAGES:
-            raise ConfigurationError(f'Unknown language specified in the '
-                                     f'command-line: {params_language}')
-        else:
-            language = LANGUAGES[params_language]
-    else:
-        language = None
-        for _, option in config_message.options.ListFields():
-            if not isinstance(option, HarnessService):
-                continue
-            language = option.language
-        if not language:
-            raise ConfigurationError('Language is not specified')
+    if 'runtime' not in params:
+        raise ConfigurationError('Runtime parameter is not specified')
+    runtime = params['runtime']
+    if runtime not in RUNTIMES:
+        raise ConfigurationError(f'Unknown runtime: {runtime}')
+    render = RUNTIMES[runtime]
 
-    ctx = Context(
+    cfg = Configuration(
         proto_file=proto_file.name,
         inputs=inputs,
         outputs=outputs,
     )
-    renderer = RENDERER[language]
-    for file in renderer(ctx):
+    for file in render(cfg):
         gen_file = response.file.add()
         gen_file.name = file.name
         gen_file.content = file.content

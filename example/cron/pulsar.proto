@@ -8,7 +8,7 @@ import "harness/logging.proto";
 import "google/protobuf/empty.proto";
 
 message Configuration {
-    option (harness.service).language = PYTHON;
+    option (harness.service).name = "pulsar";
 
     harness.redis.Connection redis_job_store = 2 [(harness.wire).input = "harness.wires.apscheduler.RedisJobStoreWire"];
     harness.logging.Console console = 3 [(harness.wire).input = "harness.wires.logging.ConsoleWire"];

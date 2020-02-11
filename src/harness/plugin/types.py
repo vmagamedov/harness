@@ -15,7 +15,7 @@ class WireOut:
 
 
 @dataclass
-class Context:
+class Configuration:
     proto_file: str
     inputs: Collection[WireIn]
     outputs: Collection[WireOut]

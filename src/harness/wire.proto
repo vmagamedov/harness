@@ -36,10 +36,6 @@ extend google.protobuf.FieldOptions {
 }
 
 message HarnessService {
-    enum Language {
-        UNSET = 0;
-        PYTHON = 1;
-    }
     message Resource {
         optional string cpu = 1;
         optional string memory = 2;
@@ -53,8 +49,7 @@ message HarnessService {
         optional Resources resources = 2;
     }
     optional string name = 1;
-    optional Language language = 2;
-    optional Container container = 3;
+    optional Container container = 2;
 }
 
 extend google.protobuf.MessageOptions {

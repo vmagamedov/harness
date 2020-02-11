@@ -24,7 +24,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='pulsar',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0cpulsar.proto\x12\x06pulsar\x1a\x12harness/wire.proto\x1a\x13harness/redis.proto\x1a\x15harness/logging.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xa8\x02\n\rConfiguration\x12\x64\n\x0fredis_job_store\x18\x02 \x01(\x0b\x32\x19.harness.redis.ConnectionB0\x8a}-\n+harness.wires.apscheduler.RedisJobStoreWire\x12Q\n\x07\x63onsole\x18\x03 \x01(\x0b\x32\x18.harness.logging.ConsoleB&\x8a}#\n!harness.wires.logging.ConsoleWire\x12W\n\tscheduler\x18\x01 \x01(\x0b\x32\x16.google.protobuf.EmptyB,\x8a})\x12\'harness.wires.apscheduler.SchedulerWire:\x05\x8a}\x02\x10\x01\x62\x06proto3')
+  serialized_pb=_b('\n\x0cpulsar.proto\x12\x06pulsar\x1a\x12harness/wire.proto\x1a\x13harness/redis.proto\x1a\x15harness/logging.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xae\x02\n\rConfiguration\x12\x64\n\x0fredis_job_store\x18\x02 \x01(\x0b\x32\x19.harness.redis.ConnectionB0\x8a}-\n+harness.wires.apscheduler.RedisJobStoreWire\x12Q\n\x07\x63onsole\x18\x03 \x01(\x0b\x32\x18.harness.logging.ConsoleB&\x8a}#\n!harness.wires.logging.ConsoleWire\x12W\n\tscheduler\x18\x01 \x01(\x0b\x32\x16.google.protobuf.EmptyB,\x8a})\x12\'harness.wires.apscheduler.SchedulerWire:\x0b\x8a}\x08\n\x06pulsarb\x06proto3')
   ,
   dependencies=[harness_dot_wire__pb2.DESCRIPTOR,harness_dot_redis__pb2.DESCRIPTOR,harness_dot_logging__pb2.DESCRIPTOR,google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
@@ -65,14 +65,14 @@ _CONFIGURATION = _descriptor.Descriptor(
   nested_types=[],
   enum_types=[
   ],
-  serialized_options=_b('\212}\002\020\001'),
+  serialized_options=_b('\212}\010\n\006pulsar'),
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
   ],
   serialized_start=118,
-  serialized_end=414,
+  serialized_end=420,
 )
 
 _CONFIGURATION.fields_by_name['redis_job_store'].message_type = harness_dot_redis__pb2._CONNECTION

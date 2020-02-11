@@ -12,7 +12,7 @@ import "harness/tracing.proto";
 import "google/protobuf/empty.proto";
 
 message Configuration {
-    option (harness.service).language = PYTHON;
+    option (harness.service).name = "scotty";
 
     bool debug = 1;
 

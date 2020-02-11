@@ -23,10 +23,10 @@ proto: clean
 	cd src && $(GEN) harness/redis.proto
 	cd src && $(GEN) harness/tracing.proto
 	cd src && $(GEN) validate/validate.proto
-	cd example/web && $(GEN) --harness_out=. kirk.proto
-	cd example/grpc && $(GEN) --python_grpc_out=. --harness_out=. scotty.proto
-	cd example/cron && $(GEN) --harness_out=. pulsar.proto
-	cd example/complex && $(GEN) --harness_out=. spock/service.proto
+	cd example/web && $(GEN) --harness_out=runtime=python:. kirk.proto
+	cd example/grpc && $(GEN) --python_grpc_out=. --harness_out=runtime=python:. scotty.proto
+	cd example/cron && $(GEN) --harness_out=runtime=python:. pulsar.proto
+	cd example/complex && $(GEN) --harness_out=runtime=python:. spock/service.proto
 
 release: proto
 	./scripts/release_check.sh
@@ -51,4 +51,4 @@ run_cron:
 	@PYTHONPATH=example/cron python example/cron/entrypoint.py example/cron/pulsar.yaml
 
 gen_web:
-	harness kube-gen example/web/kirk.proto example/web/kirk.yaml example/web/kirk.secret.yaml v1 --namespace=platform --instance=ua | pygmentize -l yaml | less -r
+	harness kube-gen example/web/kirk.proto example/web/kirk.yaml v1 --namespace=platform --instance=ua | pygmentize -l yaml | less -r
