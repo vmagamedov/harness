@@ -28,7 +28,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'protoc-gen-python_harness=harness.plugin.main:main',
+            'protoc-gen-harness=harness.plugin.main:main',
             'harness=harness.cli.main:main',
         ],
         'harness.wires': [

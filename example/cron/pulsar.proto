@@ -8,7 +8,9 @@ import "harness/logging.proto";
 import "google/protobuf/empty.proto";
 
 message Configuration {
-    harness.redis.Connection redis_job_store = 2 [(harness.wire).input = "python/apscheduler:RedisJobStoreWire"];
-    harness.logging.Console console = 3 [(harness.wire).input = "python/logging:ConsoleWire"];
-    google.protobuf.Empty scheduler = 1 [(harness.wire).output = "python/apscheduler:SchedulerWire"];
+    option (harness.service).language = PYTHON;
+
+    harness.redis.Connection redis_job_store = 2 [(harness.wire).input = "harness.wires.apscheduler.RedisJobStoreWire"];
+    harness.logging.Console console = 3 [(harness.wire).input = "harness.wires.logging.ConsoleWire"];
+    google.protobuf.Empty scheduler = 1 [(harness.wire).output = "harness.wires.apscheduler.SchedulerWire"];
 }

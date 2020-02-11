@@ -1,6 +1,6 @@
-from .... import tracing_pb2
+from .. import tracing_pb2
 
-from ...base import Wire
+from .base import Wire
 
 
 class JaegerSpanExporterWire(Wire):

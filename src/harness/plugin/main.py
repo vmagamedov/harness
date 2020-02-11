@@ -1,47 +1,65 @@
 import os
 import sys
-from typing import Collection, List, Dict
-from dataclasses import dataclass
-
-from pkg_resources import iter_entry_points, EntryPoint
 
 from google.protobuf.compiler.plugin_pb2 import CodeGeneratorRequest
 from google.protobuf.compiler.plugin_pb2 import CodeGeneratorResponse
 
-from grpclib.plugin.main import Buffer
+from harness.wire_pb2 import HarnessWire, HarnessService
 
-from harness.wire_pb2 import HarnessWire
-
-
-ProtoFile = str
-MessageName = str
-FieldName = str
-WirePath = str
+from . import python
+from .types import Context, WireIn, WireOut
 
 
-@dataclass
-class WireContext:
-    field_name: FieldName
-    wire_path: WirePath
+RENDERER = {
+    HarnessService.PYTHON: python.render,
+}
 
 
-@dataclass
-class ConfigurationContext:
-    class_name: MessageName
-    wires_in_name: str
-    wires_out_name: str
-    inputs: Collection[WireContext]
-    outputs: Collection[WireContext]
+class ConfigurationError(ValueError):
+    pass
 
 
-@dataclass
-class ModuleContext:
-    proto_file: ProtoFile
-    adapter_imports: Collection[str]
-    main_module: str
-    pb2_module: str
-    wires_module: str
-    configurations: Collection[ConfigurationContext]
+def process_file(proto_file, response):
+    for config_message in proto_file.message_type:
+        if config_message.name == 'Configuration':
+            break
+    else:
+        raise ConfigurationError('Missing configuration message')
+
+    inputs = []
+    outputs = []
+    for field in config_message.field:
+        for _, option in field.options.ListFields():
+            if not isinstance(option, HarnessWire):
+                continue
+            if option.WhichOneof('type') == 'input':
+                inputs.append(WireIn(field.name, option.input))
+            elif option.WhichOneof('type') == 'output':
+                outputs.append(WireOut(field.name, option.output))
+            else:
+                continue
+
+    language = None
+    for _, option in config_message.options.ListFields():
+        if not isinstance(option, HarnessService):
+            continue
+        language = option.language
+
+    if not language:
+        raise ConfigurationError(
+            '(harness.service).language option is not specified',
+        )
+
+    ctx = Context(
+        proto_file=proto_file.name,
+        inputs=inputs,
+        outputs=outputs,
+    )
+    renderer = RENDERER[language]
+    for file in renderer(ctx):
+        gen_file = response.file.add()
+        gen_file.name = file.name
+        gen_file.content = file.content
 
 
 def main() -> None:
@@ -50,128 +68,10 @@ def main() -> None:
 
     files_to_generate = set(request.file_to_generate)
 
-    entrypoints: Dict[str, EntryPoint] = {
-        entry_point.name: entry_point
-        for entry_point in iter_entry_points(group='harness.wires', name=None)
-    }
-
     response = CodeGeneratorResponse()
     for pf in request.proto_file:
-        if pf.name not in files_to_generate:
-            continue
-
-        configurations = []
-        adapter_imports = set()
-        main_module = pf.name.replace('/', '.').replace('.proto', '')
-        pb2_module = pf.name.replace('/', '.').replace('.proto', '_pb2')
-        wires_module = pf.name.replace('/', '.').replace('.proto', '_wires')
-
-        for mt in pf.message_type:
-            inputs: List[WireContext] = []
-            outputs: List[WireContext] = []
-            for f in mt.field:
-                for _, opt in f.options.ListFields():
-                    if not isinstance(opt, HarnessWire):
-                        continue
-                    if opt.WhichOneof('type') == 'input':
-                        collection = inputs
-                        option_value = opt.input
-                    elif opt.WhichOneof('type') == 'output':
-                        collection = outputs
-                        option_value = opt.output
-                    else:
-                        continue
-                    assert f.type_name
-                    wire_ns, _, wire_name = option_value.partition(':')
-                    wire_module = entrypoints[wire_ns].module_name
-                    wire_path = f'{wire_module}.{wire_name}'
-                    collection.append(WireContext(
-                        field_name=f.name,
-                        wire_path=wire_path,
-                    ))
-                    adapter_imports.add(wire_module)
-            if inputs or outputs:
-                config_ctx = ConfigurationContext(
-                    class_name=mt.name,
-                    wires_in_name='WiresIn',
-                    wires_out_name='WiresOut',
-                    inputs=inputs,
-                    outputs=outputs,
-                )
-                configurations.append(config_ctx)
-        module_ctx = ModuleContext(
-            proto_file=pf.name,
-            adapter_imports=sorted(adapter_imports),
-            main_module=main_module,
-            pb2_module=pb2_module,
-            wires_module=wires_module,
-            configurations=configurations,
-        )
-        file = response.file.add()
-        file.name = pf.name.replace('.proto', '_wires.py')
-        file.content = render(module_ctx)
-
-        runner_file = response.file.add()
-        runner_file.name = 'entrypoint.py'
-        runner_file.content = render_entrypoint(module_ctx)
+        if pf.name in files_to_generate:
+            process_file(pf, response)
 
     with os.fdopen(sys.stdout.fileno(), 'wb') as out:
         out.write(response.SerializeToString())
-
-
-def render(ctx: ModuleContext) -> str:
-    buf = Buffer()
-    buf.add('# Generated by the Protocol Buffers compiler. DO NOT EDIT!')
-    buf.add('# source: {}', ctx.proto_file)
-    buf.add('# plugin: {}', __name__)
-    buf.add('from dataclasses import dataclass')
-    buf.add('')
-    for module_name in ctx.adapter_imports:
-        buf.add(f'import {module_name}')
-    buf.add('')
-    buf.add(f'import {ctx.pb2_module}')
-    buf.add('')
-    buf.add('')
-    for conf_ctx in ctx.configurations:
-        buf.add('@dataclass')
-        buf.add(f'class {conf_ctx.wires_in_name}:')
-        with buf.indent():
-            buf.add(f'config: {ctx.pb2_module}.Configuration')
-            for res_ctx in conf_ctx.inputs:
-                buf.add(f'{res_ctx.field_name}: {res_ctx.wire_path}')
-        buf.add('')
-        buf.add('')
-        buf.add('@dataclass')
-        buf.add(f'class {conf_ctx.wires_out_name}:')
-        with buf.indent():
-            if conf_ctx.outputs:
-                for res_ctx in conf_ctx.outputs:
-                    buf.add(f'{res_ctx.field_name}: {res_ctx.wire_path}')
-            else:
-                buf.add('pass')
-    return buf.content()
-
-
-def render_entrypoint(ctx: ModuleContext) -> str:
-    buf = Buffer()
-    buf.add('# Generated by the Protocol Buffers compiler. DO NOT EDIT!')
-    buf.add(f'# source: {ctx.proto_file}')
-    buf.add(f'# plugin: {__name__}')
-    buf.add('import sys')
-    buf.add('')
-    buf.add('from harness.runtime import Runner')
-    buf.add('')
-    buf.add(f'import {ctx.main_module}')
-    buf.add(f'import {ctx.pb2_module}')
-    buf.add(f'import {ctx.wires_module}')
-    buf.add('')
-    buf.add('runner = Runner(')
-    buf.add(f'    {ctx.pb2_module}.Configuration,')
-    buf.add(f'    {ctx.wires_module}.WiresIn,')
-    buf.add(f'    {ctx.wires_module}.WiresOut,')
-    buf.add(')')
-    buf.add('')
-    buf.add("if __name__ == '__main__':")
-    with buf.indent():
-        buf.add(f'sys.exit(runner.run({ctx.main_module}.main, sys.argv))')
-    return buf.content()

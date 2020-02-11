@@ -23,10 +23,10 @@ proto: clean
 	cd src && $(GEN) harness/redis.proto
 	cd src && $(GEN) harness/tracing.proto
 	cd src && $(GEN) validate/validate.proto
-	cd example/web && $(GEN) --python_harness_out=. kirk.proto
-	cd example/grpc && $(GEN) --python_grpc_out=. --python_harness_out=. scotty.proto
-	cd example/cron && $(GEN) --python_harness_out=. pulsar.proto
-	cd example/complex && $(GEN) --python_harness_out=. spock/service.proto
+	cd example/web && $(GEN) --harness_out=. kirk.proto
+	cd example/grpc && $(GEN) --python_grpc_out=. --harness_out=. scotty.proto
+	cd example/cron && $(GEN) --harness_out=. pulsar.proto
+	cd example/complex && $(GEN) --harness_out=. spock/service.proto
 
 release: proto
 	./scripts/release_check.sh
