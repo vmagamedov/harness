@@ -4,10 +4,9 @@ import sys
 from google.protobuf.compiler.plugin_pb2 import CodeGeneratorRequest
 from google.protobuf.compiler.plugin_pb2 import CodeGeneratorResponse
 
-from harness.wire_pb2 import HarnessWire, HarnessService
+from ..config import translate_descriptor_proto
 
 from . import python
-from .types import Configuration, WireIn, WireOut
 
 
 RUNTIMES = {
@@ -26,19 +25,6 @@ def process_file(proto_file, response, params):
     else:
         raise ConfigurationError('Missing configuration message')
 
-    inputs = []
-    outputs = []
-    for field in config_message.field:
-        for _, option in field.options.ListFields():
-            if not isinstance(option, HarnessWire):
-                continue
-            if option.WhichOneof('type') == 'input':
-                inputs.append(WireIn(field.name, option.input))
-            elif option.WhichOneof('type') == 'output':
-                outputs.append(WireOut(field.name, option.output))
-            else:
-                continue
-
     if 'runtime' not in params:
         raise ConfigurationError('Runtime parameter is not specified')
     runtime = params['runtime']
@@ -46,15 +32,11 @@ def process_file(proto_file, response, params):
         raise ConfigurationError(f'Unknown runtime: {runtime}')
     render = RUNTIMES[runtime]
 
-    cfg = Configuration(
-        proto_file=proto_file.name,
-        inputs=inputs,
-        outputs=outputs,
-    )
-    for file in render(cfg):
-        gen_file = response.file.add()
-        gen_file.name = file.name
-        gen_file.content = file.content
+    config_spec = translate_descriptor_proto(config_message)
+    for name, content in render(proto_file.name, config_spec):
+        f = response.file.add()
+        f.name = name
+        f.content = content
 
 
 def main() -> None:

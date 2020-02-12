@@ -3,6 +3,7 @@ syntax = "proto2";
 package harness;
 
 import "google/protobuf/descriptor.proto";
+import "validate/validate.proto";
 
 message HarnessWire {
     enum Visibility {
@@ -23,6 +24,8 @@ message HarnessWire {
         EXTERNAL = 3;
     }
     oneof type {
+        option (validate.required) = true;
+
         string input = 1;
         string output = 2;
     }

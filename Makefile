@@ -51,7 +51,7 @@ run_cron:
 	@PYTHONPATH=example/cron python example/cron/entrypoint.py example/cron/pulsar.yaml
 
 test-kube:
-	harness kube-gen example/web/kirk.proto python example/web/kirk.yaml v1 --namespace=platform --instance=ua | pygmentize -l yaml | less -r
+	harness kube-gen example/web/kirk.proto python example/web/kirk.yaml v1 --namespace=platform --instance=ua --base-domain=example.com | pygmentize -l yaml | less -r
 
 test-plugin:
 	protoc -Iexample/web -Isrc --python_out=example/web --harness_out=runtime=python:example/web example/web/kirk.proto

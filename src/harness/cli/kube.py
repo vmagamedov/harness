@@ -1,27 +1,22 @@
-import sys
 import hashlib
-import tempfile
-from enum import Enum
 from typing import List, Optional
 from base64 import b64encode
-from pathlib import Path
 from argparse import FileType
 from itertools import chain
-from contextlib import ExitStack, closing
-from dataclasses import dataclass, fields
+from contextlib import closing
+from dataclasses import dataclass
 
 import yaml
-import pkg_resources
-from grpc_tools import protoc
-from google.protobuf.message import Message
 from google.protobuf.json_format import ParseDict
-from google.protobuf.descriptor_pb2 import FileDescriptorSet
 from google.protobuf.message_factory import GetMessages
 
+from ..config import translate_descriptor, WireSpec
 from ..net_pb2 import Socket
-from ..wire_pb2 import HarnessService, HarnessWire
+from ..wire_pb2 import HarnessWire, HarnessService
 from ..runtime._utils import load_config
-from ..runtime._validate import validate, ValidationError
+from ..runtime._validate import validate
+
+from .utils import load_descriptor_set, get_configuration
 
 
 @dataclass
@@ -36,108 +31,139 @@ RUNTIMES = {
 }
 
 
-class Protocol(Enum):
-    TCP = HarnessWire.TCP
-    HTTP = HarnessWire.HTTP
-    GRPC = HarnessWire.GRPC
-
-    def k8s_name(self):
-        return 'TCP'
-
-    def istio_name(self, suffix):
-        return self.name.lower() + '-' + suffix
-
-    def istio_type(self):
-        return self.name
-
-
-class Visibility(Enum):
-    PRIVATE = HarnessWire.PRIVATE
-    HEADLESS = HarnessWire.HEADLESS
-    INTERNAL = HarnessWire.INTERNAL
-    PUBLIC = HarnessWire.PUBLIC
-
-
-class Accessibility(Enum):
-    LOCAL = HarnessWire.LOCAL
-    NAMESPACE = HarnessWire.NAMESPACE
-    CLUSTER = HarnessWire.CLUSTER
-    EXTERNAL = HarnessWire.EXTERNAL
+def _ver(content_bytes):
+    return hashlib.new('sha1', content_bytes).hexdigest()[:8]
 
 
 @dataclass
-class SocketValue:
+class Socket:
     host: str
     port: int
-    protocol: Protocol
+    _protocol: HarnessWire.Protocol
+
+    def is_tcp(self):
+        return self._protocol == HarnessWire.TCP
+
+    def is_http(self):
+        return self._protocol == HarnessWire.HTTP
+
+    def is_grpc(self):
+        return self._protocol == HarnessWire.GRPC
 
 
 @dataclass
-class Wire:
+class Input:
+    _wire: WireSpec
+    socket: Optional[Socket] = None
+
+    @property
+    def name(self):
+        return self._wire.name
+
+    def is_local(self):
+        return self._wire.value.access == HarnessWire.LOCAL
+
+    def is_namespace(self):
+        return self._wire.value.access == HarnessWire.NAMESPACE
+
+    def is_cluster(self):
+        return self._wire.value.access == HarnessWire.CLUSTER
+
+    def is_external(self):
+        return self._wire.value.access == HarnessWire.EXTERNAL
+
+
+@dataclass
+class Output:
+    _wire: WireSpec
+    socket: Optional[Socket] = None
+
+    @property
+    def name(self):
+        return self._wire.name
+
+    def is_internal(self):
+        return self._wire.value.visibility == HarnessWire.INTERNAL
+
+    def is_public(self):
+        return self._wire.value.visibility == HarnessWire.PUBLIC
+
+    def is_headless(self):
+        return self._wire.value.visibility == HarnessWire.HEADLESS
+
+
+@dataclass
+class HostPath:
     name: str
+    path: str
     type: str
-    visibility: Visibility
-    access: Accessibility
-    socket: Optional[SocketValue]
 
 
 @dataclass
-class Resource:
-    cpu: str
-    memory: str
+class Context:
+    _container: HarnessService.Container
 
-
-@dataclass
-class ConfigurationInfo:
     name: str
-    repository: str
-    requests: Optional[Resource]
-    limits: Optional[Resource]
-    inputs: List[Wire]
-    outputs: List[Wire]
-
-
-@dataclass
-class Context(ConfigurationInfo):
-    config: dict
-    version: str
-
+    inputs: List[Input]
+    outputs: List[Output]
+    host_paths: List[HostPath]
     entrypoint: List[str]
-
     config_content: str
-    config_version: str
-    config_volume = 'config'
+    config_hash: str
+    secret_merge_content: Optional[str]
+    secret_merge_hash: Optional[str]
+    secret_patch_content: Optional[str]
+    secret_patch_hash: Optional[str]
 
-    secret_merge_content: str
-    secret_merge_version: str
-    secret_merge_volume = 'config-merge'
-
-    secret_patch_content: str
-    secret_patch_version: str
-    secret_patch_volume = 'config-patch'
-
+    # pass-through
+    version: str
     instance: Optional[str]
     namespace: str
     base_domain: Optional[str]
 
+    # constants
+    config_volume = 'config'
+    secret_merge_volume = 'config-merge'
+    secret_patch_volume = 'config-patch'
+
+    @property
+    def repository(self):
+        return self._container.repository
+
+    def resources(self):
+        data = dict()
+        if self._container.resources.requests:
+            requests = data['requests'] = {}
+            if self._container.resources.requests.cpu:
+                requests['cpu'] = self._container.resources.requests.cpu
+            if self._container.resources.requests.memory:
+                requests['memory'] = self._container.resources.requests.memory
+        if self._container.resources.limits:
+            limits = data['limits'] = {}
+            if self._container.resources.limits.cpu:
+                limits['cpu'] = self._container.resources.limits.cpu
+            if self._container.resources.limits.memory:
+                limits['memory'] = self._container.resources.limits.memory
+        return data
+
     @property
     def config_name(self):
-        return f'config-{self.config_version}'
+        return f'config-{self.config_hash}'
 
     @property
     def secret_merge_name(self):
-        return f'config-merge-{self.secret_merge_version}'
+        return f'config-merge-{self.secret_merge_hash}'
 
     @property
     def secret_patch_name(self):
-        return f'config-patch-{self.secret_patch_version}'
+        return f'config-patch-{self.secret_patch_hash}'
 
-    def full_name(self, *parts: str):
-        if self.instance is None:
-            name = self.name
-        else:
-            name = f'{self.name}-{self.instance}'
-        return '-'.join((name,) + parts)
+    def full_name(self, *suffix: str):
+        parts = [self.name]
+        if self.instance is not None:
+            parts.append(self.instance)
+        parts.extend(suffix)
+        return '-'.join(parts)
 
     def labels(self):
         labels = {'app.kubernetes.io/name': self.name}
@@ -149,12 +175,150 @@ class Context(ConfigurationInfo):
     def public_domain(self):
         if self.base_domain is not None:
             if self.instance is None:
-                return f'{self.name}.{self.base_domain}'
+                sub_domain = self.name
             else:
-                return f'{self.name}-{self.instance}.{self.base_domain}'
+                sub_domain = f'{self.name}-{self.instance}'
+            return f'{sub_domain}.{self.base_domain}'
 
-    def wire_port_num(self, wire: Wire):
-        return getattr(self.config, wire.name).bind.port
+
+def get_socket(wire, message_classes, config):
+    if wire.type:
+        wire_type = message_classes[wire.type]
+        for field_desc in wire_type.DESCRIPTOR.fields:
+            if (
+                field_desc.message_type
+                and field_desc.message_type.full_name == 'harness.net.Socket'
+            ):
+                protocol = HarnessWire.TCP
+                for _, option in field_desc.GetOptions().ListFields():
+                    if isinstance(option, HarnessWire):
+                        protocol = option.protocol
+                wire_value = getattr(config, wire.name)
+                socket_value = getattr(wire_value, field_desc.name)
+                return Socket(
+                    host=socket_value.host,
+                    port=socket_value.port,
+                    _protocol=protocol,
+                )
+
+
+def get_context(
+    *,
+    proto_file,
+    proto_path,
+    runtime,
+    config_bytes,
+    secret_merge_bytes=None,
+    secret_patch_bytes=None,
+    passthrough=None,
+):
+    runtime = RUNTIMES[runtime]
+
+    descriptor_set = load_descriptor_set(proto_file, proto_path)
+    file_descriptor, = (f for f in descriptor_set.file
+                        if proto_file.endswith(f.name))
+
+    config_hash = _ver(config_bytes)
+    config_content = config_bytes.decode('utf-8')
+
+    if secret_merge_bytes is not None:
+        secret_merge_hash = _ver(secret_merge_bytes)
+        secret_merge_content = secret_merge_bytes.decode('utf-8')
+    else:
+        secret_merge_hash = None
+        secret_merge_content = None
+
+    if secret_patch_bytes is not None:
+        secret_patch_hash = _ver(secret_patch_bytes)
+        secret_patch_content = secret_patch_bytes.decode('utf-8')
+    else:
+        secret_patch_hash = None
+        secret_patch_content = None
+
+    message_classes = GetMessages(descriptor_set.file)
+
+    config_descriptor = get_configuration(file_descriptor)
+    if config_descriptor is None:
+        raise Exception(f'Configuration message not found in the {proto_file}')
+
+    config_data = load_config(
+        config_content, secret_merge_content, secret_patch_content,
+    )
+
+    config_full_name = '.'.join(filter(None, (
+        file_descriptor.package,
+        config_descriptor.name,
+    )))
+    config_cls = message_classes[config_full_name]
+    config = config_cls()
+    ParseDict(config_data, config)
+    validate(config)
+
+    config_spec = translate_descriptor(config_cls.DESCRIPTOR)
+
+    inputs = []
+    outputs = []
+    for wire in config_spec.wires:
+        wire_type = wire.value.WhichOneof('type')
+        if wire_type == 'input':
+            inputs.append(Input(
+                _wire=wire,
+                socket=get_socket(wire, message_classes, config),
+            ))
+        elif wire_type == 'output':
+            outputs.append(Output(
+                _wire=wire,
+                socket=get_socket(wire, message_classes, config),
+            ))
+
+    host_paths = []
+    for wire in config_spec.wires:
+        if wire.type == 'harness.logging.Syslog':
+            host_paths.append(HostPath(
+                name='syslog',
+                path='/dev/log',
+                type='Socket',
+            ))
+
+    assert config_spec.service.name
+    return Context(
+        name=config_spec.service.name,
+        inputs=inputs,
+        outputs=outputs,
+        _container=config_spec.service.container,
+        host_paths=host_paths,
+        entrypoint=runtime.entrypoint,
+        config_content=config_content,
+        config_hash=config_hash,
+        secret_merge_content=secret_merge_content,
+        secret_merge_hash=secret_merge_hash,
+        secret_patch_content=secret_patch_content,
+        secret_patch_hash=secret_patch_hash,
+        **(passthrough or {})
+    )
+
+
+def istio_type(socket: Socket):
+    if socket.is_tcp():
+        return 'TCP'
+    elif socket.is_http():
+        return 'HTTP'
+    elif socket.is_grpc():
+        return 'GRPC'
+    else:
+        return 'TCP'
+
+
+def istio_name(socket, suffix):
+    if socket.is_tcp():
+        name = 'tcp'
+    elif socket.is_http():
+        name = 'http'
+    elif socket.is_grpc():
+        name = 'grpc'
+    else:
+        name = 'tcp'
+    return name + '-' + suffix
 
 
 def gen_deployments(ctx: 'Context'):
@@ -191,36 +355,39 @@ def gen_deployments(ctx: 'Context'):
             mountPath='/etc/config-patch',
             name=ctx.secret_patch_volume,
         ))
+    for host_path in ctx.host_paths:
+        container['volumeMounts'].append(dict(
+            mountPath=host_path.path,
+            name=host_path.name,
+        ))
 
     if ctx.outputs:
         container_ports = container['ports'] = []
         for wire in ctx.outputs:
-            container_port = dict(
-                name=wire.socket.protocol.istio_name(wire.name),
-                containerPort=wire.socket.port,
-            )
-            protocol = wire.socket.protocol.k8s_name()
-            if protocol != 'TCP':
-                container_port['protocol'] = protocol
-            container_ports.append(container_port)
+            if wire.socket is not None:
+                container_port = dict(
+                    name=istio_name(wire.socket, wire.name),
+                    containerPort=wire.socket.port,
+                )
+                container_ports.append(container_port)
 
     for wire in ctx.outputs:
-        if wire.visibility not in {Visibility.PUBLIC, Visibility.INTERNAL}:
+        if not wire.is_public() and not wire.is_internal() or wire.socket is None:
             continue
-        if wire.socket.protocol is Protocol.HTTP:
+        if wire.socket.is_http():
             container['readinessProbe'] = dict(
                 httpGet=dict(
                     path='/health/ready',
-                    port=wire.socket.protocol.istio_name(wire.name),
+                    port=istio_name(wire.socket, wire.name),
                 ),
             )
             container['livenessProbe'] = dict(
                 httpGet=dict(
                     path='/health/live',
-                    port=wire.socket.protocol.istio_name(wire.name),
+                    port=istio_name(wire.socket, wire.name),
                 ),
             )
-        elif wire.socket.protocol is Protocol.GRPC:
+        elif wire.socket.is_grpc():
             container['readinessProbe'] = dict(
                 exec=dict(
                     command=[
@@ -231,23 +398,9 @@ def gen_deployments(ctx: 'Context'):
                 ),
             )
 
-    for wire in ctx.inputs:
-        if wire.type in {'.harness.logging.Syslog'}:
-            pass  # TODO: mount /dev/log volume
-
-    if ctx.requests is not None:
-        requests_dict = container.setdefault('resources', {})['requests'] = {}
-        if ctx.requests.cpu is not None:
-            requests_dict['cpu'] = ctx.requests.cpu
-        if ctx.requests.memory is not None:
-            requests_dict['memory'] = ctx.requests.memory
-
-    if ctx.limits is not None:
-        limits_dict = container.setdefault('resources', {})['limits'] = {}
-        if ctx.limits.cpu is not None:
-            limits_dict['cpu'] = ctx.limits.cpu
-        if ctx.limits.memory is not None:
-            limits_dict['memory'] = ctx.limits.memory
+    resources = ctx.resources()
+    if resources:
+        container['resources'] = resources
 
     volumes = [
         dict(
@@ -271,6 +424,14 @@ def gen_deployments(ctx: 'Context'):
                 name=ctx.secret_patch_name,
             ),
         ))
+    for host_path in ctx.host_paths:
+        volumes.append(dict(
+            name=host_path.name,
+            hostPath=dict(
+                path=host_path.path,
+                type=host_path.type,
+            ),
+        ))
 
     yield dict(
         apiVersion='apps/v1',
@@ -289,34 +450,30 @@ def gen_deployments(ctx: 'Context'):
                 ),
                 spec=dict(
                     containers=[container],
+                    volumes=volumes,
                 ),
             ),
-            volumes=volumes,
         ),
     )
 
 
 def gen_services(ctx: 'Context'):
-    def _k8s_svc_port(wire: Wire):
-        k8s_port = dict(
-            name=wire.socket.protocol.istio_name(wire.name),
-            port=wire.socket.port,
-            targetPort=wire.socket.protocol.istio_name(wire.name),
+    def port(value: Output):
+        return dict(
+            name=istio_name(value.socket, value.name),
+            port=value.socket.port,
+            targetPort=istio_name(value.socket, value.name),
         )
-        protocol = wire.socket.protocol.k8s_name()
-        if protocol != 'TCP':
-            k8s_port['protocol'] = protocol
-        return k8s_port
 
-    regular_wires = [
-        p for p in ctx.outputs
-        if p.visibility in {Visibility.INTERNAL, Visibility.PUBLIC}
+    regular_outputs = [
+        i for i in ctx.outputs
+        if (i.is_internal() or i.is_public()) and i.socket is not None
     ]
-    headless_wires = [
-        p for p in ctx.outputs if p.visibility is Visibility.HEADLESS
+    headless_outputs = [
+        i for i in ctx.outputs
+        if i.is_headless() and i.socket is not None
     ]
-
-    if regular_wires:
+    if regular_outputs:
         yield dict(
             apiVersion='v1',
             kind='Service',
@@ -325,11 +482,11 @@ def gen_services(ctx: 'Context'):
                 namespace=ctx.namespace,
             ),
             spec=dict(
-                ports=[_k8s_svc_port(w) for w in regular_wires],
+                ports=[port(i) for i in regular_outputs],
                 selector=ctx.labels(),
             ),
         )
-    if headless_wires:
+    if headless_outputs:
         yield dict(
             apiVersion='v1',
             kind='Service',
@@ -339,34 +496,47 @@ def gen_services(ctx: 'Context'):
             ),
             spec=dict(
                 clusterIP='None',
-                ports=[_k8s_svc_port(w) for w in headless_wires],
+                ports=[port(i) for i in headless_outputs],
                 selector=ctx.labels(),
             ),
         )
 
 
 def gen_virtualservices(ctx: 'Context'):
-    internal_wires = [
-        w for w in ctx.outputs if w.visibility is Visibility.INTERNAL
+    internal_outputs = [
+        i for i in ctx.outputs if i.is_internal() and i.socket is not None
     ]
-    public_wires = [
-        w for w in ctx.outputs if w.visibility is Visibility.PUBLIC
+    public_outputs = [
+        i for i in ctx.outputs if i.is_public() and i.socket is not None
     ]
-    if not internal_wires and not public_wires:
+    if not internal_outputs and not public_outputs:
         return
 
     hosts = []
-    if internal_wires:
+    if internal_outputs:
         hosts.append(ctx.full_name())
-    if public_wires and ctx.public_domain:
+    if public_outputs and ctx.public_domain:
         hosts.append(ctx.public_domain)
 
-    if public_wires:
-        gateways_mixin = dict(
-            gateways=[ctx.full_name(), 'mesh'],
-        )
-    else:
-        gateways_mixin = dict()
+    spec = dict(
+        hosts=hosts,
+        http=[
+            dict(
+                match=[dict(port=i.socket.port)],
+                route=[
+                    dict(
+                        destination=dict(
+                            host=ctx.full_name(),
+                            port=dict(number=i.socket.port),
+                        )
+                    )
+                ],
+            )
+            for i in chain(public_outputs, internal_outputs)
+        ],
+    )
+    if public_outputs:
+        spec['gateways'] = [ctx.full_name(), 'mesh']
 
     yield dict(
         apiVersion='networking.istio.io/v1alpha3',
@@ -375,31 +545,15 @@ def gen_virtualservices(ctx: 'Context'):
             name=ctx.full_name(),
             namespace=ctx.namespace,
         ),
-        spec=dict(
-            hosts=hosts,
-            http=[
-                dict(
-                    match=[dict(port=wire.socket.port)],
-                    route=[
-                        dict(
-                            destination=dict(
-                                host=ctx.full_name(),
-                                port=dict(number=wire.socket.port),
-                            )
-                        )
-                    ],
-                )
-                for wire in chain(public_wires, internal_wires)
-            ],
-            **gateways_mixin,
-        ),
+        spec=spec,
     )
 
 
 def gen_gateways(ctx: 'Context'):
-    outputs = [w for w in ctx.outputs if w.visibility is Visibility.PUBLIC]
-    if not outputs or not ctx.public_domain:
+    public_outputs = [out for out in ctx.outputs if out.is_public()]
+    if not public_outputs or not ctx.public_domain:
         return
+
     yield dict(
         apiVersion='networking.istio.io/v1alpha3',
         kind='Gateway',
@@ -412,12 +566,12 @@ def gen_gateways(ctx: 'Context'):
             servers=[
                 dict(
                     port=dict(
-                        number=wire.socket.port,
-                        protocol=wire.socket.protocol.istio_type(),
+                        number=out.socket.port,
+                        protocol=istio_type(out.socket),
                     ),
                     hosts=[ctx.public_domain],
                 )
-                for wire in outputs
+                for out in public_outputs
             ],
         ),
     )
@@ -425,16 +579,18 @@ def gen_gateways(ctx: 'Context'):
 
 def gen_sidecars(ctx: 'Context'):
     hosts = ['istio-system/*']
-    for wire in ctx.inputs:
-        if wire.access is Accessibility.NAMESPACE:
+    for inp in ctx.inputs:
+        if inp.socket is None:
+            continue
+        if inp.is_namespace():
             assert ctx.namespace
-            host = getattr(ctx.config, wire.name).address.host
+            host = inp.socket.host
             hosts.append(f'./{host}.{ctx.namespace}.svc.cluster.local')
-        elif wire.access is Accessibility.CLUSTER:
-            host = getattr(ctx.config, wire.name).address.host
+        elif inp.is_cluster():
+            host = inp.socket.host
             hosts.append(f'*/{host}')
-        elif wire.access is Accessibility.EXTERNAL:
-            host = getattr(ctx.config, wire.name).address.host
+        elif inp.is_external():
+            host = inp.socket.host
             hosts.append(f'./{host}')
         else:
             continue
@@ -457,22 +613,22 @@ def gen_sidecars(ctx: 'Context'):
 
 
 def gen_serviceentries(ctx: 'Context'):
-    for wire in ctx.inputs:
-        if wire.access is not Accessibility.EXTERNAL:
+    for inp in ctx.inputs:
+        if not inp.is_external():
             continue
         yield dict(
             apiVersion='networking.istio.io/v1alpha3',
             kind='ServiceEntry',
             metadata=dict(
-                name=ctx.full_name(wire.name),
+                name=ctx.full_name(inp.name),
                 namespace=ctx.namespace,
             ),
             spec=dict(
-                hosts=[getattr(ctx.config, wire.name).address.host],
+                hosts=[inp.socket.host],
                 location='MESH_EXTERNAL',
                 ports=[dict(
-                    number=getattr(ctx.config, wire.name).address.port,
-                    protocol=wire.socket.protocol.istio_type(),
+                    number=inp.socket.port,
+                    protocol=istio_type(inp.socket),
                 )],
             ),
         )
@@ -523,178 +679,38 @@ def gen_secrets(ctx: 'Context'):
         )
 
 
-def load(proto_file, proto_path=None):
-    wkt_protos = pkg_resources.resource_filename('grpc_tools', '_proto')
-    validate_protos = str(Path(
-        pkg_resources.resource_filename('validate', 'validate.proto'))
-        .parent.parent
-    )
-    harness_protos = str(Path(__file__).parent.parent.parent.absolute())
-    with tempfile.NamedTemporaryFile() as f:
-        args = [
-            'grpc_tools.protoc',
-            '--include_imports',
-            f'--proto_path={wkt_protos}',
-            f'--proto_path={validate_protos}',
-            f'--proto_path={harness_protos}',
-            f'--proto_path={Path(proto_file).parent}',
-            f'--descriptor_set_out={f.name}',
-        ]
-        if proto_path:
-            args.extend(f'--proto_path={p}' for p in proto_path)
-        args.append(proto_file)
-        result = protoc.main(args)
-        if result != 0:
-            raise Exception('Failed to call protoc')
-        content = f.read()
-    return FileDescriptorSet.FromString(content)
-
-
-CONFIG_NAME = 'Configuration'
-
-
-def get_configuration_info(config: Message) -> Optional[ConfigurationInfo]:
-    requests, limits = None, None
-    for _, opt in config.DESCRIPTOR.GetOptions().ListFields():
-        if isinstance(opt, HarnessService):
-            service_name = opt.name
-            if opt.container:
-                repository = opt.container.repository
-                if opt.container.resources is not None:
-                    if opt.container.resources.requests is not None:
-                        requests = Resource(
-                            cpu=opt.container.resources.requests.cpu or None,
-                            memory=opt.container.resources.requests.memory or None,
-                        )
-                    if opt.container.resources.limits is not None:
-                        limits = Resource(
-                            cpu=opt.container.resources.limits.cpu or None,
-                            memory=opt.container.resources.limits.memory or None,
-                        )
-                break
-    else:
-        return
-
-    inputs, outputs = [], []
-    for f in config.DESCRIPTOR.fields:
-        for _, opt in f.GetOptions().ListFields():
-            if not isinstance(opt, HarnessWire):
-                continue
-            socket_value = None
-            for ff in f.message_type.fields:
-                if ff.message_type is not None:
-                    protocol = None
-                    ff_options = ff.GetOptions()
-                    for _, ff_opt in ff_options.ListFields():
-                        if isinstance(ff_opt, HarnessWire):
-                            protocol = Protocol(ff_opt.protocol)
-                            break
-                    if protocol is None:
-                        continue
-                    assert (ff.message_type.full_name
-                            == Socket.DESCRIPTOR.full_name), ff
-                    ff_val = getattr(getattr(config, f.name), ff.name)
-                    socket_value = SocketValue(
-                        ff_val.host, ff_val.port, protocol,
-                    )
-            if socket_value is not None:
-                wire = Wire(
-                    f.name,
-                    f.message_type.full_name,
-                    Visibility(opt.visibility),
-                    Accessibility(opt.access),
-                    socket_value,
-                )
-                if opt.WhichOneof('type') == 'input':
-                    inputs.append(wire)
-                elif opt.WhichOneof('type') == 'output':
-                    outputs.append(wire)
-
-    return ConfigurationInfo(
-        service_name,
-        repository=repository,
-        requests=requests,
-        limits=limits,
-        inputs=inputs,
-        outputs=outputs,
-    )
-
-
-def _ver(content_bytes):
-    return hashlib.new('sha1', content_bytes).hexdigest()[:8]
-
-
 def kube_gen(args):
-    file_descriptor_set = load(args.proto, args.proto_path)
-    with ExitStack() as stack:
-        stack.enter_context(closing(args.config))
+    # configuration
+    with closing(args.config):
         config_bytes = args.config.read()
-        config_version = hashlib.new('sha1', config_bytes).hexdigest()[:8]
-        config_content = config_bytes.decode('utf-8')
 
-        if args.secret_merge is not None:
-            stack.enter_context(closing(args.secret_merge))
+    # merge
+    if args.secret_merge:
+        with closing(args.secret_merge):
             secret_merge_bytes = args.secret_merge.read()
-            secret_merge_version = _ver(secret_merge_bytes)
-            secret_merge_content = secret_merge_bytes.decode('utf-8')
-        else:
-            secret_merge_version = None
-            secret_merge_content = None
-
-        if args.secret_patch is not None:
-            stack.enter_context(closing(args.secret_patch))
-            secret_patch_bytes = args.secret_patch.read()
-            secret_patch_version = _ver(secret_patch_bytes)
-            secret_patch_content = secret_patch_bytes.decode('utf-8')
-        else:
-            secret_patch_version = None
-            secret_patch_content = None
-
-    runtime = RUNTIMES[args.runtime]
-
-    config_data = load_config(
-        config_content, secret_merge_content, secret_patch_content,
-    )
-
-    file_descriptor, = (f for f in file_descriptor_set.file
-                        if args.proto.endswith(f.name))
-    for message_type in file_descriptor.message_type:
-        if message_type.name == CONFIG_NAME:
-            configuration_descriptor = message_type
-            break
     else:
-        raise Exception(f'Configuration message not found in the {args.proto}')
+        secret_merge_bytes = None
 
-    message_classes = GetMessages(file_descriptor_set.file)
+    # patch
+    if args.secret_patch:
+        with closing(args.secret_patch):
+            secret_patch_bytes = args.secret_patch.read()
+    else:
+        secret_patch_bytes = None
 
-    config_full_name = '.'.join(filter(None, (
-        file_descriptor.package,
-        configuration_descriptor.name,
-    )))
-    config_cls = message_classes[config_full_name]
-    config = config_cls()
-    ParseDict(config_data, config)
-    try:
-        validate(config)
-    except ValidationError as err:
-        print(f'config validation failed: {err}', file=sys.stderr)
-        return -1
-
-    config_info = get_configuration_info(config)
-    ctx = Context(
-        config=config,
-        version=args.version,
-        entrypoint=runtime.entrypoint,
-        config_content=config_content,
-        config_version=config_version,
-        secret_merge_content=secret_merge_content,
-        secret_merge_version=secret_merge_version,
-        secret_patch_content=secret_patch_content,
-        secret_patch_version=secret_patch_version,
-        instance=args.instance,
-        namespace=args.namespace,
-        base_domain=args.base_domain,
-        **{f.name: getattr(config_info, f.name) for f in fields(config_info)}
+    ctx = get_context(
+        proto_file=args.proto,
+        proto_path=args.proto_path,
+        runtime=args.runtime,
+        config_bytes=config_bytes,
+        secret_merge_bytes=secret_merge_bytes,
+        secret_patch_bytes=secret_patch_bytes,
+        passthrough=dict(
+            version=args.version,
+            instance=args.instance,
+            namespace=args.namespace,
+            base_domain=args.base_domain,
+        ),
     )
     resources = list(chain(
         gen_configmaps(ctx),

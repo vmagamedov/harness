@@ -4,7 +4,7 @@ from ipaddress import ip_address
 import pytest
 from google.protobuf.message_factory import GetMessages
 
-from harness.cli.kube import load
+from harness.cli.utils import load_descriptor_set
 from harness.runtime._validate import validate, ValidationError
 
 
@@ -33,7 +33,7 @@ def message_factory(package, content):
     with tempfile.NamedTemporaryFile(suffix='.proto') as proto_file:
         proto_file.write(src.encode('utf-8'))
         proto_file.flush()
-        file_descriptor_set = load(proto_file.name)
+        file_descriptor_set = load_descriptor_set(proto_file.name)
     return GetMessages(file_descriptor_set.file)
 
 
