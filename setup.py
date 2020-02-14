@@ -18,6 +18,7 @@ setup(
     url='https://github.com/vmagamedov/harness',
     packages=find_packages('src'),
     package_dir={'': 'src'},
+    include_package_data=True,
     license='BSD-3-Clause',
     python_requires='>=3.7',
     install_requires=[

@@ -1,0 +1,6 @@
+pytest
+faker
+protobuf
+pyyaml
+grpcio-tools
+grpclib

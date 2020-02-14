@@ -148,15 +148,15 @@ class Context:
 
     @property
     def config_name(self):
-        return f'config-{self.config_hash}'
+        return self.full_name('config', self.config_hash)
 
     @property
     def secret_merge_name(self):
-        return f'config-merge-{self.secret_merge_hash}'
+        return self.full_name('config-merge', self.secret_merge_hash)
 
     @property
     def secret_patch_name(self):
-        return f'config-patch-{self.secret_patch_hash}'
+        return self.full_name('config-patch', self.secret_merge_hash)
 
     def full_name(self, *suffix: str):
         parts = [self.name]
