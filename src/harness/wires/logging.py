@@ -5,6 +5,7 @@
     Wires for the standard ``logging`` library.
 
 """
+import sys
 import logging
 
 from .. import logging_pb2
@@ -12,27 +13,99 @@ from .. import logging_pb2
 from .base import Wire
 
 
+if hasattr(sys.stderr, 'isatty') and sys.stderr.isatty():
+    try:
+        import pygments
+    except ImportError:
+        _WITH_COLORS = False
+    else:
+        from pygments import highlight
+        from pygments.console import ansiformat
+        from pygments.lexers.python import PythonTracebackLexer
+        from pygments.formatters.terminal import TerminalFormatter
+        _WITH_COLORS = True
+else:
+    _WITH_COLORS = False
+
+
 _LEVELS_MAP = {
     logging_pb2.Level.NOTSET: logging.NOTSET,
     logging_pb2.Level.DEBUG: logging.DEBUG,
     logging_pb2.Level.INFO: logging.INFO,
     logging_pb2.Level.WARNING: logging.WARNING,
+    logging_pb2.Level.ERROR: logging.ERROR,
     logging_pb2.Level.CRITICAL: logging.CRITICAL,
 }
 
+_LEVEL_COLORS = {
+    logging.DEBUG: 'brightblack',
+    logging.INFO: 'green',
+    logging.WARNING: 'yellow',
+    logging.ERROR: 'red',
+    logging.CRITICAL: '*red*',
+}
+
+_TEXT_COLORS = {
+    logging.DEBUG: 'brightblack',
+    logging.INFO: '',
+    logging.WARNING: '',
+    logging.ERROR: '',
+    logging.CRITICAL: '',
+}
+
+
+def _wrap_text(level: int, value: str):
+    return ansiformat(_TEXT_COLORS[level], value)
+
+
+def _wrap_level(level, value: str):
+    return ansiformat(_LEVEL_COLORS[level], value)
+
+
+def _highlight(text):
+    return highlight(text, lexer=PythonTracebackLexer(),
+                     formatter=TerminalFormatter())
+
+
+_FMT = '{asctime} {levelname} {name} {message}'
+
+
+class _ColorFormatter(logging.Formatter):
+
+    def format(self, record):
+        record.asctime = self.formatTime(record)
+        record.message = record.getMessage()
+        message = _FMT.format(
+            asctime=_wrap_text(record.levelno, record.asctime),
+            levelname=_wrap_level(record.levelno, record.levelname),
+            name=_wrap_text(record.levelno, record.name),
+            message=_wrap_text(record.levelno, record.message),
+        )
+        if record.exc_info:
+            exc_text = self.formatException(record.exc_info)
+            if _WITH_COLORS:
+                exc_text = _highlight(exc_text).rstrip('\n')
+            message += '\n' + exc_text
+        return message
+
 
 class ConsoleWire(Wire):
-    handler = None
+    _handler: logging.Handler
 
     def configure(self, value: logging_pb2.Console):
-        from metricslog.ext.formatter import ColorFormatter
-
         logging.captureWarnings(True)
-        self.handler = logging.StreamHandler()
-        self.handler.setFormatter(ColorFormatter())
-        logging.root.addHandler(self.handler)
+
+        self._handler = logging.StreamHandler()
+
+        if _WITH_COLORS:
+            self._handler.setFormatter(_ColorFormatter())
+        else:
+            self._handler.setFormatter(logging.Formatter(fmt=_FMT, style='{'))
 
         level = _LEVELS_MAP[value.level]
+        self._handler.setLevel(level)
+
+        logging.root.addHandler(self._handler)
         if level is not logging.NOTSET:
             if logging.root.level is not logging.NOTSET:
                 level = min(level, logging.root.level)
