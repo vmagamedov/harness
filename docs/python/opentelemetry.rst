@@ -1,4 +1,5 @@
-opentelemetry
-=============
+.. automodule:: harness.wires.opentelemetry
+  :members:
 
-.. autoclass:: harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire
+.. automodule:: harness.wires.opentelemetry.ext.jaeger
+  :members:

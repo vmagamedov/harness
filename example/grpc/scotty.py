@@ -1,8 +1,8 @@
 import logging
 from dataclasses import dataclass
 
-import harness.wires.grpclib
 import harness.wires.prometheus
+import harness.wires.grpclib.server
 from asyncpg.pool import Pool
 from grpclib.server import Stream
 from google.protobuf.empty_pb2 import Empty
@@ -31,6 +31,6 @@ async def main(wires_in: WiresIn) -> WiresOut:
         db=wires_in.db.pool,
     )
     return WiresOut(
-        server=harness.wires.grpclib.ServerWire([scotty]),
+        server=harness.wires.grpclib.server.ServerWire([scotty]),
         prometheus=harness.wires.prometheus.ServerWire(),
     )

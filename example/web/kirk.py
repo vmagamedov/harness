@@ -1,8 +1,8 @@
 from aiohttp import web
 from google.protobuf.empty_pb2 import Empty
 
-from harness.wires.aiohttp import ServerWire
 from harness.wires.aiomonitor import MonitorWire
+from harness.wires.aiohttp.web import ServerWire
 
 from scotty_grpc import ScottyStub
 

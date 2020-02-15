@@ -19,8 +19,8 @@ message Configuration {
     harness.postgres.Pool db = 2 [(harness.wire).input = "harness.wires.asyncpg.PoolWire"];
     harness.logging.Console console = 4 [(harness.wire).input = "harness.wires.logging.ConsoleWire"];
     harness.logging.Syslog syslog = 5 [(harness.wire).input = "harness.wires.logging.SyslogWire"];
-    harness.tracing.Exporter tracing = 6 [(harness.wire).input = "harness.wires.opentelemetry.JaegerSpanExporterWire"];
-    harness.grpc.Server server = 7 [(harness.wire).output = "harness.wires.grpclib.ServerWire"];
+    harness.tracing.Exporter tracing = 6 [(harness.wire).input = "harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire"];
+    harness.grpc.Server server = 7 [(harness.wire).output = "harness.wires.grpclib.server.ServerWire"];
     harness.http.Server prometheus = 8 [(harness.wire).output = "harness.wires.prometheus.ServerWire"];
 }
 

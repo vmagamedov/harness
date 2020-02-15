@@ -23,17 +23,17 @@ message Configuration {
         (harness.wire).access = EXTERNAL
     ];
     harness.grpc.Channel scotty = 3 [
-        (harness.wire).input = "harness.wires.grpclib.ChannelWire",
+        (harness.wire).input = "harness.wires.grpclib.client.ChannelWire",
         (harness.wire).access = NAMESPACE
     ];
     harness.logging.Console console = 4 [
         (harness.wire).input = "harness.wires.logging.ConsoleWire"
     ];
     harness.tracing.Exporter tracing = 5 [
-        (harness.wire).input = "harness.wires.opentelemetry.JaegerSpanExporterWire"
+        (harness.wire).input = "harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire"
     ];
     harness.http.Server server = 6 [
-        (harness.wire).output = "harness.wires.aiohttp.ServerWire",
+        (harness.wire).output = "harness.wires.aiohttp.web.ServerWire",
         (harness.wire).visibility = PUBLIC
     ];
     harness.net.Server monitor = 7 [

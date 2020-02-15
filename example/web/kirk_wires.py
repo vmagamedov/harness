@@ -3,12 +3,12 @@
 # plugin: harness.plugin.python
 from dataclasses import dataclass
 
-import harness.wires.aiohttp
+import harness.wires.aiohttp.web
 import harness.wires.aiomonitor
 import harness.wires.asyncpg
-import harness.wires.grpclib
+import harness.wires.grpclib.client
 import harness.wires.logging
-import harness.wires.opentelemetry
+import harness.wires.opentelemetry.ext.jaeger
 
 import kirk_pb2
 
@@ -17,12 +17,12 @@ import kirk_pb2
 class WiresIn:
     config: kirk_pb2.Configuration
     db: harness.wires.asyncpg.PoolWire
-    scotty: harness.wires.grpclib.ChannelWire
+    scotty: harness.wires.grpclib.client.ChannelWire
     console: harness.wires.logging.ConsoleWire
-    tracing: harness.wires.opentelemetry.JaegerSpanExporterWire
+    tracing: harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire
 
 
 @dataclass
 class WiresOut:
-    server: harness.wires.aiohttp.ServerWire
+    server: harness.wires.aiohttp.web.ServerWire
     monitor: harness.wires.aiomonitor.MonitorWire

@@ -25,7 +25,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='scotty',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\x0cscotty.proto\x12\x06scotty\x1a\x12harness/wire.proto\x1a\x16harness/postgres.proto\x1a\x12harness/grpc.proto\x1a\x15harness/logging.proto\x1a\x12harness/http.proto\x1a\x15harness/tracing.proto\x1a\x1bgoogle/protobuf/empty.proto\"\x9d\x04\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12G\n\x02\x64\x62\x18\x02 \x01(\x0b\x32\x16.harness.postgres.PoolB#\x8a} \n\x1eharness.wires.asyncpg.PoolWire\x12Q\n\x07\x63onsole\x18\x04 \x01(\x0b\x32\x18.harness.logging.ConsoleB&\x8a}#\n!harness.wires.logging.ConsoleWire\x12N\n\x06syslog\x18\x05 \x01(\x0b\x32\x17.harness.logging.SyslogB%\x8a}\"\n harness.wires.logging.SyslogWire\x12\x63\n\x07tracing\x18\x06 \x01(\x0b\x32\x19.harness.tracing.ExporterB7\x8a}4\n2harness.wires.opentelemetry.JaegerSpanExporterWire\x12K\n\x06server\x18\x07 \x01(\x0b\x32\x14.harness.grpc.ServerB%\x8a}\"\x12 harness.wires.grpclib.ServerWire\x12R\n\nprometheus\x18\x08 \x01(\x0b\x32\x14.harness.http.ServerB(\x8a}%\x12#harness.wires.prometheus.ServerWire:\x0b\x8a}\x08\n\x06scotty2F\n\x06Scotty\x12<\n\x08\x42\x65\x61mMeUp\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x0cscotty.proto\x12\x06scotty\x1a\x12harness/wire.proto\x1a\x16harness/postgres.proto\x1a\x12harness/grpc.proto\x1a\x15harness/logging.proto\x1a\x12harness/http.proto\x1a\x15harness/tracing.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xaf\x04\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12G\n\x02\x64\x62\x18\x02 \x01(\x0b\x32\x16.harness.postgres.PoolB#\x8a} \n\x1eharness.wires.asyncpg.PoolWire\x12Q\n\x07\x63onsole\x18\x04 \x01(\x0b\x32\x18.harness.logging.ConsoleB&\x8a}#\n!harness.wires.logging.ConsoleWire\x12N\n\x06syslog\x18\x05 \x01(\x0b\x32\x17.harness.logging.SyslogB%\x8a}\"\n harness.wires.logging.SyslogWire\x12n\n\x07tracing\x18\x06 \x01(\x0b\x32\x19.harness.tracing.ExporterBB\x8a}?\n=harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire\x12R\n\x06server\x18\x07 \x01(\x0b\x32\x14.harness.grpc.ServerB,\x8a})\x12\'harness.wires.grpclib.server.ServerWire\x12R\n\nprometheus\x18\x08 \x01(\x0b\x32\x14.harness.http.ServerB(\x8a}%\x12#harness.wires.prometheus.ServerWire:\x0b\x8a}\x08\n\x06scotty2F\n\x06Scotty\x12<\n\x08\x42\x65\x61mMeUp\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3'
   ,
   dependencies=[harness_dot_wire__pb2.DESCRIPTOR,harness_dot_postgres__pb2.DESCRIPTOR,harness_dot_grpc__pb2.DESCRIPTOR,harness_dot_logging__pb2.DESCRIPTOR,harness_dot_http__pb2.DESCRIPTOR,harness_dot_tracing__pb2.DESCRIPTOR,google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
@@ -73,14 +73,14 @@ _CONFIGURATION = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\212}4\n2harness.wires.opentelemetry.JaegerSpanExporterWire', file=DESCRIPTOR),
+      serialized_options=b'\212}?\n=harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire', file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='server', full_name='scotty.Configuration.server', index=5,
       number=7, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\212}\"\022 harness.wires.grpclib.ServerWire', file=DESCRIPTOR),
+      serialized_options=b'\212})\022\'harness.wires.grpclib.server.ServerWire', file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='prometheus', full_name='scotty.Configuration.prometheus', index=6,
       number=8, type=11, cpp_type=10, label=1,
@@ -101,7 +101,7 @@ _CONFIGURATION = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=184,
-  serialized_end=725,
+  serialized_end=743,
 )
 
 _CONFIGURATION.fields_by_name['db'].message_type = harness_dot_postgres__pb2._POOL
@@ -135,8 +135,8 @@ _SCOTTY = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=727,
-  serialized_end=797,
+  serialized_start=745,
+  serialized_end=815,
   methods=[
   _descriptor.MethodDescriptor(
     name='BeamMeUp',

@@ -1,30 +1,17 @@
-"""
-    aiohttp
-    =======
-
-    Wires for the aiohttp_ project.
-
-    .. _aiohttp: https://github.com/aio-libs/aiohttp
-"""
 from http import HTTPStatus
-from typing import TYPE_CHECKING, Callable, Awaitable, List, Dict, Optional
+from typing import Callable, Awaitable, List, Dict, Optional
 from logging import Logger
 
-from aiohttp.web_runner import AppRunner, TCPSite
-from aiohttp.web_request import Request
-from aiohttp.web_response import Response
-from aiohttp.web_exceptions import HTTPException
-from aiohttp.web_middlewares import middleware
+from aiohttp.web import Application, AppRunner, TCPSite, Request, Response
+from aiohttp.web import HTTPException, middleware
 
 from opentelemetry.trace import SpanKind, tracer
 from opentelemetry.propagators import extract
 from opentelemetry.trace.status import Status, StatusCanonicalCode
 
-from .. import http_pb2
-from .base import Wire, WaitMixin
+from ... import http_pb2
 
-if TYPE_CHECKING:
-    from aiohttp.web import Application
+from ..base import Wire, WaitMixin
 
 
 def _headers_getter(request: Request, header_name: str) -> List[str]:
@@ -101,9 +88,9 @@ class ServerWire(WaitMixin, Wire):
     """
     Output wire to start HTTP server and serve aiohttp application.
     """
-    _runner = None
-    _site = None
-    _site_factory = None
+    _runner: AppRunner
+    _site: TCPSite
+    _site_factory: Callable[[], TCPSite]
 
     def __init__(
         self, app: 'Application', *, access_log: Optional[Logger] = None,
@@ -125,8 +112,8 @@ class ServerWire(WaitMixin, Wire):
         self._runner = AppRunner(self._app, access_log=self._access_log)
         self._site_factory = lambda: TCPSite(
             self._runner,
-            value.bind.host or '127.0.0.1',
-            value.bind.port or 8000,
+            value.bind.host,
+            value.bind.port,
         )
 
     async def __aenter__(self):

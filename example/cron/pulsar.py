@@ -3,7 +3,7 @@ import logging
 from harness.wires.apscheduler import SchedulerWire
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from kirk_wires import WiresIn, WiresOut
+from pulsar_wires import WiresIn, WiresOut
 
 
 async def tick():
