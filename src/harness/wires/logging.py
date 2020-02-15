@@ -6,7 +6,7 @@
 
 """
 import sys
-import logging
+import logging.handlers
 
 from .. import logging_pb2
 
@@ -112,5 +112,44 @@ class ConsoleWire(Wire):
             logging.root.setLevel(level)
 
 
+class _SyslogHandler(logging.handlers.SysLogHandler):
+
+    def __init__(self, *args, app_name, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.ident = f'{app_name}: '
+
+
+_FACILITY_MAP = {
+    logging_pb2.Syslog.NOTSET: logging.handlers.SysLogHandler.LOG_USER,
+    logging_pb2.Syslog.USER: logging.handlers.SysLogHandler.LOG_USER,
+    logging_pb2.Syslog.LOCAL0: logging.handlers.SysLogHandler.LOG_LOCAL0,
+    logging_pb2.Syslog.LOCAL1: logging.handlers.SysLogHandler.LOG_LOCAL1,
+    logging_pb2.Syslog.LOCAL2: logging.handlers.SysLogHandler.LOG_LOCAL2,
+    logging_pb2.Syslog.LOCAL3: logging.handlers.SysLogHandler.LOG_LOCAL3,
+    logging_pb2.Syslog.LOCAL4: logging.handlers.SysLogHandler.LOG_LOCAL4,
+    logging_pb2.Syslog.LOCAL5: logging.handlers.SysLogHandler.LOG_LOCAL5,
+    logging_pb2.Syslog.LOCAL6: logging.handlers.SysLogHandler.LOG_LOCAL6,
+    logging_pb2.Syslog.LOCAL7: logging.handlers.SysLogHandler.LOG_LOCAL7,
+}
+
+
 class SyslogWire(Wire):
-    pass
+    _handler: logging
+
+    def configure(self, value: logging_pb2.Syslog):
+        logging.captureWarnings(True)
+
+        self._handler = _SyslogHandler(
+            app_name=value.app,
+            address='/dev/log',
+            facility=_FACILITY_MAP[value.facility],
+        )
+
+        level = _LEVELS_MAP[value.level]
+        self._handler.setLevel(level)
+
+        logging.root.addHandler(self._handler)
+        if level is not logging.NOTSET:
+            if logging.root.level is not logging.NOTSET:
+                level = min(level, logging.root.level)
+            logging.root.setLevel(level)
