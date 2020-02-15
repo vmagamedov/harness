@@ -9,8 +9,6 @@
 from typing import TYPE_CHECKING, List, Any, NewType, Union
 from contextvars import ContextVar
 
-from typing_extensions import Protocol
-
 from opentelemetry.trace import tracer, SpanKind
 from opentelemetry.propagators import extract, inject
 
@@ -25,10 +23,10 @@ from .base import Wire
 
 if TYPE_CHECKING:
     from multidict import MultiDict  # noqa
+    from typing_extensions import Protocol  # noqa
 
-
-class _IServable(Protocol):
-    def __mapping__(self) -> Any: ...
+    class _IServable(Protocol):
+        def __mapping__(self) -> Any: ...
 
 
 _Value = Union[str, bytes]
@@ -103,7 +101,7 @@ class ServerWire(Wire):
     _port = None
     server = None
 
-    def __init__(self, handlers: List[_IServable]):
+    def __init__(self, handlers: List['_IServable']):
         self.handlers = handlers
 
     def configure(self, value: grpc_pb2.Server):
