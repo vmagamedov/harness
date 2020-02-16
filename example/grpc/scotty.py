@@ -25,7 +25,7 @@ class Scotty(ScottyBase):
         await stream.send_message(Empty())
 
 
-async def main(wires_in: WiresIn) -> WiresOut:
+async def setup(wires_in: WiresIn) -> WiresOut:
     log.info('Environment loaded')
     scotty = Scotty(
         db=wires_in.db.pool,

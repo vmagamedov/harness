@@ -16,4 +16,4 @@ runner = Runner(
 )
 
 if __name__ == '__main__':
-    sys.exit(runner.run(spock.service.main, sys.argv))
+    sys.exit(runner.run(spock.service.setup, sys.argv))

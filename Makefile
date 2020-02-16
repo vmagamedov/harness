@@ -34,7 +34,7 @@ release: proto
 	python setup.py sdist
 
 reference:
-	protoc --plugin=scripts/protoc-gen-reference -Isrc --reference_out=docs \
+	python3 -m grpc_tools.protoc --plugin=scripts/protoc-gen-reference -Isrc --reference_out=docs \
 	  src/harness/net.proto \
 	  src/harness/http.proto
 
@@ -54,4 +54,4 @@ test-kube:
 	harness kube-gen example/web/kirk.proto python example/web/kirk.yaml v1 --namespace=platform --instance=ua --base-domain=example.com | pygmentize -l yaml | less -r
 
 test-plugin:
-	protoc -Iexample/web -Isrc --python_out=example/web --harness_out=runtime=python:example/web example/web/kirk.proto
+	python3 -m grpc_tools.protoc -Iexample/web -Isrc --python_out=example/web --harness_out=runtime=python:example/web example/web/kirk.proto

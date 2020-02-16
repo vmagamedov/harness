@@ -16,4 +16,4 @@ runner = Runner(
 )
 
 if __name__ == '__main__':
-    sys.exit(runner.run(pulsar.main, sys.argv))
+    sys.exit(runner.run(pulsar.setup, sys.argv))

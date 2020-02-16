@@ -10,7 +10,7 @@ async def tick():
     logging.info('Tick')
 
 
-async def main(wires_in: WiresIn) -> WiresOut:
+async def setup(wires_in: WiresIn) -> WiresOut:
     scheduler = AsyncIOScheduler()
     scheduler.add_job(tick, 'interval', seconds=5)
     scheduler.configure(jobstores={

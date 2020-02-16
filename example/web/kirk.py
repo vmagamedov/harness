@@ -16,7 +16,7 @@ async def index(request):
     return web.Response(text=f'PG Time: {now}\nPG Version: {version}\n')
 
 
-async def main(wires_in: WiresIn) -> WiresOut:
+async def setup(wires_in: WiresIn) -> WiresOut:
     app = web.Application()
     app.router.add_get('/', index)
     app['db'] = wires_in.db.pool

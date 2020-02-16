@@ -80,7 +80,7 @@ def _render_entrypoint(proto_file: str):
     buf.add('')
     buf.add("if __name__ == '__main__':")
     with buf.indent():
-        buf.add(f'sys.exit(runner.run({main_module}.main, sys.argv))')
+        buf.add(f'sys.exit(runner.run({main_module}.setup, sys.argv))')
     return 'entrypoint.py', buf.content()
 
 
