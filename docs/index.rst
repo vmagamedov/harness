@@ -15,16 +15,20 @@
 Introduction
 ~~~~~~~~~~~~
 
-Harness is a language-neutral meta-framework for building serverless-style
-services:
+Harness is a language-neutral meta-framework for building and deploying
+serverless-style services:
 
-- It lets you glue together other frameworks, libraries and your own code to
-  build a solution which fits your needs
-- Serverless means that Harness ships with a :doc:`runtime <runtime>`, which
-  you can use to run your services
+- It glues together other libraries, frameworks and your own code
+- Serverless-style means that Harness ships with a :doc:`runtime <runtime>`,
+  which is used to run your services
 - You can use Harness to generate deploy configuration for your services
 - To make all this happen, Harness uses a language-neutral self-describing
   :doc:`configuration format <configuration>`
+
+.. note:: Harness is in it's early stage of design and development.
+  Please don't hesitate to provide your expertise in any form. Our goal is to
+  develop a framework, which is not specific to some particular company, but
+  to make it suitable for all, so everyone can benefit from it.
 
 Motivation
 ~~~~~~~~~~
@@ -34,7 +38,7 @@ things in common, like:
 
 - Configuration management
 - Secrets management
-- Startup and shutdown sequences
+- Startup and shutdown strategy
 - Logs, metrics, tracing
 - Deploy configuration
 
@@ -56,11 +60,3 @@ Philosophy
   capable to generate a deploy configuration (e.g. Kubernetes manifests)
 - Harness provides wires for different libraries and frameworks, and you can
   write your own wires. So there is no single true way and no limitations
-
-Installation
-~~~~~~~~~~~~
-
-.. code-block:: console
-
-  $ pip3 install harness
-  $ brew install protobuf
