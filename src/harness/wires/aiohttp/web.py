@@ -1,3 +1,4 @@
+import logging
 from http import HTTPStatus
 from typing import Callable, Awaitable, List, Dict, Optional
 from logging import Logger
@@ -12,6 +13,9 @@ from opentelemetry.trace.status import Status, StatusCanonicalCode
 from ... import http_pb2
 
 from ..base import Wire, WaitMixin
+
+
+_log = logging.getLogger(__name__)
 
 
 def _headers_getter(request: Request, header_name: str) -> List[str]:
@@ -120,7 +124,7 @@ class ServerWire(WaitMixin, Wire):
         await self._runner.setup()
         self._site = self._site_factory()
         await self._site.start()
-        print(f'Started Web server and listening on {self._site.name}')
+        _log.info('%s started: %s', self.__class__.__name__, self._site.name)
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self._runner.cleanup()

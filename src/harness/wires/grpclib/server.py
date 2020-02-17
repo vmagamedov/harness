@@ -1,3 +1,4 @@
+import logging
 from typing import TYPE_CHECKING, List, Any
 from contextvars import ContextVar
 
@@ -16,6 +17,9 @@ if TYPE_CHECKING:
 
     class _Servable(Protocol):
         def __mapping__(self) -> Any: ...
+
+
+_log = logging.getLogger(__name__)
 
 
 def _metadata_getter(metadata, header_name: str) -> List[str]:
@@ -47,8 +51,7 @@ async def _send_trailing_metadata(event: SendTrailingMetadata) -> None:
 
 
 class ServerWire(Wire):
-    _host: str
-    _port: int
+    _config: grpc_pb2.Server
     server: Server
 
     def __init__(self, handlers: List['_Servable']):
@@ -56,9 +59,7 @@ class ServerWire(Wire):
 
     def configure(self, value: grpc_pb2.Server):
         assert isinstance(value, grpc_pb2.Server), type(value)
-
-        self._host = value.bind.host
-        self._port = value.bind.port
+        self._config = value
 
         handlers = list(self.handlers)
         services = ServerReflection.extend(handlers)
@@ -67,8 +68,9 @@ class ServerWire(Wire):
         listen(self.server, SendTrailingMetadata, _send_trailing_metadata)
 
     async def __aenter__(self):
-        await self.server.start(self._host, self._port)
-        print(f'Started gRPC server and listening on {self._host}:{self._port}')
+        await self.server.start(self._config.bind.host, self._config.bind.port)
+        _log.info('%s started: addr=%s:%d', self.__class__.__name__,
+                  self._config.bind.host, self._config.bind.port)
 
     def close(self):
         self.server.close()

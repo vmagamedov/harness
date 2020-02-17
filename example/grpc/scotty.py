@@ -26,10 +26,7 @@ class Scotty(ScottyBase):
 
 
 async def setup(wires_in: WiresIn) -> WiresOut:
-    log.info('Environment loaded')
-    scotty = Scotty(
-        db=wires_in.db.pool,
-    )
+    scotty = Scotty(db=wires_in.db.pool)
     return WiresOut(
         server=harness.wires.grpclib.server.ServerWire([scotty]),
         prometheus=harness.wires.prometheus.ServerWire(),
