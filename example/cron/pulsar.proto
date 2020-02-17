@@ -10,7 +10,7 @@ import "google/protobuf/empty.proto";
 message Configuration {
     option (harness.service).name = "pulsar";
 
-    harness.redis.Connection redis_job_store = 2 [(harness.wire).input = "harness.wires.apscheduler.RedisJobStoreWire"];
+    harness.redis.Connection redis_job_store = 2 [(harness.wire).input = "harness.wires.apscheduler.jobstores.redis.RedisJobStoreWire"];
     harness.logging.Console console = 3 [(harness.wire).input = "harness.wires.logging.ConsoleWire"];
     google.protobuf.Empty scheduler = 1 [(harness.wire).output = "harness.wires.apscheduler.SchedulerWire"];
 }
