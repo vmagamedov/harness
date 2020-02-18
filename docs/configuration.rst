@@ -95,6 +95,11 @@ service deploys. You can even validate your configurations without starting your
 services as an additional step in your CI/CD pipeline or using a pre-commit
 hooks.
 
+.. code-block:: console
+
+  $ harness check service.proto service.yaml
+  Validation error: host length is less than 1
+
 Secrets
 ~~~~~~~
 
