@@ -1,0 +1,4 @@
+[tool.black]
+line-length = 80
+exclude = "(_pb2\\.py|_grpc\\.py|entrypoint.py)"
+skip-string-normalization = true

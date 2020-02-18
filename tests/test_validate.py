@@ -253,7 +253,7 @@ def test_email(message_type):
     """
     validate(message_type(field="admin@example.com"))
     validate(message_type(field="Jean-Luc Picard <jean-luc.pickard@starfleet.milkyway>"))
-    with pytest.raises(ValidationError, match='field contains invalid email address:\n - add-spec local part with no domain'):
+    with pytest.raises(ValidationError, match='field contains invalid email address'):
         validate(message_type(field="example.com"))
     with pytest.raises(ValidationError, match='field contains more than one email address'):
         validate(message_type(field="foo@example.com, bar@example.com"))
