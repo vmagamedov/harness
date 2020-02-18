@@ -6,6 +6,7 @@ Protocols
 
 .. toctree::
 
+  harness/wire.proto
   harness/net
   harness/http
 
