@@ -12,6 +12,7 @@ _sym_db = _symbol_database.Default()
 
 
 from harness import wire_pb2 as harness_dot_wire__pb2
+from validate import validate_pb2 as validate_dot_validate__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -19,9 +20,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='harness.net',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\x11harness/net.proto\x12\x0bharness.net\x1a\x12harness/wire.proto\"$\n\x06Socket\x12\x0c\n\x04host\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\r\"\"\n\x04Pipe\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04mode\x18\x02 \x01(\r\"H\n\x07\x41\x64\x64ress\x12%\n\x06socket\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketH\x00\x12\x0e\n\x04pipe\x18\x02 \x01(\tH\x00\x42\x06\n\x04type\"2\n\x06Server\x12(\n\x04\x62ind\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketB\x05\x8a}\x02 \x00\x62\x06proto3'
+  serialized_pb=b'\n\x11harness/net.proto\x12\x0bharness.net\x1a\x12harness/wire.proto\x1a\x17validate/validate.proto\"6\n\x06Socket\x12\x15\n\x04host\x18\x01 \x01(\tB\x07\xfa\x42\x04r\x02\x10\x01\x12\x15\n\x04port\x18\x02 \x01(\rB\x07\xfa\x42\x04*\x02 \x00\"\"\n\x04Pipe\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04mode\x18\x02 \x01(\r\"H\n\x07\x41\x64\x64ress\x12%\n\x06socket\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketH\x00\x12\x0e\n\x04pipe\x18\x02 \x01(\tH\x00\x42\x06\n\x04type\"2\n\x06Server\x12(\n\x04\x62ind\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketB\x05\x8a}\x02 \x00\x62\x06proto3'
   ,
-  dependencies=[harness_dot_wire__pb2.DESCRIPTOR,])
+  dependencies=[harness_dot_wire__pb2.DESCRIPTOR,validate_dot_validate__pb2.DESCRIPTOR,])
 
 
 
@@ -39,14 +40,14 @@ _SOCKET = _descriptor.Descriptor(
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=b'\372B\004r\002\020\001', file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='port', full_name='harness.net.Socket.port', index=1,
       number=2, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=b'\372B\004*\002 \000', file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -59,8 +60,8 @@ _SOCKET = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=54,
-  serialized_end=90,
+  serialized_start=79,
+  serialized_end=133,
 )
 
 
@@ -97,8 +98,8 @@ _PIPE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=92,
-  serialized_end=126,
+  serialized_start=135,
+  serialized_end=169,
 )
 
 
@@ -138,8 +139,8 @@ _ADDRESS = _descriptor.Descriptor(
       name='type', full_name='harness.net.Address.type',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=128,
-  serialized_end=200,
+  serialized_start=171,
+  serialized_end=243,
 )
 
 
@@ -169,8 +170,8 @@ _SERVER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=202,
-  serialized_end=252,
+  serialized_start=245,
+  serialized_end=295,
 )
 
 _ADDRESS.fields_by_name['socket'].message_type = _SOCKET
@@ -216,5 +217,7 @@ Server = _reflection.GeneratedProtocolMessageType('Server', (_message.Message,),
 _sym_db.RegisterMessage(Server)
 
 
+_SOCKET.fields_by_name['host']._options = None
+_SOCKET.fields_by_name['port']._options = None
 _SERVER.fields_by_name['bind']._options = None
 # @@protoc_insertion_point(module_scope)
