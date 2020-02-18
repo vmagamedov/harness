@@ -21,5 +21,4 @@ async def setup(wires_in: WiresIn) -> WiresOut:
     app.router.add_get('/', index)
     app['db'] = wires_in.db.pool
     app['scotty'] = ScottyStub(wires_in.scotty.channel)
-    return WiresOut(server=ServerWire(app),
-                    monitor=MonitorWire())
+    return WiresOut(server=ServerWire(app), monitor=MonitorWire())
