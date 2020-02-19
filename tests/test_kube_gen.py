@@ -1,8 +1,8 @@
 import faker
 import pytest
 
-from harness.cli.kube import gen_configmaps, Context
 from harness.wire_pb2 import HarnessService
+from harness.cli.kubegen import gen_configmaps, Context
 
 
 f = faker.Faker()
