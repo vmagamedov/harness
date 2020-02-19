@@ -32,16 +32,6 @@ setup(
             'protoc-gen-harness=harness.plugin.main:main',
             'harness=harness.cli.main:main',
         ],
-        'harness.wires': [
-            'python/logging=harness.wires.logging',
-            'python/prometheus=harness.wires.prometheus',
-            'python/asyncpg=harness.wires.asyncpg',
-            'python/grpclib=harness.wires.grpclib',
-            'python/aiohttp=harness.wires.aiohttp',
-            'python/aiomonitor=harness.wires.aiomonitor',
-            'python/apscheduler=harness.wires.apscheduler',
-            'python/opentelemetry.ext.jaeger=harness.wires.opentelemetry.ext.jaeger',
-        ],
     },
     classifiers=[
         'Development Status :: 3 - Alpha',
