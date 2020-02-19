@@ -6,10 +6,11 @@ def main():
     parser = argparse.ArgumentParser()
     subparser = parser.add_subparsers()
 
-    from . import kube, check
+    from . import kubegen, check, protopath
 
-    kube.add_commands(subparser)
+    kubegen.add_commands(subparser)
     check.add_commands(subparser)
+    protopath.add_commands(subparser)
 
     args = parser.parse_args()
     if 'func' in args:

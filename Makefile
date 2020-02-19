@@ -54,4 +54,4 @@ test-kube:
 	harness kube-gen example/web/kirk.proto python example/web/kirk.yaml v1 --namespace=platform --instance=ua --base-domain=example.com | pygmentize -l yaml | less -r
 
 test-plugin:
-	python3 -m grpc_tools.protoc -Iexample/web -Isrc --python_out=example/web --harness_out=runtime=python:example/web example/web/kirk.proto
+	python3 -m grpc_tools.protoc -Iexample/web -I$(shell harness proto-path) --python_out=example/web --harness_out=runtime=python:example/web example/web/kirk.proto
