@@ -124,8 +124,7 @@ Here is how a secrets merge patch looks like:
 .. code-block:: yaml
 
   db:
-    password:
-      really-strong-secret
+    password: "really-strong-secret"
 
 .. _Protocol Buffers: https://developers.google.com/protocol-buffers
 .. _protoc-gen-validate: https://github.com/envoyproxy/protoc-gen-validate
