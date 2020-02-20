@@ -2,8 +2,9 @@
   :hidden:
 
   configuration
-  code-generation
   runtime
+  code-generation
+  deployment
   reference
 
 .. toctree::

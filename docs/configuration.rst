@@ -28,6 +28,9 @@ this:
       ];
   }
 
+.. note:: It is required that your message type was named ``Configuration``,
+  this is a convention over configuration.
+
 This example probably differs from what you expected to see in a ``.proto``
 files because we are using message and field options:
 
@@ -103,8 +106,8 @@ hooks.
 Secrets
 ~~~~~~~
 
-You can provide secrets for your service using `JSON Merge Patch` (RFC 7386)
-or `JSON Patch` (RFC 6902) formats. Secrets are applied to the main
+You can provide secrets for your service using `JSON Merge Patch`_ or
+`JSON Patch`_ formats. Secrets are applied to the main
 configuration and then validated as described in the previous section.
 
 Here is how a connection to the database can be configured in a public
@@ -128,3 +131,5 @@ Here is how a secrets merge patch looks like:
 
 .. _Protocol Buffers: https://developers.google.com/protocol-buffers
 .. _protoc-gen-validate: https://github.com/envoyproxy/protoc-gen-validate
+.. _JSON Merge Patch: https://tools.ietf.org/html/rfc7386
+.. _JSON Patch: https://tools.ietf.org/html/rfc6902
