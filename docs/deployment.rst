@@ -28,7 +28,7 @@ Additional options:
 --base-domain
   If you have an output ``PUBLIC`` wire of :proto:message:`harness.http.Server`
   type, Harness also generates a routing config to accept ingress traffic from
-  ``http://{service-name}.{base-domain}`` domain, where ``service-name``
+  ``https://{service-name}.{base-domain}`` domain, where ``service-name``
   comes from a ``(harness.service).name`` option value
 
   .. note:: ``--instance`` option value is added as a suffix to the sub-domain

@@ -2,6 +2,7 @@
   :hidden:
 
   configuration
+  wires
   runtime
   code-generation
   deployment
@@ -9,7 +10,7 @@
 
 .. toctree::
   :hidden:
-  :caption: Python
+  :caption: Runtimes
 
   python/index
 

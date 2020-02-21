@@ -59,6 +59,8 @@ Where:
 - ``(harness.wire).output = "..."`` - is a compile-time configuration of a wire,
   it describes which wire implementation you wish to use and other options
 
+.. note:: There is a more detailed explanation of a :doc:`wires`.
+
 Runtime Configuration
 ~~~~~~~~~~~~~~~~~~~~~
 
