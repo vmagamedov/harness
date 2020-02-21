@@ -4,23 +4,23 @@ Wires
 Observability
 ~~~~~~~~~~~~~
 
-- Logs: :doc:`logging`
-- Metrics: :doc:`prometheus`
-- Tracing: :doc:`opentelemetry`
-- Debug: :doc:`aiomonitor`
+- Logs: :doc:`wires/logging`
+- Metrics: :doc:`wires/prometheus`
+- Tracing: :doc:`wires/opentelemetry`
+- Debug: :doc:`wires/aiomonitor`
 
 Services
 ~~~~~~~~
 
-- Web: :doc:`aiohttp`
-- gRPC: :doc:`grpclib`
+- Web: :doc:`wires/aiohttp`
+- gRPC: :doc:`wires/grpclib`
 
 Drivers
 ~~~~~~~
 
-- PostgreSQL: :doc:`asyncpg`
+- PostgreSQL: :doc:`wires/asyncpg`
 
 Other
 ~~~~~
 
-- Regular tasks: :doc:`apscheduler`
+- Regular tasks: :doc:`wires/apscheduler`

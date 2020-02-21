@@ -15,11 +15,11 @@ Python
 
 .. toctree::
 
-  python/aiohttp
-  python/aiomonitor
-  python/apscheduler
-  python/asyncpg
-  python/grpclib
-  python/logging
-  python/opentelemetry
-  python/prometheus
+  python/wires/aiohttp
+  python/wires/aiomonitor
+  python/wires/apscheduler
+  python/wires/asyncpg
+  python/wires/grpclib
+  python/wires/logging
+  python/wires/opentelemetry
+  python/wires/prometheus
