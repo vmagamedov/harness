@@ -183,16 +183,13 @@ function AddWireDialog(props) {
     props.addWire(wire);
   }
 
-  return <div>
-    <label>
-      New Wire
-      <select value={wire} onChange={useSetter(setWire)}>
-        <option key={-1} value={""}>--- select ---</option>
-        {Wires.map((wire, i) => {
-          return <option key={i} value={wire.value}>{wire.value}</option>
-        })}
-      </select>
-    </label>
+  return <div className={props.className}>
+    <select value={wire} onChange={useSetter(setWire)}>
+      <option key={-1} value={""}>--- select ---</option>
+      {Wires.map((wire, i) => {
+        return <option key={i} value={wire.value}>{wire.value}</option>
+      })}
+    </select>
     <button onClick={addWire} disabled={wire === ""}>Add</button>
   </div>
 }
@@ -212,8 +209,8 @@ function Bootstrap() {
   const [serviceName, setServiceName] = useState('whisper');
   const [runtime, setRuntime] = useState('python');
 
-  const [kubeEnabled, setKubeEnabled] = useState(false);
-  const [repository, setRepository] = useState('');
+  const [kubeEnabled, setKubeEnabled] = useState(true);
+  const [repository, setRepository] = useState('registry.local/group/project');
 
   const [inputs, setInputs] = useState([]);
   const [outputs, setOutputs] = useState([]);
@@ -245,41 +242,39 @@ function Bootstrap() {
 
   return (
     <div className="bootstrap">
-      <div>
-        <label>
-          Service Name
-          <input type="text" value={serviceName} onChange={useSetter(setServiceName)}/>
-        </label>
+      <div className="bootstrap-row">
+        <label className="bootstrap-key">Service Name</label>
+        <input className="bootstrap-value" type="text" value={serviceName} onChange={useSetter(setServiceName)}/>
       </div>
-      <div>
-        <span>Runtime:</span>
-        {LANGUAGES.map(({value, title}) => {
-          return (
-            <span key={value}>
-              <label>
+      <div className="bootstrap-row">
+        <label className="bootstrap-key">Runtime</label>
+        <div className="bootstrap-value">
+          {LANGUAGES.map(({value, title}) => {
+            return (
+              <label key={value}>
                 <input type="radio" value={value}
                        checked={value === runtime}
                        onChange={useSetter(setRuntime)}/>
                 {title}
               </label>
-            </span>
-          )
-        })}
+            )
+          })}
+        </div>
       </div>
-      <div>
-        <label>
-          <input type="checkbox" checked={kubeEnabled} onChange={e => {setKubeEnabled(!kubeEnabled)}}/>
-          With Kubernetes
+      <div className="bootstrap-row">
+        <label className="bootstrap-key">Kubernetes</label>
+        <label className="bootstrap-value">
+          <input type="checkbox" checked={kubeEnabled} onChange={() => {setKubeEnabled(!kubeEnabled)}}/>
+          Enable
         </label>
       </div>
-      {kubeEnabled && <div>
-        <label>
-          Docker Image Repository
-          <input type="text" value={repository} onChange={useSetter(setRepository)}/>
-        </label>
+      {kubeEnabled && <div className="bootstrap-row">
+        <label className="bootstrap-key">Docker Image Repository</label>
+        <input className="bootstrap-value" type="text" value={repository} onChange={useSetter(setRepository)}/>
       </div>}
-      <div>
-        <AddWireDialog addWire={addWire} />
+      <div className="bootstrap-row">
+        <label className="bootstrap-key">Add Wire</label>
+        <AddWireDialog className="bootstrap-value" addWire={addWire} />
       </div>
       <div>
         {inputs.map((w, i) => {
