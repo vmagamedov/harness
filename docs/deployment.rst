@@ -5,13 +5,13 @@ Here is how to generate Kubernetes manifests from your service definition:
 
 .. code-block:: console
 
-  $ harness kube-gen service.proto python service.yaml v2020
-                     ^-----------^ ^----^ ^----------^ ^---^
-                           1         2         3         4
+  $ harness kube-gen python service.proto service.yaml v2020
+                     ^----^ ^-----------^ ^----------^ ^---^
+                       1          2            3         4
 
-1. Configuration's definition location
-2. Runtime name
-3. Configuration runtime values
+1. Runtime's name
+2. Configuration's definition location
+3. Configuration's runtime values
 4. Version
 
 Additional options:

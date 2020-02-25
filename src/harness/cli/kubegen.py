@@ -728,8 +728,8 @@ def kube_gen(args):
 def add_commands(subparsers):
     kube_gen_parser = subparsers.add_parser('kube-gen')
     kube_gen_parser.add_argument('-I', '--proto-path', action='append')
-    kube_gen_parser.add_argument('proto')
     kube_gen_parser.add_argument('runtime', choices=frozenset(RUNTIMES.keys()))
+    kube_gen_parser.add_argument('proto')
     kube_gen_parser.add_argument('config', type=FileType('rb'))
     kube_gen_parser.add_argument('version')
     kube_gen_parser.add_argument('--instance', default=None)
