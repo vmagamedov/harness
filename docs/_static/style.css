@@ -1,3 +1,6 @@
+/*
+    Theme colors
+*/
 .wy-nav-side {
     background: #2d3a48;
 }
@@ -26,8 +29,25 @@
 .rst-content a:hover code.literal {
     color: #3091d1;
 }
+
 /*
-    Bootstrap
+    protobuf reference docs
+*/
+.rst-content dl:not(.docutils) code.descname {
+    padding-right: 4px;
+}
+
+.rst-content dl:not(.docutils) .property {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.rst-content dl:not(.docutils) code.descclassname {
+    padding-left: 4px;
+}
+
+/*
+    Bootstrap page
 */
 label {
     display: inline;
@@ -35,9 +55,13 @@ label {
 .bootstrap pre {
     font-size: 12px;
     line-height: 1.4;
+    background: #f8f8f8;
+    padding: 12px;
+    border: 1px solid #e1e4e5;
 }
+
 /*
-    other
+    Code examples in the note/test directives
 */
 div.admonition div.highlight-console {
     margin-bottom: 0;

@@ -2,7 +2,8 @@ import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 
 import Prism from 'prismjs';
-import 'prismjs/components/prism-protobuf'
+import 'prismjs/components/prism-protobuf';
+import 'prismjs/themes/prism.css';
 
 const LANGUAGES = [
   {value: 'python', title: 'Python'},
