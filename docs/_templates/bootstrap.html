@@ -1,0 +1,9 @@
+{% extends "!layout.html" %}
+
+{% set title = "Bootstrap" %}
+
+{% block document %}
+<link rel="stylesheet" href="{{ pathto('_static/prism.min.css', 1) }}">
+<div id="placeholder"></div>
+<script type="text/javascript" src="{{ pathto('_static/bootstrap.js', 1) }}"></script>
+{% endblock %}

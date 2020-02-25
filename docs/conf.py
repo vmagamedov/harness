@@ -16,9 +16,13 @@ intersphinx_mapping = {
 }
 
 exclude_patterns = ['_build']
+templates_path = ['_templates']
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+html_additional_pages = {
+    'bootstrap': 'bootstrap.html',
+}
 html_theme_options = {
     'display_version': False,
 }

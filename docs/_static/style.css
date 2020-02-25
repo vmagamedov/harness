@@ -26,3 +26,13 @@
 .rst-content a:hover code.literal {
     color: #3091d1;
 }
+/*
+    Bootstrap
+*/
+label {
+    display: inline;
+}
+.bootstrap pre {
+    font-size: 12px;
+    line-height: 1.4;
+}
