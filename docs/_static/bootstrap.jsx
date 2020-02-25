@@ -6,8 +6,8 @@ import 'prismjs/components/prism-protobuf'
 
 const LANGUAGES = [
   {value: 'python', title: 'Python'},
-  {value: 'nodejs', title: 'NodeJS'},
-  {value: 'golang', title: 'Go'},
+  // {value: 'nodejs', title: 'NodeJS'},
+  // {value: 'golang', title: 'Go'},
 ];
 
 const WireType = {
@@ -96,6 +96,49 @@ function formatOutput(i, wire, kubeEnabled) {
   return formatField(i, wire, options);
 }
 
+function renderConfig(serviceName, kubeEnabled, repository, inputs, outputs) {
+  const imports = ['harness/wire.proto'];
+  inputs.map(w => {
+    imports.push(Imports[w.configType]);
+  });
+  outputs.map(w => {
+    imports.push(Imports[w.configType]);
+  });
+
+  let sourceLines = [
+    `syntax = "proto3";`,
+    '',
+    `package ${serviceName};`,
+  ];
+  sourceLines.push('');
+  imports.map(value => sourceLines.push(`import "${value}";`));
+  sourceLines.push('');
+  sourceLines.push(`message Configuration {`);
+  sourceLines.push(`    option (harness.service).name = "${serviceName}";`);
+  if (kubeEnabled) {
+    sourceLines.push(`    option (harness.service).container.repository = "${repository}";`);
+  }
+  if (inputs.length > 0 || outputs.length > 0) {
+    sourceLines.push('');
+  }
+  let fieldNumber = 1;
+  inputs.map(w => {
+    sourceLines.push(`    ${formatInput(fieldNumber, w, kubeEnabled)}`);
+    fieldNumber++;
+  });
+  outputs.map(w => {
+    sourceLines.push(`    ${formatOutput(fieldNumber, w, kubeEnabled)}`);
+    fieldNumber++;
+  });
+  sourceLines.push('}');
+
+  return Prism.highlight(
+    sourceLines.join('\n'),
+    Prism.languages.protobuf,
+    'protobuf',
+  );
+}
+
 function Input(props) {
   return (
     <div>
@@ -153,6 +196,17 @@ function AddWireDialog(props) {
   </div>
 }
 
+function collectDependencies(inputs, outputs) {
+  const items = new Set(['harness']);
+  inputs.map(w => {
+    w.dependencies.map(v => items.add(v));
+  });
+  outputs.map(w => {
+    w.dependencies.map(v => items.add(v));
+  });
+  return Array.from(items).sort();
+}
+
 function Bootstrap() {
   const [serviceName, setServiceName] = useState('whisper');
   const [runtime, setRuntime] = useState('python');
@@ -182,57 +236,11 @@ function Bootstrap() {
     }
   }
 
-  const imports = ['harness/wire.proto'];
-  inputs.map(w => {
-    imports.push(Imports[w.configType]);
-  });
-  outputs.map(w => {
-    imports.push(Imports[w.configType]);
-  });
+  let configMarkup = {__html: renderConfig(
+    serviceName, kubeEnabled, repository, inputs, outputs,
+  )};
 
-  let sourceLines = [
-    `syntax = "proto3";`,
-    '',
-    `package ${serviceName};`,
-  ];
-  sourceLines.push('');
-  imports.map(value => sourceLines.push(`import "${value}";`));
-  sourceLines.push('');
-  sourceLines.push(`message Configuration {`);
-  sourceLines.push(`    option (harness.service).name = "${serviceName}";`);
-  if (kubeEnabled) {
-    sourceLines.push(`    option (harness.service).container.repository = "${repository}";`);
-  }
-  if (inputs.length > 0 || outputs.length > 0) {
-    sourceLines.push('');
-  }
-  let fieldNumber = 1;
-  inputs.map(w => {
-    sourceLines.push(`    ${formatInput(fieldNumber, w, kubeEnabled)}`);
-    fieldNumber++;
-  });
-  outputs.map(w => {
-    sourceLines.push(`    ${formatOutput(fieldNumber, w, kubeEnabled)}`);
-    fieldNumber++;
-  });
-  sourceLines.push('}');
-
-  const highlighted = Prism.highlight(
-    sourceLines.join('\n'),
-    Prism.languages.protobuf,
-    'protobuf',
-  );
-
-  let markup = {__html: highlighted};
-
-  const dependencies = new Set(['harness']);
-  inputs.map(w => {
-    w.dependencies.map(v => dependencies.add(v));
-  });
-  outputs.map(w => {
-    w.dependencies.map(v => dependencies.add(v));
-  });
-  const dependenciesArray = Array.from(dependencies).sort();
+  const dependencies = collectDependencies(inputs, outputs);
 
   return (
     <div className="bootstrap">
@@ -243,6 +251,7 @@ function Bootstrap() {
         </label>
       </div>
       <div>
+        <span>Runtime:</span>
         {LANGUAGES.map(({value, title}) => {
           return (
             <span key={value}>
@@ -296,12 +305,12 @@ function Bootstrap() {
       <div>
         <span>Configuration:</span>
         <div>
-          <pre dangerouslySetInnerHTML={markup}/>
+          <pre dangerouslySetInnerHTML={configMarkup}/>
         </div>
       </div>
       <div>
         <span>Dependencies:</span>
-        <pre>{dependenciesArray.join('\n')}</pre>
+        <pre>{dependencies.join('\n')}</pre>
       </div>
     </div>
   )
