@@ -1,6 +1,7 @@
 .. toctree::
   :hidden:
 
+  bootstrap
   configuration
   wires
   runtime

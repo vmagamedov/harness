@@ -1,6 +1,10 @@
 Python
 ======
 
+.. toctree::
+
+  guide
+
 Wires
 ~~~~~
 

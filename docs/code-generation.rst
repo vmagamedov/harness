@@ -7,6 +7,6 @@ code for a ``python`` runtime:
 
 .. code-block:: console
 
-  $ protoc -I$(harness proto-path) --harness_out=python:./src ./src/service.proto
-                                                 ^----^
-                                                 runtime
+  $ protoc -Isrc -I$(harness proto-path) --harness_out=python:./src ./src/service.proto
+                                                       ^----^
+                                                       runtime
