@@ -7,6 +7,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx_ext_protobuf',
     'sphinx_ext_test',
+    'sphinx_ext_wire',
 ]
 
 autoclass_content = 'both'

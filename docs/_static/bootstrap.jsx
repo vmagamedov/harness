@@ -78,7 +78,7 @@ function itemDeleter(value, setValue, i) {
 }
 
 function formatField(i, wire, options) {
-  return `${wire.configType} ${wire.configName} = ${i} [\n        ${options.join(',\n        ')}\n    ];`;
+  return `${wire.config} ${wire.configName} = ${i} [\n        ${options.join(',\n        ')}\n    ];`;
 }
 
 function formatInput(i, wire, kubeEnabled) {
@@ -100,10 +100,10 @@ function formatOutput(i, wire, kubeEnabled) {
 function renderConfig(serviceName, kubeEnabled, repository, inputs, outputs) {
   const imports = ['harness/wire.proto'];
   inputs.map(w => {
-    imports.push(Imports[w.configType]);
+    imports.push(Imports[w.config]);
   });
   outputs.map(w => {
-    imports.push(Imports[w.configType]);
+    imports.push(Imports[w.config]);
   });
 
   let sourceLines = [
@@ -188,7 +188,7 @@ function AddWireDialog(props) {
   return <div className={props.className}>
     <select value={wire} onChange={useSetter(setWire)}>
       <option key={-1} value={""}>--- select ---</option>
-      {Wires.map((wire, i) => {
+      {props.wires.map((wire, i) => {
         return <option key={i} value={wire.value}>{wire.value}</option>
       })}
     </select>
@@ -196,29 +196,36 @@ function AddWireDialog(props) {
   </div>
 }
 
-function collectDependencies(inputs, outputs) {
+function collectRequirements(inputs, outputs) {
   const items = new Set(['harness']);
   inputs.map(w => {
-    w.dependencies.map(v => items.add(v));
+    w.requirements.map(v => items.add(v));
   });
   outputs.map(w => {
-    w.dependencies.map(v => items.add(v));
+    w.requirements.map(v => items.add(v));
   });
   return Array.from(items).sort();
 }
 
-function Bootstrap() {
+function Bootstrap(props) {
+  const wires = props.wiresData.map((w) => {
+    return {
+      ...w,
+      type: (w.type === 'input'? WireType.Input: WireType.Output),
+    }
+  });
+
   const [serviceName, setServiceName] = useState('whisper');
   const [runtime, setRuntime] = useState('python');
 
   const [kubeEnabled, setKubeEnabled] = useState(true);
-  const [repository, setRepository] = useState('registry.local/group/project');
+  const [repository, setRepository] = useState('');
 
   const [inputs, setInputs] = useState([]);
   const [outputs, setOutputs] = useState([]);
 
   function addWire(name) {
-    let wire = Wires.find(wire => wire.value === name);
+    let wire = wires.find(wire => wire.value === name);
     if (wire.type === WireType.Input) {
       setInputs([...inputs, {
         ...wire,
@@ -240,7 +247,7 @@ function Bootstrap() {
     serviceName, kubeEnabled, repository, inputs, outputs,
   )};
 
-  const dependencies = collectDependencies(inputs, outputs);
+  const requirements = collectRequirements(inputs, outputs);
 
   return (
     <div className="bootstrap">
@@ -272,11 +279,11 @@ function Bootstrap() {
       </div>
       {kubeEnabled && <div className="bootstrap-row">
         <label className="bootstrap-key">Docker Image Repository</label>
-        <input className="bootstrap-value" type="text" value={repository} onChange={useSetter(setRepository)}/>
+        <input className="bootstrap-value" type="text" placeholder="registry.local/group/project" value={repository} onChange={useSetter(setRepository)}/>
       </div>}
       <div className="bootstrap-row">
         <label className="bootstrap-key">Add Wire</label>
-        <AddWireDialog className="bootstrap-value" addWire={addWire} />
+        <AddWireDialog className="bootstrap-value" wires={wires} addWire={addWire} />
       </div>
       <div>
         {inputs.map((w, i) => {
@@ -309,12 +316,14 @@ function Bootstrap() {
         </div>
       </div>
       <div>
-        <h3>Dependencies</h3>
-        <pre>{dependencies.join('\n')}</pre>
+        <h3>Requirements</h3>
+        <pre>{requirements.join('\n')}</pre>
       </div>
     </div>
   )
 }
 
 const mountPoint = document.getElementById('placeholder');
-ReactDOM.render(<Bootstrap/>, mountPoint);
+const wiresDataElement = document.getElementById('wires-data');
+const wiresData = JSON.parse(wiresDataElement.innerText);
+ReactDOM.render(<Bootstrap wiresData={wiresData}/>, mountPoint);

@@ -91,6 +91,12 @@ async def _opentracing_middleware(
 class ServerWire(WaitMixin, Wire):
     """
     Output wire to start HTTP server and serve aiohttp application.
+
+    .. wire:: harness.wires.aiohttp.web.ServerWire
+      :type: output
+      :runtime: python
+      :config: harness.http.Server
+      :requirements: aiohttp[speedups]
     """
     _runner: AppRunner
     _site: TCPSite
