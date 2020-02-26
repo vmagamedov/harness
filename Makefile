@@ -36,7 +36,8 @@ release: proto
 reference:
 	python3 -m grpc_tools.protoc --plugin=scripts/protoc-gen-reference -Isrc --reference_out=docs \
 	  src/harness/net.proto \
-	  src/harness/http.proto
+	  src/harness/http.proto \
+	  src/harness/redis.proto
 
 docs: reference
 	PYTHONPATH=docs sphinx-build docs build

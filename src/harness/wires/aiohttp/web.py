@@ -97,6 +97,7 @@ class ServerWire(WaitMixin, Wire):
       :runtime: python
       :config: harness.http.Server
       :requirements: aiohttp[speedups]
+
     """
     _runner: AppRunner
     _site: TCPSite

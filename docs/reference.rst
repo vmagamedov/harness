@@ -9,6 +9,7 @@ Protocols
   harness/wire.proto
   harness/net
   harness/http
+  harness/redis
 
 Python
 ~~~~~~

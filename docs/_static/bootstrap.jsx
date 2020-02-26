@@ -7,8 +7,6 @@ import 'prismjs/themes/prism.css';
 
 const LANGUAGES = [
   {value: 'python', title: 'Python'},
-  // {value: 'nodejs', title: 'NodeJS'},
-  // {value: 'golang', title: 'Go'},
 ];
 
 const WireType = {
@@ -28,28 +26,6 @@ const Visibility = {
   Headless: "HEADLESS",
   Internal: "INTERNAL",
   Public: "PUBLIC",
-};
-
-const Wires = [
-  {
-    runtime: "python",
-    type: WireType.Input,
-    value: "harness.wires.grpclib.client.ChannelWire",
-    configType: "harness.grpc.Channel",
-    dependencies: ['grpclib', 'protobuf'],
-  },
-  {
-    runtime: "python",
-    type: WireType.Output,
-    value: "harness.wires.aiohttp.web.ServerWire",
-    configType: "harness.http.Server",
-    dependencies: ['aiohttp', 'cchardet'],
-  },
-];
-
-const Imports = {
-  'harness.grpc.Channel': 'harness/grpc.proto',
-  'harness.http.Server': 'harness/http.proto',
 };
 
 function useSetter(setter) {
@@ -97,14 +73,15 @@ function formatOutput(i, wire, kubeEnabled) {
   return formatField(i, wire, options);
 }
 
+function collectImports(inputs, outputs) {
+  const items = new Set(['harness/wire.proto']);
+  inputs.map(w => items.add(w.configProto));
+  outputs.map(w => items.add(w.configProto));
+  return Array.from(items).sort();
+}
+
 function renderConfig(serviceName, kubeEnabled, repository, inputs, outputs) {
-  const imports = ['harness/wire.proto'];
-  inputs.map(w => {
-    imports.push(Imports[w.config]);
-  });
-  outputs.map(w => {
-    imports.push(Imports[w.config]);
-  });
+  const imports = collectImports(inputs, outputs);
 
   let sourceLines = [
     `syntax = "proto3";`,

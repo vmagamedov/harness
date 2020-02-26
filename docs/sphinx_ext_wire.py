@@ -62,7 +62,14 @@ class Wire(SphinxDirective):
 
 def on_html_page_context(app, pagename, templatename, context, doctree):
     if templatename == 'bootstrap.html':
-        context[KEY] = [asdict(w) for w in getattr(app, KEY, [])]
+        proto_domain = app.env.get_domain('proto')
+        wires_data = []
+        for wire in getattr(app, KEY, []):
+            wire_data = asdict(wire)
+            doc, _ = proto_domain.data['messages'][wire.config]
+            wire_data['configProto'] = doc + '.proto'
+            wires_data.append(wire_data)
+        context[KEY] = wires_data
 
 
 def setup(app: Sphinx):

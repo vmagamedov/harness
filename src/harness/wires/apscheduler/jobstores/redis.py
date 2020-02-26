@@ -1,5 +1,3 @@
-import logging
-
 from apscheduler.jobstores.redis import RedisJobStore
 
 from .... import redis_pb2
@@ -8,6 +6,15 @@ from ....wires.base import Wire
 
 
 class RedisJobStoreWire(Wire):
+    """
+
+    .. wire:: harness.wires.apscheduler.jobstores.redis.RedisJobStoreWire
+      :type: input
+      :runtime: python
+      :config: harness.redis.Connection
+      :requirements: redis
+
+    """
     job_store: 'RedisJobStore'
 
     def configure(self, value: redis_pb2.Connection):
