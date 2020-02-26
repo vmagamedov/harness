@@ -59,6 +59,9 @@ label {
     padding: 12px;
     border: 1px solid #e1e4e5;
 }
+.bootstrap h3 {
+    margin-top: 20px;
+}
 .bootstrap-row {
     display: flex;
     flex-direction: row;
@@ -80,6 +83,29 @@ label {
     flex: 1;
 }
 .bootstrap-value button {
+    margin-left: 6px;
+}
+.bootstrap-wire {
+    display: flex;
+    flex-direction: column;
+}
+.bootstrap-wire-value {
+    font-size: 70%;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    color: indigo;
+    width: 100%;
+}
+.bootstrap-wire-inputs {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    width: 100%;
+}
+.bootstrap-wire-name {
+    flex: 2;
+}
+.bootstrap-wire-inputs select {
+    flex: 1;
     margin-left: 6px;
 }
 

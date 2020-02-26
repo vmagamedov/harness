@@ -142,36 +142,38 @@ function renderConfig(serviceName, kubeEnabled, repository, inputs, outputs) {
 
 function Input(props) {
   return (
-    <div>
-      <label>Name</label>
-      <input type="text" value={props.wire.configName} onChange={useSetter(props.setConfigName)}/>
-      <span>{props.wire.value}</span>
-      {props.kubeEnabled &&
-        <select value={props.wire.accessibility} onChange={useSetter(props.setAccessibility)}>
-          {Object.entries(Accessibility).map(([key, value]) => {
-            return <option key={value} value={value}>{key}</option>
-          })}
-        </select>
-      }
-      <button onClick={props.delete}>Delete</button>
+    <div className="bootstrap-value bootstrap-wire">
+      <span className="bootstrap-wire-value">{props.wire.value}</span>
+      <div className="bootstrap-wire-inputs">
+        <input className="bootstrap-wire-name" placeholder="name" type="text" value={props.wire.configName} onChange={useSetter(props.setConfigName)}/>
+        {props.kubeEnabled &&
+          <select value={props.wire.accessibility} onChange={useSetter(props.setAccessibility)}>
+            {Object.entries(Accessibility).map(([key, value]) => {
+              return <option key={value} value={value}>{key}</option>
+            })}
+          </select>
+        }
+        <button onClick={props.delete}>Delete</button>
+      </div>
     </div>
   )
 }
 
 function Output(props) {
   return (
-    <div>
-      <label>Name</label>
-      <input type="text" value={props.wire.configName} onChange={useSetter(props.setConfigName)}/>
-      <span>{props.wire.value}</span>
-      {props.kubeEnabled &&
-        <select value={props.wire.visibility} onChange={useSetter(props.setVisibility)}>
-          {Object.entries(Visibility).map(([key, value]) => {
-            return <option key={value} value={value}>{key}</option>
-          })}
-        </select>
-      }
-      <button onClick={props.delete}>Delete</button>
+    <div className="bootstrap-value bootstrap-wire">
+      <span className="bootstrap-wire-value">{props.wire.value}</span>
+      <div className="bootstrap-wire-inputs">
+        <input className="bootstrap-wire-name" placeholder="name" type="text" value={props.wire.configName} onChange={useSetter(props.setConfigName)}/>
+        {props.kubeEnabled &&
+          <select value={props.wire.visibility} onChange={useSetter(props.setVisibility)}>
+            {Object.entries(Visibility).map(([key, value]) => {
+              return <option key={value} value={value}>{key}</option>
+            })}
+          </select>
+        }
+        <button onClick={props.delete}>Delete</button>
+      </div>
     </div>
   )
 }
@@ -278,34 +280,36 @@ function Bootstrap() {
       </div>
       <div>
         {inputs.map((w, i) => {
-          return <Input key={i}
-                        wire={w}
-                        kubeEnabled={kubeEnabled}
-                        setConfigName={itemSetter(inputs, setInputs, i, 'configName')}
-                        setAccessibility={itemSetter(inputs, setInputs, i, 'accessibility')}
-                        delete={itemDeleter(inputs, setInputs, i)}
-          />
+          return <div className="bootstrap-row" key={i}>
+            <label className="bootstrap-key">Input</label>
+            <Input wire={w}
+                   kubeEnabled={kubeEnabled}
+                   setConfigName={itemSetter(inputs, setInputs, i, 'configName')}
+                   setAccessibility={itemSetter(inputs, setInputs, i, 'accessibility')}
+                   delete={itemDeleter(inputs, setInputs, i)}/>
+          </div>
         })}
       </div>
       <div>
         {outputs.map((w, i) => {
-          return <Output key={i}
-                         wire={w}
-                         kubeEnabled={kubeEnabled}
-                         setConfigName={itemSetter(outputs, setOutputs, i, 'configName')}
-                         setVisibility={itemSetter(outputs, setOutputs, i, 'visibility')}
-                         delete={itemDeleter(outputs, setOutputs, i)}
-          />
+          return <div className="bootstrap-row" key={i}>
+            <label className="bootstrap-key">Output</label>
+            <Output wire={w}
+                    kubeEnabled={kubeEnabled}
+                    setConfigName={itemSetter(outputs, setOutputs, i, 'configName')}
+                    setVisibility={itemSetter(outputs, setOutputs, i, 'visibility')}
+                    delete={itemDeleter(outputs, setOutputs, i)}/>
+          </div>
         })}
       </div>
       <div>
-        <span>Configuration:</span>
+        <h3>Configuration</h3>
         <div>
           <pre dangerouslySetInnerHTML={configMarkup}/>
         </div>
       </div>
       <div>
-        <span>Dependencies:</span>
+        <h3>Dependencies</h3>
         <pre>{dependencies.join('\n')}</pre>
       </div>
     </div>
