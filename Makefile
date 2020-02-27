@@ -34,10 +34,8 @@ release: proto
 	python setup.py sdist
 
 reference:
-	python3 -m grpc_tools.protoc --plugin=scripts/protoc-gen-reference -Isrc --reference_out=docs \
-	  src/harness/net.proto \
-	  src/harness/http.proto \
-	  src/harness/redis.proto
+	python3 -m grpc_tools.protoc --plugin=scripts/protoc-gen-reference -Isrc --reference_out=docs src/harness/*.proto
+	rm docs/harness/wire.rst
 
 docs: reference
 	PYTHONPATH=docs sphinx-build docs build

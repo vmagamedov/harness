@@ -11,6 +11,17 @@ from google.protobuf.compiler.plugin_pb2 import CodeGeneratorResponse
 
 
 @dataclass
+class EnumValue:
+    name: str
+
+
+@dataclass
+class Enum:
+    name: str
+    values: List[EnumValue]
+
+
+@dataclass
 class Field:
     name: str
     type: Optional[str]
@@ -21,16 +32,18 @@ class Field:
 @dataclass
 class Message:
     name: str
-    full_name: str
     fields: List[Field]
+    enums: List[Enum]
     comment: Optional[str] = None
 
 
 @dataclass
 class Module:
+    package: str
     input_name: str
     output_name: str
     messages: List[Message]
+    enums: List[Enum]
 
 
 SCALARS = {
@@ -74,10 +87,23 @@ def main():
                     type_,
                     repeated=f.label == FieldDescriptorProto.LABEL_REPEATED,
                 ))
+            message_enums = []
+            for et in mt.enum_type:
+                message_enums.append(Enum(
+                    name=et.name,
+                    values=[EnumValue(name=v.name) for v in et.value]
+                ))
             messages.append(Message(
                 name=mt.name,
-                full_name=f'{pf.package}.{mt.name}',
                 fields=fields,
+                enums=message_enums,
+            ))
+
+        enums = []
+        for et in pf.enum_type:
+            enums.append(Enum(
+                name=et.name,
+                values=[EnumValue(name=v.name) for v in et.value]
             ))
 
         if not pf.source_code_info:
@@ -96,9 +122,11 @@ def main():
 
         output_name = pf.name.replace('.proto', '.rst')
         modules[pf.name] = Module(
+            package=pf.package,
             input_name=pf.name,
             output_name=output_name,
             messages=messages,
+            enums=enums,
         )
 
     response = CodeGeneratorResponse()
@@ -109,12 +137,26 @@ def main():
         print(title, file=buf)
         print('=' * len(title), file=buf)
         print('', file=buf)
+        print(f'.. proto:package:: {module.package}', file=buf)
+        print('', file=buf)
+        for enum in module.enums:
+            print(f'.. proto:enum:: {enum.name}', file=buf)
+            print('', file=buf)
+            for value in enum.values:
+                print(f'  .. proto:value:: {value.name}', file=buf)
+                print('', file=buf)
         for message in module.messages:
-            print(f'.. proto:message:: {message.full_name}', file=buf)
+            print(f'.. proto:message:: {message.name}', file=buf)
             print('', file=buf)
             if message.comment:
                 print(f'  {message.comment.strip()}', file=buf)
                 print('', file=buf)
+            for enum in message.enums:
+                print(f'  .. proto:enum:: {enum.name}', file=buf)
+                print('', file=buf)
+                for value in enum.values:
+                    print(f'    .. proto:value:: {value.name}', file=buf)
+                    print('', file=buf)
             for field in message.fields:
                 name_type = 'repeated ' if field.repeated else ''
                 name_type += f'{field.type} {field.name}'

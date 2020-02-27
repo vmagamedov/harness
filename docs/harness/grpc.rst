@@ -1,9 +1,9 @@
-harness/http.proto
+harness/grpc.proto
 ==================
 
-.. proto:package:: harness.http
+.. proto:package:: harness.grpc
 
-.. proto:message:: Connection
+.. proto:message:: Channel
 
   .. proto:field:: harness.net.Socket address
 

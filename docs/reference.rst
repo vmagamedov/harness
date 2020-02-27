@@ -6,10 +6,14 @@ Protocols
 
 .. toctree::
 
-  harness/wire.proto
-  harness/net
+  harness/grpc
   harness/http
+  harness/logging
+  harness/net
+  harness/postgres
   harness/redis
+  harness/tracing
+  harness/wire.proto
 
 Python
 ~~~~~~

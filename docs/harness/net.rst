@@ -1,25 +1,27 @@
 harness/net.proto
 =================
 
-.. proto:message:: harness.net.Socket
+.. proto:package:: harness.net
+
+.. proto:message:: Socket
 
   .. proto:field:: string host
 
   .. proto:field:: uint32 port
 
-.. proto:message:: harness.net.Pipe
+.. proto:message:: Pipe
 
   .. proto:field:: string name
 
   .. proto:field:: uint32 mode
 
-.. proto:message:: harness.net.Address
+.. proto:message:: Address
 
   .. proto:field:: harness.net.Socket socket
 
   .. proto:field:: string pipe
 
-.. proto:message:: harness.net.Server
+.. proto:message:: Server
 
   .. proto:field:: harness.net.Socket bind
 

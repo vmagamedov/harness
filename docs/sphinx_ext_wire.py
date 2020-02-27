@@ -66,7 +66,7 @@ def on_html_page_context(app, pagename, templatename, context, doctree):
         wires_data = []
         for wire in getattr(app, KEY, []):
             wire_data = asdict(wire)
-            doc, _ = proto_domain.data['messages'][wire.config]
+            doc, _ = proto_domain.data['types'][wire.config]
             wire_data['configProto'] = doc + '.proto'
             wires_data.append(wire_data)
         context[KEY] = wires_data

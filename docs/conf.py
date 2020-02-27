@@ -13,8 +13,8 @@ extensions = [
 autoclass_content = 'both'
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3.7', None),
-    'aiohttp': ('https://docs.aiohttp.org/en/stable', None),
+    # 'python': ('https://docs.python.org/3.7', None),
+    # 'aiohttp': ('https://docs.aiohttp.org/en/stable', None),
 }
 
 exclude_patterns = ['_build']

@@ -1,7 +1,9 @@
 harness/redis.proto
 ===================
 
-.. proto:message:: harness.redis.Connection
+.. proto:package:: harness.redis
+
+.. proto:message:: Connection
 
   .. proto:field:: harness.net.Socket address
 
