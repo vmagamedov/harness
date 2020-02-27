@@ -192,7 +192,7 @@ function Bootstrap(props) {
     }
   });
 
-  const [serviceName, setServiceName] = useState('whisper');
+  const [serviceName, setServiceName] = useState('');
   const [runtime, setRuntime] = useState('python');
 
   const [kubeEnabled, setKubeEnabled] = useState(true);
@@ -230,7 +230,7 @@ function Bootstrap(props) {
     <div className="bootstrap">
       <div className="bootstrap-row">
         <label className="bootstrap-key">Service Name</label>
-        <input className="bootstrap-value" type="text" value={serviceName} onChange={useSetter(setServiceName)}/>
+        <input className="bootstrap-value" type="text" placeholder="bazinga" value={serviceName} onChange={useSetter(setServiceName)}/>
       </div>
       <div className="bootstrap-row">
         <label className="bootstrap-key">Runtime</label>
@@ -248,7 +248,7 @@ function Bootstrap(props) {
         </div>
       </div>
       <div className="bootstrap-row">
-        <label className="bootstrap-key">Kubernetes</label>
+        <label className="bootstrap-key">Deployment</label>
         <label className="bootstrap-value">
           <input type="checkbox" checked={kubeEnabled} onChange={() => {setKubeEnabled(!kubeEnabled)}}/>
           Enable
