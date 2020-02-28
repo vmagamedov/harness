@@ -5,6 +5,8 @@ import Prism from 'prismjs';
 import 'prismjs/components/prism-protobuf';
 import 'prismjs/themes/prism.css';
 
+import {TypeInfo} from './typeinfo';
+
 const LANGUAGES = [
   {value: 'python', title: 'Python'},
 ];
@@ -57,17 +59,17 @@ function formatField(i, wire, options) {
   return `${wire.config} ${wire.configName} = ${i} [\n        ${options.join(',\n        ')}\n    ];`;
 }
 
-function formatInput(i, wire, kubeEnabled) {
+function formatInput(i, wire, deployEnabled) {
   let options = [`(harness.wire).input = "${wire.value}"`];
-  if (kubeEnabled) {
+  if (deployEnabled && wire.accessibility.length > 0) {
     options.push(`(harness.wire).access = ${wire.accessibility}`);
   }
   return formatField(i, wire, options);
 }
 
-function formatOutput(i, wire, kubeEnabled) {
+function formatOutput(i, wire, deployEnabled) {
   let options = [`(harness.wire).output = "${wire.value}"`];
-  if (kubeEnabled) {
+  if (deployEnabled && wire.visibility.length > 0) {
     options.push(`(harness.wire).visibility = ${wire.visibility}`);
   }
   return formatField(i, wire, options);
@@ -80,7 +82,7 @@ function collectImports(inputs, outputs) {
   return Array.from(items).sort();
 }
 
-function renderConfig(serviceName, kubeEnabled, repository, inputs, outputs) {
+function renderConfig(serviceName, deployEnabled, repository, inputs, outputs) {
   const imports = collectImports(inputs, outputs);
 
   let sourceLines = [
@@ -93,7 +95,7 @@ function renderConfig(serviceName, kubeEnabled, repository, inputs, outputs) {
   sourceLines.push('');
   sourceLines.push(`message Configuration {`);
   sourceLines.push(`    option (harness.service).name = "${serviceName}";`);
-  if (kubeEnabled) {
+  if (deployEnabled) {
     sourceLines.push(`    option (harness.service).container.repository = "${repository}";`);
   }
   if (inputs.length > 0 || outputs.length > 0) {
@@ -101,11 +103,11 @@ function renderConfig(serviceName, kubeEnabled, repository, inputs, outputs) {
   }
   let fieldNumber = 1;
   inputs.map(w => {
-    sourceLines.push(`    ${formatInput(fieldNumber, w, kubeEnabled)}`);
+    sourceLines.push(`    ${formatInput(fieldNumber, w, deployEnabled)}`);
     fieldNumber++;
   });
   outputs.map(w => {
-    sourceLines.push(`    ${formatOutput(fieldNumber, w, kubeEnabled)}`);
+    sourceLines.push(`    ${formatOutput(fieldNumber, w, deployEnabled)}`);
     fieldNumber++;
   });
   sourceLines.push('}');
@@ -118,18 +120,18 @@ function renderConfig(serviceName, kubeEnabled, repository, inputs, outputs) {
 }
 
 function Input(props) {
+  const hasAccessibility = props.deployEnabled && TypeInfo.hasOwnProperty(props.wire.config);
   return (
     <div className="bootstrap-value bootstrap-wire">
       <span className="bootstrap-wire-value">{props.wire.value}</span>
       <div className="bootstrap-wire-inputs">
         <input className="bootstrap-wire-name" placeholder="name" type="text" value={props.wire.configName} onChange={useSetter(props.setConfigName)}/>
-        {props.kubeEnabled &&
-          <select value={props.wire.accessibility} onChange={useSetter(props.setAccessibility)}>
-            {Object.entries(Accessibility).map(([key, value]) => {
-              return <option key={value} value={value}>{key}</option>
-            })}
-          </select>
-        }
+        <select value={props.wire.accessibility} onChange={useSetter(props.setAccessibility)} disabled={!hasAccessibility}>
+          <option key={-1} value="">---</option>
+          {Object.entries(Accessibility).map(([key, value]) => {
+            return <option key={value} value={value}>{key}</option>
+          })}
+        </select>
         <button onClick={props.delete}>Delete</button>
       </div>
     </div>
@@ -137,18 +139,18 @@ function Input(props) {
 }
 
 function Output(props) {
+  const hasVisibility = props.deployEnabled && TypeInfo.hasOwnProperty(props.wire.config);
   return (
     <div className="bootstrap-value bootstrap-wire">
       <span className="bootstrap-wire-value">{props.wire.value}</span>
       <div className="bootstrap-wire-inputs">
         <input className="bootstrap-wire-name" placeholder="name" type="text" value={props.wire.configName} onChange={useSetter(props.setConfigName)}/>
-        {props.kubeEnabled &&
-          <select value={props.wire.visibility} onChange={useSetter(props.setVisibility)}>
-            {Object.entries(Visibility).map(([key, value]) => {
-              return <option key={value} value={value}>{key}</option>
-            })}
-          </select>
-        }
+        <select value={props.wire.visibility} onChange={useSetter(props.setVisibility)} disabled={!hasVisibility}>
+          <option key={-1} value="">---</option>
+          {Object.entries(Visibility).map(([key, value]) => {
+            return <option key={value} value={value}>{key}</option>
+          })}
+        </select>
         <button onClick={props.delete}>Delete</button>
       </div>
     </div>
@@ -164,7 +166,7 @@ function AddWireDialog(props) {
 
   return <div className={props.className}>
     <select value={wire} onChange={useSetter(setWire)}>
-      <option key={-1} value={""}>--- select ---</option>
+      <option key={-1} value="">--- select ---</option>
       {props.wires.map((wire, i) => {
         return <option key={i} value={wire.value}>{wire.value}</option>
       })}
@@ -195,33 +197,43 @@ function Bootstrap(props) {
   const [serviceName, setServiceName] = useState('');
   const [runtime, setRuntime] = useState('python');
 
-  const [kubeEnabled, setKubeEnabled] = useState(true);
+  const [deployEnabled, setDeployEnabled] = useState(true);
   const [repository, setRepository] = useState('');
 
   const [inputs, setInputs] = useState([]);
   const [outputs, setOutputs] = useState([]);
 
+  function addInput(wire) {
+    const accessibility = TypeInfo.hasOwnProperty(wire.config)? Accessibility.Cluster: '';
+    setInputs([...inputs, {
+      ...wire,
+      configName: '',
+      accessibility: accessibility,
+    }]);
+  }
+
+  function addOutput(wire) {
+    const visibility = TypeInfo.hasOwnProperty(wire.config)? Visibility.Internal: '';
+    setOutputs([...outputs, {
+      ...wire,
+      configName: '',
+      visibility: visibility,
+    }]);
+  }
+
   function addWire(name) {
-    let wire = wires.find(wire => wire.value === name);
+    const wire = wires.find(wire => wire.value === name);
     if (wire.type === WireType.Input) {
-      setInputs([...inputs, {
-        ...wire,
-        configName: '',
-        accessibility: Accessibility.Cluster,
-      }]);
+      addInput(wire);
     } else if (wire.type === WireType.Output) {
-      setOutputs([...outputs, {
-        ...wire,
-        configName: '',
-        visibility: Visibility.Internal,
-      }]);
+      addOutput(wire);
     } else {
       throw `Unknown wire type: ${wire.type}`
     }
   }
 
   let configMarkup = {__html: renderConfig(
-    serviceName, kubeEnabled, repository, inputs, outputs,
+    serviceName, deployEnabled, repository, inputs, outputs,
   )};
 
   const requirements = collectRequirements(inputs, outputs);
@@ -250,11 +262,11 @@ function Bootstrap(props) {
       <div className="bootstrap-row">
         <label className="bootstrap-key">Deployment</label>
         <label className="bootstrap-value">
-          <input type="checkbox" checked={kubeEnabled} onChange={() => {setKubeEnabled(!kubeEnabled)}}/>
+          <input type="checkbox" checked={deployEnabled} onChange={() => {setDeployEnabled(!deployEnabled)}}/>
           Enable
         </label>
       </div>
-      {kubeEnabled && <div className="bootstrap-row">
+      {deployEnabled && <div className="bootstrap-row">
         <label className="bootstrap-key">Docker Image Repository</label>
         <input className="bootstrap-value" type="text" placeholder="registry.local/group/project" value={repository} onChange={useSetter(setRepository)}/>
       </div>}
@@ -267,7 +279,7 @@ function Bootstrap(props) {
           return <div className="bootstrap-row" key={i}>
             <label className="bootstrap-key">Input</label>
             <Input wire={w}
-                   kubeEnabled={kubeEnabled}
+                   deployEnabled={deployEnabled}
                    setConfigName={itemSetter(inputs, setInputs, i, 'configName')}
                    setAccessibility={itemSetter(inputs, setInputs, i, 'accessibility')}
                    delete={itemDeleter(inputs, setInputs, i)}/>
@@ -279,7 +291,7 @@ function Bootstrap(props) {
           return <div className="bootstrap-row" key={i}>
             <label className="bootstrap-key">Output</label>
             <Output wire={w}
-                    kubeEnabled={kubeEnabled}
+                    deployEnabled={deployEnabled}
                     setConfigName={itemSetter(outputs, setOutputs, i, 'configName')}
                     setVisibility={itemSetter(outputs, setOutputs, i, 'visibility')}
                     delete={itemDeleter(outputs, setOutputs, i)}/>

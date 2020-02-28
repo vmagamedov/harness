@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+import os
+import sys
+
+from google.protobuf.compiler.plugin_pb2 import CodeGeneratorRequest
+from google.protobuf.compiler.plugin_pb2 import CodeGeneratorResponse
+
+from harness.wire_pb2 import HarnessWire
+
+
+TEMPLATE = """\
+const Protocol = {{
+  TCP: 'tcp',
+  HTTP: 'http',
+  GRPC: 'grpc',
+}};
+
+export const TypeInfo = {{
+{typeinfo}
+}};
+"""
+
+protocols = {
+    HarnessWire.TCP: 'Protocol.TCP',
+    HarnessWire.HTTP: 'Protocol.HTTP',
+    HarnessWire.GRPC: 'Protocol.GRPC',
+}
+
+
+def main():
+    with os.fdopen(sys.stdin.fileno(), 'rb') as inp:
+        request = CodeGeneratorRequest.FromString(inp.read())
+
+    typeinfo = []
+    for pf in request.proto_file:
+        for mt in pf.message_type:
+            for f in mt.field:
+                if f.type_name == '.harness.net.Socket':
+                    protocol = HarnessWire.TCP
+                    for _, opt in f.options.ListFields():
+                        if isinstance(opt, HarnessWire):
+                            protocol = opt.protocol
+                    typeinfo.append(
+                        f'  "{pf.package}.{mt.name}": {protocols[protocol]},'
+                    )
+
+    response = CodeGeneratorResponse()
+    module_rst = response.file.add()
+    module_rst.name = 'typeinfo.js'
+    module_rst.content = TEMPLATE.format(typeinfo='\n'.join(typeinfo))
+
+    with os.fdopen(sys.stdout.fileno(), 'wb') as out:
+        out.write(response.SerializeToString())
+
+
+if __name__ == '__main__':
+    main()

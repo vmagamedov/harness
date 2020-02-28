@@ -5,6 +5,7 @@ PROTO_PATH=$(abspath src)
 GOOGLE_PATH=$(shell scripts/google-proto-path)
 GEN=python3 -m grpc_tools.protoc -I. -I$(PROTO_PATH) --python_out=. --mypy_out=.
 GENERATED=*{_pb2.py,_grpc.py,_wires.py,.pyi}
+WIRE_PROTOS=$(filter-out src/harness/wire.proto, $(wildcard src/harness/*.proto))
 
 clean:
 	rm -f example/grpc/$(GENERATED)
@@ -36,8 +37,8 @@ release: proto
 
 reference:
 	python3 -m grpc_tools.protoc --plugin=scripts/protoc-gen-reference --reference_out=docs $(GOOGLE_PATH)/google/protobuf/empty.proto
-	python3 -m grpc_tools.protoc --plugin=scripts/protoc-gen-reference -Isrc --reference_out=docs src/harness/*.proto
-	rm docs/harness/wire.rst
+	python3 -m grpc_tools.protoc --plugin=scripts/protoc-gen-reference -Isrc --reference_out=docs ${WIRE_PROTOS}
+	python3 -m grpc_tools.protoc --plugin=scripts/protoc-gen-typeinfo --typeinfo_out=docs/_static -Isrc ${WIRE_PROTOS}
 
 docs: reference
 	PYTHONPATH=docs sphinx-build docs build
