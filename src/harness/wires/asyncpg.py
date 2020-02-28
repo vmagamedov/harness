@@ -1,11 +1,3 @@
-"""
-    asyncpg
-    =======
-
-    Wires for the asyncpg_ project.
-
-    .. _asyncpg: https://github.com/MagicStack/asyncpg
-"""
 from typing import TYPE_CHECKING
 
 from asyncpg import Connection

@@ -1,11 +1,3 @@
-"""
-    apscheduler
-    ===========
-
-    Wires for the apscheduler_ project.
-
-    .. _apscheduler: https://github.com/agronholm/apscheduler
-"""
 from apscheduler.schedulers.base import BaseScheduler
 
 from ..base import Wire, WaitMixin

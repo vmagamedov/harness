@@ -1,11 +1,3 @@
-"""
-    prometheus
-    ==========
-
-    Wires for the prometheus_client_ project.
-
-    .. _prometheus_client: https://github.com/prometheus/client_python
-"""
 import logging
 
 from prometheus_client import start_http_server

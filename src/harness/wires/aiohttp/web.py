@@ -107,8 +107,6 @@ class ServerWire(WaitMixin, Wire):
         self, app: 'Application', *, access_log: Optional[Logger] = None,
     ) -> None:
         """
-        :Configurable by: :proto:message:`harness.http.Server`
-
         :param app: configured :py:class:`aiohttp:aiohttp.web.Application`
             to run
         :param access_log: enable access logs by providing a logger instance

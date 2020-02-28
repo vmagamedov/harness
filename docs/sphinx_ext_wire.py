@@ -1,6 +1,8 @@
 from typing import List
 from dataclasses import dataclass, asdict
 
+from sphinx import addnodes
+from docutils import nodes
 from sphinx.application import Sphinx
 from sphinx.util.docutils import SphinxDirective
 from docutils.parsers.rst import directives
@@ -57,7 +59,38 @@ class Wire(SphinxDirective):
             config=self.options['config'],
             requirements=self.options['requirements'].split(),
         ))
-        return []
+
+        node = addnodes.desc()
+        node['objtype'] = 'wire'
+        signode = addnodes.desc_signature('', '')
+        signode += addnodes.desc_annotation('type', 'type:')
+        signode += addnodes.desc_name(self.options['type'],
+                                      self.options['type'])
+        signode += addnodes.desc_annotation('config', 'config:')
+        signode += addnodes.pending_xref(
+            '',
+            addnodes.desc_addname(self.options['config'],
+                                  self.options['config']),
+            refdomain='proto',
+            reftype='message',
+            reftarget=self.options['config'],
+        )
+        node.append(signode)
+
+        contentnode = addnodes.desc_content()
+        if self.options['requirements']:
+            contentnode += nodes.paragraph('', 'Requirements:')
+            bullet_list = nodes.bullet_list('')
+            for requirement in self.options['requirements'].split():
+                bullet_list += nodes.list_item(
+                    '', nodes.literal('', requirement),
+                )
+            contentnode += bullet_list
+        else:
+            contentnode += nodes.paragraph('', 'No requirements')
+        node.append(contentnode)
+
+        return [node]
 
 
 def on_html_page_context(app, pagename, templatename, context, doctree):

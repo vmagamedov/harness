@@ -1,10 +1,3 @@
-"""
-    logging
-    =======
-
-    Wires for the standard ``logging`` library.
-
-"""
 import sys
 import logging.handlers
 
