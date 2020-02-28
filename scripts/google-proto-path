@@ -1,0 +1,5 @@
+#!/usr/bin/env python3
+import pkg_resources
+
+if __name__ == '__main__':
+    print(pkg_resources.resource_filename('grpc_tools', '_proto'))

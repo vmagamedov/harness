@@ -2,6 +2,7 @@ __default__:
 	@echo "Please specify a target to make"
 
 PROTO_PATH=$(abspath src)
+GOOGLE_PATH=$(shell scripts/google-proto-path)
 GEN=python3 -m grpc_tools.protoc -I. -I$(PROTO_PATH) --python_out=. --mypy_out=.
 GENERATED=*{_pb2.py,_grpc.py,_wires.py,.pyi}
 
@@ -34,6 +35,7 @@ release: proto
 	python setup.py sdist
 
 reference:
+	python3 -m grpc_tools.protoc --plugin=scripts/protoc-gen-reference --reference_out=docs $(GOOGLE_PATH)/google/protobuf/empty.proto
 	python3 -m grpc_tools.protoc --plugin=scripts/protoc-gen-reference -Isrc --reference_out=docs src/harness/*.proto
 	rm docs/harness/wire.rst
 

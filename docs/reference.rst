@@ -14,6 +14,7 @@ Protocols
   harness/redis
   harness/tracing
   harness/wire.proto
+  google/protobuf/empty
 
 Python
 ~~~~~~

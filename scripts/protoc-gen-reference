@@ -64,14 +64,41 @@ SCALARS = {
     FieldDescriptorProto.TYPE_BYTES: 'bytes',
 }
 
+_text_indent = ' '
+_code_indent = '     '
+
+
+def format_comments(value, indent):
+    value = value.replace('`', '``')
+    output = []
+    code = []
+    for line in value.splitlines():
+        if line == '':
+            continue
+        elif line.startswith(_code_indent):
+            if not code:
+                output.append('')
+                output.append('.. code-block:: protobuf')
+                output.append('')
+            code.append(line[len(_code_indent):])
+        else:
+            if code:
+                output.extend(f'  {ln}' for ln in code)
+                del code[:]
+                output.append('')
+            output.append(line[len(_text_indent):])
+    return '\n'.join((' ' * indent + ln).rstrip() for ln in output)
+
 
 def main():
     with os.fdopen(sys.stdin.fileno(), 'rb') as inp:
         request = CodeGeneratorRequest.FromString(inp.read())
 
+    files_to_generate = set(request.file_to_generate)
+
     modules = {}
     for pf in request.proto_file:
-        if not pf.name.startswith('harness/'):
+        if pf.name not in files_to_generate:
             continue
 
         messages = []
@@ -149,7 +176,7 @@ def main():
             print(f'.. proto:message:: {message.name}', file=buf)
             print('', file=buf)
             if message.comment:
-                print(f'  {message.comment.strip()}', file=buf)
+                print(format_comments(message.comment, 2), file=buf)
                 print('', file=buf)
             for enum in message.enums:
                 print(f'  .. proto:enum:: {enum.name}', file=buf)
@@ -163,7 +190,7 @@ def main():
                 print(f'  .. proto:field:: {name_type}', file=buf)
                 print('', file=buf)
                 if field.comment:
-                    print(f'    {field.comment.strip()}', file=buf)
+                    print(format_comments(field.comment, 4), file=buf)
                     print('', file=buf)
 
         module_rst = response.file.add()
