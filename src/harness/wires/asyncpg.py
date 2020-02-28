@@ -40,6 +40,15 @@ def _wrap_do_execute(fn):
 
 
 class PoolWire(Wire):
+    """
+
+    .. wire:: harness.wires.asyncpg.PoolWire
+      :type: input
+      :runtime: python
+      :config: harness.postgres.Pool
+      :requirements: asyncpg
+
+    """
     pool: 'Pool'
     _connect = None
     _connect_params = None

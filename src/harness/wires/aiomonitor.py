@@ -14,6 +14,15 @@ from .base import Wire, WaitMixin
 
 
 class MonitorWire(WaitMixin, Wire):
+    """
+
+    .. wire:: harness.wires.aiomonitor.MonitorWire
+      :type: output
+      :runtime: python
+      :config: harness.net.Server
+      :requirements: aiomonitor
+
+    """
     _monitor = None
 
     def configure(self, value: net_pb2.Server):

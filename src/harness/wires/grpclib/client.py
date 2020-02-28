@@ -32,6 +32,15 @@ async def _recv_trailing_metadata(event: RecvTrailingMetadata) -> None:
 
 
 class ChannelWire(Wire):
+    """
+
+    .. wire:: harness.wires.grpclib.client.ChannelWire
+      :type: input
+      :runtime: python
+      :config: harness.grpc.Channel
+      :requirements: grpclib protobuf
+
+    """
     channel: Channel
 
     def configure(self, value: grpc_pb2.Channel):

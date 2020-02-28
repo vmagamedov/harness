@@ -14,6 +14,15 @@ _log = logging.getLogger(__name__)
 
 
 class JaegerSpanExporterWire(Wire):
+    """
+
+    .. wire:: harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire
+      :type: input
+      :runtime: python
+      :config: harness.tracing.Exporter
+      :requirements: jaeger-client
+
+    """
     _config: tracing_pb2.Exporter
 
     def configure(self, value: tracing_pb2.Exporter):

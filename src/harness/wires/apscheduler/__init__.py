@@ -12,7 +12,15 @@ from ..base import Wire, WaitMixin
 
 
 class SchedulerWire(WaitMixin, Wire):
+    """
 
+    .. wire:: harness.wires.apscheduler.SchedulerWire
+      :type: output
+      :runtime: python
+      :config: google.protobuf.Empty
+      :requirements: apscheduler
+
+    """
     def __init__(self, scheduler: 'BaseScheduler'):
         self._scheduler = scheduler
 

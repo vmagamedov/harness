@@ -51,6 +51,15 @@ async def _send_trailing_metadata(event: SendTrailingMetadata) -> None:
 
 
 class ServerWire(Wire):
+    """
+
+    .. wire:: harness.wires.grpclib.server.ServerWire
+      :type: output
+      :runtime: python
+      :config: harness.grpc.Server
+      :requirements: grpclib protobuf
+
+    """
     _config: grpc_pb2.Server
     server: Server
 

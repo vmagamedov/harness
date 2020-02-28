@@ -90,6 +90,15 @@ class _ColorFormatter(logging.Formatter):
 
 
 class ConsoleWire(Wire):
+    """
+
+    .. wire:: harness.wires.logging.ConsoleWire
+      :type: input
+      :runtime: python
+      :config: harness.logging.Console
+      :requirements: pygments
+
+    """
     _handler: logging.Handler
 
     def configure(self, value: logging_pb2.Console):
@@ -134,6 +143,15 @@ _FACILITY_MAP = {
 
 
 class SyslogWire(Wire):
+    """
+
+    .. wire:: harness.wires.logging.SyslogWire
+      :type: input
+      :runtime: python
+      :config: harness.logging.Syslog
+      :requirements:
+
+    """
     _handler: logging
 
     def configure(self, value: logging_pb2.Syslog):

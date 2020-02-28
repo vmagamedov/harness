@@ -19,6 +19,15 @@ _log = logging.getLogger(__name__)
 
 
 class ServerWire(WaitMixin, Wire):
+    """
+
+    .. wire:: harness.wires.prometheus.ServerWire
+      :type: output
+      :runtime: python
+      :config: harness.http.Server
+      :requirements: prometheus_client
+
+    """
     _config: http_pb2.Server
 
     def configure(self, value: http_pb2.Server):
