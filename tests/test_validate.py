@@ -1,45 +1,8 @@
-import tempfile
 from ipaddress import ip_address
 
 import pytest
-from google.protobuf.message_factory import GetMessages
 
-from harness.cli.utils import load_descriptor_set
 from harness.runtime._validate import validate, ValidationError
-
-
-_counter = 1
-
-
-@pytest.fixture()
-def package():
-    global _counter
-    try:
-        return f'test_{_counter}'
-    finally:
-        _counter += 1
-
-
-def message_factory(package, content):
-    src = (
-        'syntax = "proto3"; '
-        + f'package {package}; '
-        + 'import "validate/validate.proto"; '
-        + 'import "google/protobuf/timestamp.proto"; '
-        + 'import "google/protobuf/duration.proto"; '
-        + 'import "google/protobuf/any.proto"; '
-        + f'message Message {{ {content} }}'
-    )
-    with tempfile.NamedTemporaryFile(suffix='.proto') as proto_file:
-        proto_file.write(src.encode('utf-8'))
-        proto_file.flush()
-        file_descriptor_set = load_descriptor_set(proto_file.name)
-    return GetMessages(file_descriptor_set.file)
-
-
-@pytest.fixture()
-def message_types(request, package):
-    return message_factory(package, request.function.__doc__)
 
 
 @pytest.fixture()
@@ -64,21 +27,25 @@ def any_type(message_types):
 
 def test_disabled(message_type):
     """
-    message Inner {
-        option (validate.disabled) = true;
-        string value = 1 [(validate.rules).string.const = "valid"];
+    message Message {
+        message Inner {
+            option (validate.disabled) = true;
+            string value = 1 [(validate.rules).string.const = "valid"];
+        }
+        Inner field = 1;
     }
-    Inner field = 1;
     """
     validate(message_type(field=dict(value="invalid")))
 
 
 def test_oneof_required(message_type):
     """
-    oneof type {
-        option (validate.required) = true;
-        string foo = 1;
-        int32 bar = 2;
+    message Message {
+        oneof type {
+            option (validate.required) = true;
+            string foo = 1;
+            int32 bar = 2;
+        }
     }
     """
     validate(message_type(foo="test"))
@@ -89,7 +56,9 @@ def test_oneof_required(message_type):
 
 def test_float_const(message_type):
     """
-    float value = 1 [(validate.rules).float.const = 4.2];
+    message Message {
+        float value = 1 [(validate.rules).float.const = 4.2];
+    }
     """
     validate(message_type(value=4.2))
     with pytest.raises(ValidationError, match='value not equal to'):
@@ -98,9 +67,11 @@ def test_float_const(message_type):
 
 def test_timestamp_lt(message_type, timestamp_type):
     """
-    google.protobuf.Timestamp value = 1 [
-        (validate.rules).timestamp.lt = {seconds: 1000}
-    ];
+    message Message {
+        google.protobuf.Timestamp value = 1 [
+            (validate.rules).timestamp.lt = {seconds: 1000}
+        ];
+    }
     """
     validate(message_type(value=timestamp_type(seconds=999)))
     with pytest.raises(ValidationError, match='is not lesser than'):
@@ -109,9 +80,11 @@ def test_timestamp_lt(message_type, timestamp_type):
 
 def test_timestamp_within(message_type, timestamp_type):
     """
-    google.protobuf.Timestamp value = 1 [
-        (validate.rules).timestamp.within = {seconds: 60}
-    ];
+    message Message {
+        google.protobuf.Timestamp value = 1 [
+            (validate.rules).timestamp.within = {seconds: 60}
+        ];
+    }
     """
     value = timestamp_type()
     value.GetCurrentTime()
@@ -129,10 +102,12 @@ def test_timestamp_within(message_type, timestamp_type):
 
 def test_duration_in(message_type, duration_type):
     """
-    google.protobuf.Duration value = 1 [
-        (validate.rules).duration.in = {seconds: 60},
-        (validate.rules).duration.in = {seconds: 30}
-    ];
+    message Message {
+        google.protobuf.Duration value = 1 [
+            (validate.rules).duration.in = {seconds: 60},
+            (validate.rules).duration.in = {seconds: 30}
+        ];
+    }
     """
     validate(message_type(value=duration_type(seconds=60)))
     with pytest.raises(ValidationError, match='value not in {60s, 30s}'):
@@ -141,9 +116,11 @@ def test_duration_in(message_type, duration_type):
 
 def test_duration_lte(message_type, duration_type):
     """
-    google.protobuf.Duration value = 1 [
-        (validate.rules).duration.lte = {seconds: 60}
-    ];
+    message Message {
+        google.protobuf.Duration value = 1 [
+            (validate.rules).duration.lte = {seconds: 60}
+        ];
+    }
     """
     validate(message_type(value=duration_type(seconds=60)))
     with pytest.raises(ValidationError, match='value is not lesser than or equal to 60s'):
@@ -152,11 +129,13 @@ def test_duration_lte(message_type, duration_type):
 
 def test_enum_defined_only(message_type):
     """
-    enum Foo {
-        A = 0;
-        B = 1;
+    message Message {
+        enum Foo {
+            A = 0;
+            B = 1;
+        }
+        Foo value = 1 [(validate.rules).enum.defined_only = true];
     }
-    Foo value = 1 [(validate.rules).enum.defined_only = true];
     """
     validate(message_type())
     validate(message_type(value=1))
@@ -166,7 +145,9 @@ def test_enum_defined_only(message_type):
 
 def test_repeated_unique(message_type):
     """
-    repeated int32 value = 1 [(validate.rules).repeated.unique = true];
+    message Message {
+        repeated int32 value = 1 [(validate.rules).repeated.unique = true];
+    }
     """
     validate(message_type(value=[1, 2, 3]))
     with pytest.raises(ValidationError, match='value must contain unique items; repeated items: \\[2, 3\\]'):
@@ -175,7 +156,9 @@ def test_repeated_unique(message_type):
 
 def test_repeated_items(message_type):
     """
-    repeated int32 field = 1 [(validate.rules).repeated.items.int32.lt = 5];
+    message Message {
+        repeated int32 field = 1 [(validate.rules).repeated.items.int32.lt = 5];
+    }
     """
     validate(message_type(field=[1, 2, 3, 4]))
     with pytest.raises(ValidationError, match='field\\[\\] is not lesser than 5'):
@@ -184,7 +167,9 @@ def test_repeated_items(message_type):
 
 def test_map_key(message_type):
     """
-    map<string, int32> field = 1 [(validate.rules).map.keys.string.min_len = 3];
+    message Message {
+        map<string, int32> field = 1 [(validate.rules).map.keys.string.min_len = 3];
+    }
     """
     validate(message_type(field={'test': 42}))
     with pytest.raises(ValidationError, match='field<key> length is less than 3'):
@@ -193,7 +178,9 @@ def test_map_key(message_type):
 
 def test_map_values(message_type):
     """
-    map<string, int32> field = 1 [(validate.rules).map.values.int32.const = 42];
+    message Message {
+        map<string, int32> field = 1 [(validate.rules).map.values.int32.const = 42];
+    }
     """
     validate(message_type(field={'test': 42}))
     with pytest.raises(ValidationError, match='field<value> not equal to 42'):
@@ -202,7 +189,9 @@ def test_map_values(message_type):
 
 def test_any_in(message_type, any_type, duration_type, timestamp_type):
     """
-    google.protobuf.Any field = 1 [(validate.rules).any.in = "type.googleapis.com/google.protobuf.Duration"];
+    message Message {
+        google.protobuf.Any field = 1 [(validate.rules).any.in = "type.googleapis.com/google.protobuf.Duration"];
+    }
     """
     any_1 = any_type()
     any_1.Pack(duration_type(seconds=42))
@@ -215,10 +204,12 @@ def test_any_in(message_type, any_type, duration_type, timestamp_type):
 
 def test_nested(message_type):
     """
-    message Inner {
-        string value = 1 [(validate.rules).string.const = "valid"];
+    message Message {
+        message Inner {
+            string value = 1 [(validate.rules).string.const = "valid"];
+        }
+        Inner field = 1;
     }
-    Inner field = 1;
     """
     validate(message_type())
     validate(message_type(field=dict(value="valid")))
@@ -228,20 +219,24 @@ def test_nested(message_type):
 
 def test_message_skip(message_type):
     """
-    message Inner {
-        string value = 1 [(validate.rules).string.const = "valid"];
+    message Message {
+        message Inner {
+            string value = 1 [(validate.rules).string.const = "valid"];
+        }
+        Inner field = 1 [(validate.rules).message.skip = true];
     }
-    Inner field = 1 [(validate.rules).message.skip = true];
     """
     validate(message_type(field=dict(value="invalid")))
 
 
 def test_message_required(message_type):
     """
-    message Inner {
-        string value = 1;
+    message Message {
+        message Inner {
+            string value = 1;
+        }
+        Inner field = 1 [(validate.rules).message.required = true];
     }
-    Inner field = 1 [(validate.rules).message.required = true];
     """
     validate(message_type(field=dict()))
     validate(message_type(field=dict(value='test')))
@@ -251,7 +246,9 @@ def test_message_required(message_type):
 
 def test_email(message_type):
     """
-    string field = 1 [(validate.rules).string.email = true];
+    message Message {
+        string field = 1 [(validate.rules).string.email = true];
+    }
     """
     validate(message_type(field="admin@example.com"))
     validate(message_type(field="Jean-Luc Picard <jean-luc.pickard@starfleet.milkyway>"))
@@ -263,7 +260,9 @@ def test_email(message_type):
 
 def test_hostname(message_type):
     """
-    string field = 1 [(validate.rules).string.hostname = true];
+    message Message {
+        string field = 1 [(validate.rules).string.hostname = true];
+    }
     """
     validate(message_type(field="example.com"))
     validate(message_type(field="Example.com"))
@@ -273,7 +272,9 @@ def test_hostname(message_type):
 
 def test_string_ip(message_type):
     """
-    string field = 1 [(validate.rules).string.ip = true];
+    message Message {
+        string field = 1 [(validate.rules).string.ip = true];
+    }
     """
     validate(message_type(field="0.0.0.0"))
     validate(message_type(field="127.0.0.1"))
@@ -285,7 +286,9 @@ def test_string_ip(message_type):
 
 def test_string_ipv4(message_type):
     """
-    string field = 1 [(validate.rules).string.ipv4 = true];
+    message Message {
+        string field = 1 [(validate.rules).string.ipv4 = true];
+    }
     """
     validate(message_type(field="0.0.0.0"))
     validate(message_type(field="127.0.0.1"))
@@ -297,7 +300,9 @@ def test_string_ipv4(message_type):
 
 def test_string_ipv6(message_type):
     """
-    string field = 1 [(validate.rules).string.ipv6 = true];
+    message Message {
+        string field = 1 [(validate.rules).string.ipv6 = true];
+    }
     """
     validate(message_type(field="::1"))
     validate(message_type(field="2001:0db8:85a3:0000:0000:8a2e:0370:7334"))
@@ -309,7 +314,9 @@ def test_string_ipv6(message_type):
 
 def test_bytes_ip(message_type):
     """
-    bytes field = 1 [(validate.rules).bytes.ip = true];
+    message Message {
+        bytes field = 1 [(validate.rules).bytes.ip = true];
+    }
     """
     validate(message_type(field=ip_address("0.0.0.0").packed))
     validate(message_type(field=ip_address("127.0.0.1").packed))
@@ -321,7 +328,9 @@ def test_bytes_ip(message_type):
 
 def test_bytes_ipv4(message_type):
     """
-    bytes field = 1 [(validate.rules).bytes.ipv4 = true];
+    message Message {
+        bytes field = 1 [(validate.rules).bytes.ipv4 = true];
+    }
     """
     validate(message_type(field=ip_address("0.0.0.0").packed))
     validate(message_type(field=ip_address("127.0.0.1").packed))
@@ -333,7 +342,9 @@ def test_bytes_ipv4(message_type):
 
 def test_bytes_ipv6(message_type):
     """
-    bytes field = 1 [(validate.rules).bytes.ipv6 = true];
+    message Message {
+        bytes field = 1 [(validate.rules).bytes.ipv6 = true];
+    }
     """
     validate(message_type(field=ip_address("::1").packed))
     validate(message_type(field=ip_address("2001:0db8:85a3:0000:0000:8a2e:0370:7334").packed))
@@ -345,7 +356,9 @@ def test_bytes_ipv6(message_type):
 
 def test_address(message_type):
     """
-    string field = 1 [(validate.rules).string.address = true];
+    message Message {
+        string field = 1 [(validate.rules).string.address = true];
+    }
     """
     validate(message_type(field="::1"))
     validate(message_type(field="127.0.0.1"))
@@ -356,7 +369,9 @@ def test_address(message_type):
 
 def test_uri(message_type):
     """
-    string field = 1 [(validate.rules).string.uri = true];
+    message Message {
+        string field = 1 [(validate.rules).string.uri = true];
+    }
     """
     validate(message_type(field="http://google.com"))
     validate(message_type(field="http://127.0.0.1/page.html#fragment"))
@@ -366,7 +381,9 @@ def test_uri(message_type):
 
 def test_uri_ref(message_type):
     """
-    string field = 1 [(validate.rules).string.uri_ref = true];
+    message Message {
+        string field = 1 [(validate.rules).string.uri_ref = true];
+    }
     """
     validate(message_type(field="http://google.com"))
     validate(message_type(field="/local/path"))
@@ -376,7 +393,9 @@ def test_uri_ref(message_type):
 
 def test_uuid(message_type):
     """
-    string field = 1 [(validate.rules).string.uuid = true];
+    message Message {
+        string field = 1 [(validate.rules).string.uuid = true];
+    }
     """
     validate(message_type(field="adbf3fd4-6a41-41a8-b5c1-df09adc3a9b3"))
     validate(message_type(field="ADBF3FD4-6A41-41A8-B5C1-DF09ADC3A9B3"))
