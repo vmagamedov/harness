@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package scotty;
 
+import "validate/validate.proto";
 import "harness/wire.proto";
 import "harness/postgres.proto";
 import "harness/grpc.proto";
@@ -16,12 +17,26 @@ message Configuration {
 
     bool debug = 1;
 
-    harness.postgres.Pool db = 2 [(harness.wire).input = "harness.wires.asyncpg.PoolWire"];
-    harness.logging.Console console = 4 [(harness.wire).input = "harness.wires.logging.ConsoleWire"];
-    harness.logging.Syslog syslog = 5 [(harness.wire).input = "harness.wires.logging.SyslogWire"];
-    harness.tracing.Exporter tracing = 6 [(harness.wire).input = "harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire"];
-    harness.grpc.Server server = 7 [(harness.wire).output = "harness.wires.grpclib.server.ServerWire"];
-    harness.http.Server prometheus = 8 [(harness.wire).output = "harness.wires.prometheus.ServerWire"];
+    harness.postgres.Pool db = 2 [
+        (validate.rules).message.required = true,
+        (harness.wire).input = "harness.wires.asyncpg.PoolWire"
+    ];
+    harness.logging.Console console = 4 [
+        (harness.wire).input = "harness.wires.logging.ConsoleWire"
+    ];
+    harness.logging.Syslog syslog = 5 [
+        (harness.wire).input = "harness.wires.logging.SyslogWire"
+    ];
+    harness.tracing.Exporter tracing = 6 [
+        (harness.wire).input = "harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire"
+    ];
+    harness.grpc.Server server = 7 [
+        (validate.rules).message.required = true,
+        (harness.wire).output = "harness.wires.grpclib.server.ServerWire"
+    ];
+    harness.http.Server prometheus = 8 [
+        (harness.wire).output = "harness.wires.prometheus.ServerWire"
+    ];
 }
 
 service Scotty {

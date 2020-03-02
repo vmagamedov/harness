@@ -5,3 +5,4 @@ redis_job_store:
   db: 0
 console:
   level: INFO
+scheduler: {}

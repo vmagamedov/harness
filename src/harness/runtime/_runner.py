@@ -55,10 +55,13 @@ class Runner(Generic[_CT, _WI, _WO]):
             for field in fields(self._wires_in_type):
                 if field.name == 'config':
                     continue
-                wire_config = getattr(config, field.name)
-                wire = field.type()
-                wire.configure(wire_config)
-                await stack.enter_async_context(wire)
+                if config.HasField(field.name):
+                    wire_config = getattr(config, field.name)
+                    wire = field.type()
+                    wire.configure(wire_config)
+                    await stack.enter_async_context(wire)
+                else:
+                    wire = None
                 input_wires[field.name] = wire
             wires_in = self._wires_in_type(**input_wires)
 
@@ -73,6 +76,8 @@ class Runner(Generic[_CT, _WI, _WO]):
             waiters = set()
             output_wires = []
             for field in fields(self._wires_out_type):
+                if not config.HasField(field.name):
+                    continue
                 wire = getattr(wires_out, field.name)
                 wire_config = getattr(config, field.name)
                 wire.configure(wire_config)
@@ -80,8 +85,11 @@ class Runner(Generic[_CT, _WI, _WO]):
                 waiters.add(wire.wait_closed())
                 output_wires.append(wire)
 
-            with graceful_exit(output_wires):
-                await asyncio.wait(waiters, return_when=asyncio.FIRST_COMPLETED)
+            if output_wires:
+                with graceful_exit(output_wires):
+                    await asyncio.wait(
+                        waiters, return_when=asyncio.FIRST_COMPLETED,
+                    )
 
     def run(
         self, main_func: Callable[[_WI], Awaitable[_WO]], args: List[str],

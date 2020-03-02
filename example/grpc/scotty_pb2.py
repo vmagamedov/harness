@@ -11,6 +11,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from validate import validate_pb2 as validate_dot_validate__pb2
 from harness import wire_pb2 as harness_dot_wire__pb2
 from harness import postgres_pb2 as harness_dot_postgres__pb2
 from harness import grpc_pb2 as harness_dot_grpc__pb2
@@ -25,9 +26,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='scotty',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\x0cscotty.proto\x12\x06scotty\x1a\x12harness/wire.proto\x1a\x16harness/postgres.proto\x1a\x12harness/grpc.proto\x1a\x15harness/logging.proto\x1a\x12harness/http.proto\x1a\x15harness/tracing.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xaf\x04\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12G\n\x02\x64\x62\x18\x02 \x01(\x0b\x32\x16.harness.postgres.PoolB#\x8a} \n\x1eharness.wires.asyncpg.PoolWire\x12Q\n\x07\x63onsole\x18\x04 \x01(\x0b\x32\x18.harness.logging.ConsoleB&\x8a}#\n!harness.wires.logging.ConsoleWire\x12N\n\x06syslog\x18\x05 \x01(\x0b\x32\x17.harness.logging.SyslogB%\x8a}\"\n harness.wires.logging.SyslogWire\x12n\n\x07tracing\x18\x06 \x01(\x0b\x32\x19.harness.tracing.ExporterBB\x8a}?\n=harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire\x12R\n\x06server\x18\x07 \x01(\x0b\x32\x14.harness.grpc.ServerB,\x8a})\x12\'harness.wires.grpclib.server.ServerWire\x12R\n\nprometheus\x18\x08 \x01(\x0b\x32\x14.harness.http.ServerB(\x8a}%\x12#harness.wires.prometheus.ServerWire:\x0b\x8a}\x08\n\x06scotty2F\n\x06Scotty\x12<\n\x08\x42\x65\x61mMeUp\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x0cscotty.proto\x12\x06scotty\x1a\x17validate/validate.proto\x1a\x12harness/wire.proto\x1a\x16harness/postgres.proto\x1a\x12harness/grpc.proto\x1a\x15harness/logging.proto\x1a\x12harness/http.proto\x1a\x15harness/tracing.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xbf\x04\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12O\n\x02\x64\x62\x18\x02 \x01(\x0b\x32\x16.harness.postgres.PoolB+\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a} \n\x1eharness.wires.asyncpg.PoolWire\x12Q\n\x07\x63onsole\x18\x04 \x01(\x0b\x32\x18.harness.logging.ConsoleB&\x8a}#\n!harness.wires.logging.ConsoleWire\x12N\n\x06syslog\x18\x05 \x01(\x0b\x32\x17.harness.logging.SyslogB%\x8a}\"\n harness.wires.logging.SyslogWire\x12n\n\x07tracing\x18\x06 \x01(\x0b\x32\x19.harness.tracing.ExporterBB\x8a}?\n=harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire\x12Z\n\x06server\x18\x07 \x01(\x0b\x32\x14.harness.grpc.ServerB4\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a})\x12\'harness.wires.grpclib.server.ServerWire\x12R\n\nprometheus\x18\x08 \x01(\x0b\x32\x14.harness.http.ServerB(\x8a}%\x12#harness.wires.prometheus.ServerWire:\x0b\x8a}\x08\n\x06scotty2F\n\x06Scotty\x12<\n\x08\x42\x65\x61mMeUp\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3'
   ,
-  dependencies=[harness_dot_wire__pb2.DESCRIPTOR,harness_dot_postgres__pb2.DESCRIPTOR,harness_dot_grpc__pb2.DESCRIPTOR,harness_dot_logging__pb2.DESCRIPTOR,harness_dot_http__pb2.DESCRIPTOR,harness_dot_tracing__pb2.DESCRIPTOR,google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
+  dependencies=[validate_dot_validate__pb2.DESCRIPTOR,harness_dot_wire__pb2.DESCRIPTOR,harness_dot_postgres__pb2.DESCRIPTOR,harness_dot_grpc__pb2.DESCRIPTOR,harness_dot_logging__pb2.DESCRIPTOR,harness_dot_http__pb2.DESCRIPTOR,harness_dot_tracing__pb2.DESCRIPTOR,google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
 
 
@@ -52,7 +53,7 @@ _CONFIGURATION = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\212} \n\036harness.wires.asyncpg.PoolWire', file=DESCRIPTOR),
+      serialized_options=b'\372B\005\212\001\002\020\001\212} \n\036harness.wires.asyncpg.PoolWire', file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='console', full_name='scotty.Configuration.console', index=2,
       number=4, type=11, cpp_type=10, label=1,
@@ -80,7 +81,7 @@ _CONFIGURATION = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\212})\022\'harness.wires.grpclib.server.ServerWire', file=DESCRIPTOR),
+      serialized_options=b'\372B\005\212\001\002\020\001\212})\022\'harness.wires.grpclib.server.ServerWire', file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='prometheus', full_name='scotty.Configuration.prometheus', index=6,
       number=8, type=11, cpp_type=10, label=1,
@@ -100,8 +101,8 @@ _CONFIGURATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=184,
-  serialized_end=743,
+  serialized_start=209,
+  serialized_end=784,
 )
 
 _CONFIGURATION.fields_by_name['db'].message_type = harness_dot_postgres__pb2._POOL
@@ -135,8 +136,8 @@ _SCOTTY = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=745,
-  serialized_end=815,
+  serialized_start=786,
+  serialized_end=856,
   methods=[
   _descriptor.MethodDescriptor(
     name='BeamMeUp',

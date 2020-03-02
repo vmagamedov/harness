@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package pulsar;
 
+import "validate/validate.proto";
 import "harness/wire.proto";
 import "harness/redis.proto";
 import "harness/logging.proto";
@@ -10,7 +11,16 @@ import "google/protobuf/empty.proto";
 message Configuration {
     option (harness.service).name = "pulsar";
 
-    harness.redis.Connection redis_job_store = 2 [(harness.wire).input = "harness.wires.apscheduler.jobstores.redis.RedisJobStoreWire"];
-    harness.logging.Console console = 3 [(harness.wire).input = "harness.wires.logging.ConsoleWire"];
-    google.protobuf.Empty scheduler = 1 [(harness.wire).output = "harness.wires.apscheduler.SchedulerWire"];
+    harness.redis.Connection redis_job_store = 2 [
+        (validate.rules).message.required = true,
+        (harness.wire).input = "harness.wires.apscheduler.jobstores.redis.RedisJobStoreWire"
+    ];
+    harness.logging.Console console = 3 [
+        (validate.rules).message.required = true,
+        (harness.wire).input = "harness.wires.logging.ConsoleWire"
+    ];
+    google.protobuf.Empty scheduler = 1 [
+        (validate.rules).message.required = true,
+        (harness.wire).output = "harness.wires.apscheduler.SchedulerWire"
+    ];
 }

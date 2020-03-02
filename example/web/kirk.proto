@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package kirk;
 
+import "validate/validate.proto";
 import "harness/wire.proto";
 import "harness/postgres.proto";
 import "harness/net.proto";
@@ -19,24 +20,30 @@ message Configuration {
     bool debug = 1;
 
     harness.postgres.Pool db = 2 [
+        (validate.rules).message.required = true,
         (harness.wire).input = "harness.wires.asyncpg.PoolWire",
         (harness.wire).access = EXTERNAL
     ];
     harness.grpc.Channel scotty = 3 [
+        (validate.rules).message.required = true,
         (harness.wire).input = "harness.wires.grpclib.client.ChannelWire",
         (harness.wire).access = NAMESPACE
     ];
     harness.logging.Console console = 4 [
+        (validate.rules).message.required = true,
         (harness.wire).input = "harness.wires.logging.ConsoleWire"
     ];
     harness.tracing.Exporter tracing = 5 [
+        (validate.rules).message.required = true,
         (harness.wire).input = "harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire"
     ];
     harness.http.Server server = 6 [
+        (validate.rules).message.required = true,
         (harness.wire).output = "harness.wires.aiohttp.web.ServerWire",
         (harness.wire).visibility = PUBLIC
     ];
     harness.net.Server monitor = 7 [
+        (validate.rules).message.required = true,
         (harness.wire).output = "harness.wires.aiomonitor.MonitorWire"
     ];
 }

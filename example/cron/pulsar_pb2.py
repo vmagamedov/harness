@@ -11,6 +11,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from validate import validate_pb2 as validate_dot_validate__pb2
 from harness import wire_pb2 as harness_dot_wire__pb2
 from harness import redis_pb2 as harness_dot_redis__pb2
 from harness import logging_pb2 as harness_dot_logging__pb2
@@ -22,9 +23,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='pulsar',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\x0cpulsar.proto\x12\x06pulsar\x1a\x12harness/wire.proto\x1a\x13harness/redis.proto\x1a\x15harness/logging.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xbe\x02\n\rConfiguration\x12t\n\x0fredis_job_store\x18\x02 \x01(\x0b\x32\x19.harness.redis.ConnectionB@\x8a}=\n;harness.wires.apscheduler.jobstores.redis.RedisJobStoreWire\x12Q\n\x07\x63onsole\x18\x03 \x01(\x0b\x32\x18.harness.logging.ConsoleB&\x8a}#\n!harness.wires.logging.ConsoleWire\x12W\n\tscheduler\x18\x01 \x01(\x0b\x32\x16.google.protobuf.EmptyB,\x8a})\x12\'harness.wires.apscheduler.SchedulerWire:\x0b\x8a}\x08\n\x06pulsarb\x06proto3'
+  serialized_pb=b'\n\x0cpulsar.proto\x12\x06pulsar\x1a\x17validate/validate.proto\x1a\x12harness/wire.proto\x1a\x13harness/redis.proto\x1a\x15harness/logging.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xd6\x02\n\rConfiguration\x12|\n\x0fredis_job_store\x18\x02 \x01(\x0b\x32\x19.harness.redis.ConnectionBH\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}=\n;harness.wires.apscheduler.jobstores.redis.RedisJobStoreWire\x12Y\n\x07\x63onsole\x18\x03 \x01(\x0b\x32\x18.harness.logging.ConsoleB.\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}#\n!harness.wires.logging.ConsoleWire\x12_\n\tscheduler\x18\x01 \x01(\x0b\x32\x16.google.protobuf.EmptyB4\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a})\x12\'harness.wires.apscheduler.SchedulerWire:\x0b\x8a}\x08\n\x06pulsarb\x06proto3'
   ,
-  dependencies=[harness_dot_wire__pb2.DESCRIPTOR,harness_dot_redis__pb2.DESCRIPTOR,harness_dot_logging__pb2.DESCRIPTOR,google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
+  dependencies=[validate_dot_validate__pb2.DESCRIPTOR,harness_dot_wire__pb2.DESCRIPTOR,harness_dot_redis__pb2.DESCRIPTOR,harness_dot_logging__pb2.DESCRIPTOR,google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
 
 
@@ -42,21 +43,21 @@ _CONFIGURATION = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\212}=\n;harness.wires.apscheduler.jobstores.redis.RedisJobStoreWire', file=DESCRIPTOR),
+      serialized_options=b'\372B\005\212\001\002\020\001\212}=\n;harness.wires.apscheduler.jobstores.redis.RedisJobStoreWire', file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='console', full_name='pulsar.Configuration.console', index=1,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\212}#\n!harness.wires.logging.ConsoleWire', file=DESCRIPTOR),
+      serialized_options=b'\372B\005\212\001\002\020\001\212}#\n!harness.wires.logging.ConsoleWire', file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='scheduler', full_name='pulsar.Configuration.scheduler', index=2,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\212})\022\'harness.wires.apscheduler.SchedulerWire', file=DESCRIPTOR),
+      serialized_options=b'\372B\005\212\001\002\020\001\212})\022\'harness.wires.apscheduler.SchedulerWire', file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -69,8 +70,8 @@ _CONFIGURATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=118,
-  serialized_end=436,
+  serialized_start=143,
+  serialized_end=485,
 )
 
 _CONFIGURATION.fields_by_name['redis_job_store'].message_type = harness_dot_redis__pb2._CONNECTION
