@@ -636,7 +636,9 @@ def field_gen(buf, field, code_path, proto_path):
             with buf.indent():
                 buf.add(f'validate(item)')
         else:
-            buf.add(f'if {field_value} is not None:')
+            outer = '.'.join(code_path[:-1])
+            inner = code_path[-1]
+            buf.add(f'if {outer}.HasField("{inner}"):')
             with buf.indent():
                 buf.add(f'validate({field_value})')
 

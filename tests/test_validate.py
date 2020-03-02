@@ -220,6 +220,7 @@ def test_nested(message_type):
     }
     Inner field = 1;
     """
+    validate(message_type())
     validate(message_type(field=dict(value="valid")))
     with pytest.raises(ValidationError, match="value not equal to 'valid'"):
         validate(message_type(field=dict(value="invalid")))
@@ -242,6 +243,7 @@ def test_message_required(message_type):
     }
     Inner field = 1 [(validate.rules).message.required = true];
     """
+    validate(message_type(field=dict()))
     validate(message_type(field=dict(value='test')))
     with pytest.raises(ValidationError, match="field is required"):
         validate(message_type())
