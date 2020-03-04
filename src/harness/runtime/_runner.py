@@ -64,7 +64,7 @@ class Runner(Generic[_CT, _WI, _WO]):
                     else:
                         # Optional[wire_type]
                         wire_type = field.type.__args__[0]
-                        assert isinstance(wire_type, Wire), type(wire_type)
+                        assert isinstance(wire_type, type) and issubclass(wire_type, Wire), type(wire_type)
                     wire = wire_type()
                     wire.configure(wire_config)
                     await stack.enter_async_context(wire)
