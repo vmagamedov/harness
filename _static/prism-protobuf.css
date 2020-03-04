@@ -1,0 +1,31 @@
+.token.keyword {
+	color: rgb(0, 128, 0);
+	font-weight: bold;
+}
+.token.string {
+	color: rgb(186, 33, 33);
+}
+.token.class-name {
+	color: rgb(0, 0, 255);
+	font-weight: bold;
+}
+.token.number {
+	color: rgb(102, 102, 102);
+}
+.token.boolean {
+	color: rgb(0, 128, 0);
+	font-weight: bold;
+}
+.token.variable {
+	color: rgb(125, 144, 41);
+}
+.token.builtin {
+	color: rgb(176, 0, 64);
+}
+.token.positional-class-name {
+	color: #404040;
+	font-weight: normal;
+}
+.token.operator {
+	color: #666666;
+}

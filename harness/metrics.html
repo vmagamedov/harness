@@ -1,0 +1,259 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>harness/metrics.proto &mdash; Harness  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="google/protobuf/empty.proto" href="../google/protobuf/empty.html" />
+    <link rel="prev" title="harness/tracing.proto" href="tracing.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Harness
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../bootstrap.html">Bootstrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wires.html">Wires</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../runtime.html">Runtime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code-generation.html">Code Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment.html">Deployment</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../reference.html">Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../reference.html#message-types">Message Types</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="grpc.html">harness/grpc.proto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="http.html">harness/http.proto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="logging.html">harness/logging.proto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="net.html">harness/net.proto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="postgres.html">harness/postgres.proto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="redis.html">harness/redis.proto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tracing.html">harness/tracing.proto</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">harness/metrics.proto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../google/protobuf/empty.html">google/protobuf/empty.proto</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#proto-files">Proto Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#python-wires">Python Wires</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Runtimes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../python/guide.html">Python Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../python/wires/index.html">Python Wires</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Harness</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../reference.html">Reference</a> &raquo;</li>
+        
+      <li>harness/metrics.proto</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/vmagamedov/harness/blob/master/docs/harness/metrics.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="harness-metrics-proto">
+<h1>harness/metrics.proto<a class="headerlink" href="#harness-metrics-proto" title="Permalink to this headline">¶</a></h1>
+<dl class="message">
+<dt id="Prometheus">
+<em class="property">message</em><code class="sig-prename descclassname">harness.metrics.</code><code class="sig-name descname">Prometheus</code><a class="headerlink" href="#Prometheus" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field">
+<dt>
+<code class="sig-name descname">prefix</code><code class="sig-prename descclassname">string</code></dt>
+<dd></dd></dl>
+
+<dl class="field">
+<dt>
+<code class="sig-name descname">bind</code><a class="reference internal" href="net.html#Socket"><code class="sig-prename descclassname">harness.net.Socket</code></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../google/protobuf/empty.html" class="btn btn-neutral float-right" title="google/protobuf/empty.proto" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tracing.html" class="btn btn-neutral float-left" title="harness/tracing.proto" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Vladimir Magamedov
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+ 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-136602285-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-136602285-3');
+</script>
+
+
+</body>
+</html>

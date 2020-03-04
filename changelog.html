@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Harness Framework &mdash; Harness  documentation</title>
+  <title>Changelog &mdash; Harness  documentation</title>
   
 
   
@@ -36,7 +36,8 @@
   <link rel="stylesheet" href="_static/style.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Bootstrap" href="bootstrap.html" /> 
+    <link rel="next" title="Python Guide" href="python/guide.html" />
+    <link rel="prev" title="Contributing" href="contributing.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -50,7 +51,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> Harness
+            <a href="index.html" class="icon icon-home"> Harness
           
 
           
@@ -77,7 +78,7 @@
               
             
             
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="bootstrap.html">Bootstrap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wires.html">Wires</a></li>
@@ -86,7 +87,10 @@
 <li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#v0.1.0">v0.1.0 (dev)</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Runtimes</span></p>
 <ul>
@@ -106,7 +110,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">Harness</a>
+          <a href="index.html">Harness</a>
         
       </nav>
 
@@ -135,16 +139,16 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#">Docs</a> &raquo;</li>
+      <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Harness Framework</li>
+      <li>Changelog</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/vmagamedov/harness/blob/master/docs/index.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/vmagamedov/harness/blob/master/docs/changelog.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -158,60 +162,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="harness-framework">
-<h1>Harness Framework<a class="headerlink" href="#harness-framework" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-</div>
-<div class="toctree-wrapper compound">
-</div>
-<div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
-<p>Harness is a language-neutral meta-framework for building and deploying
-serverless-style services:</p>
+  <div class="section" id="changelog">
+<h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="v0.1.0">
+<h2>v0.1.0 (dev)<a class="headerlink" href="#v0.1.0" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>It glues together other libraries, frameworks and your own code</p></li>
-<li><p>Serverless-style means that Harness ships with a <a class="reference internal" href="runtime.html"><span class="doc">runtime</span></a>,
-which is used to run your services</p></li>
-<li><p>You can use Harness to generate deploy configuration for your services</p></li>
-<li><p>To make all this happen, Harness uses a language-neutral self-describing
-<a class="reference internal" href="configuration.html"><span class="doc">configuration format</span></a></p></li>
-</ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Harness is in it’s early stage of design and development.
-Please don’t hesitate to provide your expertise in any form. Our goal is to
-develop a framework, which is not specific to some particular company, but
-to make it suitable for all, so everyone can benefit from it.</p>
-</div>
-</div>
-<div class="section" id="motivation">
-<h2>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
-<p>It doesn’t matter which programming language you use, all services have many
-things in common, like:</p>
-<ul class="simple">
-<li><p>Configuration management</p></li>
-<li><p>Secrets management</p></li>
-<li><p>Startup and shutdown strategy</p></li>
-<li><p>Logs, metrics, tracing</p></li>
-<li><p>Deploy configuration</p></li>
-</ul>
-<p>Every service have to have all of this, implemented in a consistent and
-reasonable way.</p>
-<p>Obvious way is to use a scaffolding tool to setup every new project. But then
-you have to support all of this in every service by yourself. Harness takes
-another approach, it manages all of this all the time for you.</p>
-</div>
-<div class="section" id="philosophy">
-<h2>Philosophy<a class="headerlink" href="#philosophy" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p><a class="reference internal" href="configuration.html"><span class="doc">Configuration</span></a> in Harness is a source of truth.
-It explicitly defines what your service is capable to do</p></li>
-<li><p>Harness utilises code-generation to translate this configuration into source
-code, then you add your code on top of it</p></li>
-<li><p>Such configuration opens many possibilities, that’s why Harness is also
-capable to generate a deploy configuration (e.g. Kubernetes manifests)</p></li>
-<li><p>Harness provides wires for different libraries and frameworks, and you can
-write your own wires. So there is no single true way and no limitations</p></li>
+<li><p>[<span style="color: #40A056;">Feature</span>]<span>: </span>Initial release</p></li>
 </ul>
 </div>
 </div>
@@ -224,8 +180,10 @@ write your own wires. So there is no single true way and no limitations</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="bootstrap.html" class="btn btn-neutral float-right" title="Bootstrap" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="python/guide.html" class="btn btn-neutral float-right" title="Python Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
+      
+        <a href="contributing.html" class="btn btn-neutral float-left" title="Contributing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -1,0 +1,313 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>harness/wire.proto &mdash; Harness  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="validate/validate.proto" href="../validate/validate.proto.html" />
+    <link rel="prev" title="google/protobuf/empty.proto" href="../google/protobuf/empty.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Harness
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../bootstrap.html">Bootstrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wires.html">Wires</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../runtime.html">Runtime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code-generation.html">Code Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment.html">Deployment</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../reference.html">Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#message-types">Message Types</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../reference.html#proto-files">Proto Files</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">harness/wire.proto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../validate/validate.proto.html">validate/validate.proto</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#python-wires">Python Wires</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Runtimes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../python/guide.html">Python Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../python/wires/index.html">Python Wires</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Harness</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../reference.html">Reference</a> &raquo;</li>
+        
+      <li>harness/wire.proto</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/vmagamedov/harness/blob/master/docs/harness/wire.proto.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="harness-wire-proto">
+<h1>harness/wire.proto<a class="headerlink" href="#harness-wire-proto" title="Permalink to this headline">¶</a></h1>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">harness/wire.proto</span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
+<div class="highlight-protobuf notranslate"><div class="highlight"><pre><span></span><span class="na">syntax</span> <span class="o">=</span> <span class="s">&quot;proto2&quot;</span><span class="p">;</span>
+
+<span class="kn">package</span> <span class="nn">harness</span><span class="p">;</span>
+
+<span class="k">import</span> <span class="s">&quot;google/protobuf/descriptor.proto&quot;</span><span class="p">;</span>
+<span class="k">import</span> <span class="s">&quot;validate/validate.proto&quot;</span><span class="p">;</span>
+
+<span class="kd">message</span> <span class="nc">Mark</span> <span class="p">{</span>
+    <span class="kd">enum</span> <span class="n">Protocol</span> <span class="p">{</span>
+        <span class="na">TCP</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="na">HTTP</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="na">GRPC</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">optional</span> <span class="n">Protocol</span> <span class="na">protocol</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">message</span> <span class="nc">Input</span> <span class="p">{</span>
+    <span class="kd">enum</span> <span class="n">Reach</span> <span class="p">{</span>
+        <span class="na">LOCALHOST</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="na">NAMESPACE</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="na">CLUSTER</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="na">EXTERNAL</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">required</span> <span class="kt">string</span> <span class="na">type</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">[(</span><span class="n">validate.rules</span><span class="p">)</span><span class="o">.</span><span class="kt">string</span><span class="o">.</span><span class="na">min_len</span> <span class="o">=</span> <span class="mi">1</span><span class="p">];</span>
+    <span class="k">optional</span> <span class="n">Reach</span> <span class="na">reach</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">message</span> <span class="nc">Output</span> <span class="p">{</span>
+    <span class="kd">enum</span> <span class="n">Expose</span> <span class="p">{</span>
+        <span class="na">PRIVATE</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="na">HEADLESS</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="na">INTERNAL</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="na">PUBLIC</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">required</span> <span class="kt">string</span> <span class="na">type</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">[(</span><span class="n">validate.rules</span><span class="p">)</span><span class="o">.</span><span class="kt">string</span><span class="o">.</span><span class="na">min_len</span> <span class="o">=</span> <span class="mi">1</span><span class="p">];</span>
+    <span class="k">optional</span> <span class="n">Expose</span> <span class="na">expose</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">message</span> <span class="nc">Wire</span> <span class="p">{</span>
+    <span class="k">oneof</span> <span class="n">type</span> <span class="p">{</span>
+        <span class="k">option</span> <span class="p">(</span><span class="n">validate.required</span><span class="p">)</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="n">Input</span> <span class="na">input</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">Output</span> <span class="na">output</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">extend</span> <span class="nc">google</span><span class="o">.</span><span class="n">protobuf.FieldOptions</span> <span class="p">{</span>
+    <span class="k">optional</span> <span class="n">Wire</span> <span class="na">wire</span> <span class="o">=</span> <span class="mi">2001</span><span class="p">;</span>
+    <span class="k">optional</span> <span class="n">Mark</span> <span class="na">mark</span> <span class="o">=</span> <span class="mi">2002</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">message</span> <span class="nc">Service</span> <span class="p">{</span>
+    <span class="kd">message</span> <span class="nc">Resource</span> <span class="p">{</span>
+        <span class="k">optional</span> <span class="kt">string</span> <span class="na">cpu</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">optional</span> <span class="kt">string</span> <span class="na">memory</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kd">message</span> <span class="nc">Resources</span> <span class="p">{</span>
+        <span class="k">optional</span> <span class="n">Resource</span> <span class="na">requests</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">optional</span> <span class="n">Resource</span> <span class="na">limits</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kd">message</span> <span class="nc">Container</span> <span class="p">{</span>
+        <span class="k">optional</span> <span class="kt">string</span> <span class="na">repository</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">optional</span> <span class="n">Resources</span> <span class="na">resources</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">optional</span> <span class="kt">string</span> <span class="na">name</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">optional</span> <span class="n">Container</span> <span class="na">container</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">extend</span> <span class="nc">google</span><span class="o">.</span><span class="n">protobuf.MessageOptions</span> <span class="p">{</span>
+    <span class="k">optional</span> <span class="n">Service</span> <span class="kd">service</span> <span class="o">=</span> <span class="mi">2001</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../validate/validate.proto.html" class="btn btn-neutral float-right" title="validate/validate.proto" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../google/protobuf/empty.html" class="btn btn-neutral float-left" title="google/protobuf/empty.proto" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Vladimir Magamedov
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+ 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-136602285-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-136602285-3');
+</script>
+
+
+</body>
+</html>

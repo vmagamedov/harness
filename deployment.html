@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Harness Framework &mdash; Harness  documentation</title>
+  <title>Deployment &mdash; Harness  documentation</title>
   
 
   
@@ -36,7 +36,8 @@
   <link rel="stylesheet" href="_static/style.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Bootstrap" href="bootstrap.html" /> 
+    <link rel="next" title="Reference" href="reference.html" />
+    <link rel="prev" title="Code Generation" href="code-generation.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -50,7 +51,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> Harness
+            <a href="index.html" class="icon icon-home"> Harness
           
 
           
@@ -77,13 +78,17 @@
               
             
             
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="bootstrap.html">Bootstrap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wires.html">Wires</a></li>
 <li class="toctree-l1"><a class="reference internal" href="runtime.html">Runtime</a></li>
 <li class="toctree-l1"><a class="reference internal" href="code-generation.html">Code Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Deployment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#kubectl">Kubectl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#kustomize">Kustomize</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
@@ -106,7 +111,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">Harness</a>
+          <a href="index.html">Harness</a>
         
       </nav>
 
@@ -135,16 +140,16 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#">Docs</a> &raquo;</li>
+      <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Harness Framework</li>
+      <li>Deployment</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/vmagamedov/harness/blob/master/docs/index.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/vmagamedov/harness/blob/master/docs/deployment.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -158,61 +163,58 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="harness-framework">
-<h1>Harness Framework<a class="headerlink" href="#harness-framework" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
+  <div class="section" id="deployment">
+<h1>Deployment<a class="headerlink" href="#deployment" title="Permalink to this headline">¶</a></h1>
+<p>Here is how to generate Kubernetes manifests from your service definition:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> harness kube-gen python service.proto service.yaml v2020
+<span class="go">                   ^----^ ^-----------^ ^----------^ ^---^</span>
+<span class="go">                     1          2            3         4</span>
+</pre></div>
 </div>
-<div class="toctree-wrapper compound">
-</div>
-<div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
-<p>Harness is a language-neutral meta-framework for building and deploying
-serverless-style services:</p>
-<ul class="simple">
-<li><p>It glues together other libraries, frameworks and your own code</p></li>
-<li><p>Serverless-style means that Harness ships with a <a class="reference internal" href="runtime.html"><span class="doc">runtime</span></a>,
-which is used to run your services</p></li>
-<li><p>You can use Harness to generate deploy configuration for your services</p></li>
-<li><p>To make all this happen, Harness uses a language-neutral self-describing
-<a class="reference internal" href="configuration.html"><span class="doc">configuration format</span></a></p></li>
-</ul>
+<ol class="arabic simple">
+<li><p>Runtime’s name</p></li>
+<li><p>Configuration’s definition location</p></li>
+<li><p>Configuration’s runtime values</p></li>
+<li><p>Version</p></li>
+</ol>
+<p>Additional options:</p>
+<dl class="option-list">
+<dt><kbd><span class="option">--instance</span></kbd></dt>
+<dd><p>Instance of your deployment – <code class="docutils literal notranslate"><span class="pre">app.kubernetes.io/instance</span></code>, when you have
+to deploy several instances of your service into the same namespace</p>
+</dd>
+<dt><kbd><span class="option">--namespace</span></kbd></dt>
+<dd><p>Explicitly defines a namespace in the manifests</p>
+</dd>
+<dt><kbd><span class="option">--secret-merge</span></kbd></dt>
+<dd><p>Path to a YAML file with a secrets defined in the <a class="reference external" href="https://tools.ietf.org/html/rfc7386">JSON Merge Patch</a> format</p>
+</dd>
+<dt><kbd><span class="option">--secret-patch</span></kbd></dt>
+<dd><p>Path to a YAML file with a secrets defined in the <a class="reference external" href="https://tools.ietf.org/html/rfc6902">JSON Patch</a> format</p>
+</dd>
+<dt><kbd><span class="option">--base-domain</span></kbd></dt>
+<dd><p>If you have an output <code class="docutils literal notranslate"><span class="pre">PUBLIC</span></code> wire of <a class="reference internal" href="harness/http.html#Server"><code class="xref proto proto-message docutils literal notranslate"><span class="pre">harness.http.Server</span></code></a>
+type, Harness also generates a routing config to accept ingress traffic from
+<code class="docutils literal notranslate"><span class="pre">https://{service-name}.{base-domain}</span></code> domain, where <code class="docutils literal notranslate"><span class="pre">service-name</span></code>
+comes from a <code class="docutils literal notranslate"><span class="pre">(harness.service).name</span></code> option value</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Harness is in it’s early stage of design and development.
-Please don’t hesitate to provide your expertise in any form. Our goal is to
-develop a framework, which is not specific to some particular company, but
-to make it suitable for all, so everyone can benefit from it.</p>
+<p><code class="docutils literal notranslate"><span class="pre">--instance</span></code> option value is added as a suffix to the sub-domain</p>
+</div>
+</dd>
+</dl>
+<div class="section" id="kubectl">
+<h2>Kubectl<a class="headerlink" href="#kubectl" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> harness kube-gen <span class="o">{</span>...args...<span class="o">}</span> <span class="p">|</span> kubectl apply -f -
+</pre></div>
 </div>
 </div>
-<div class="section" id="motivation">
-<h2>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
-<p>It doesn’t matter which programming language you use, all services have many
-things in common, like:</p>
-<ul class="simple">
-<li><p>Configuration management</p></li>
-<li><p>Secrets management</p></li>
-<li><p>Startup and shutdown strategy</p></li>
-<li><p>Logs, metrics, tracing</p></li>
-<li><p>Deploy configuration</p></li>
-</ul>
-<p>Every service have to have all of this, implemented in a consistent and
-reasonable way.</p>
-<p>Obvious way is to use a scaffolding tool to setup every new project. But then
-you have to support all of this in every service by yourself. Harness takes
-another approach, it manages all of this all the time for you.</p>
+<div class="section" id="kustomize">
+<h2>Kustomize<a class="headerlink" href="#kustomize" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> harness kube-gen <span class="o">{</span>...args...<span class="o">}</span> &gt; deployment.yaml
+<span class="gp">$</span> kubectl apply -k .
+</pre></div>
 </div>
-<div class="section" id="philosophy">
-<h2>Philosophy<a class="headerlink" href="#philosophy" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p><a class="reference internal" href="configuration.html"><span class="doc">Configuration</span></a> in Harness is a source of truth.
-It explicitly defines what your service is capable to do</p></li>
-<li><p>Harness utilises code-generation to translate this configuration into source
-code, then you add your code on top of it</p></li>
-<li><p>Such configuration opens many possibilities, that’s why Harness is also
-capable to generate a deploy configuration (e.g. Kubernetes manifests)</p></li>
-<li><p>Harness provides wires for different libraries and frameworks, and you can
-write your own wires. So there is no single true way and no limitations</p></li>
-</ul>
 </div>
 </div>
 
@@ -224,8 +226,10 @@ write your own wires. So there is no single true way and no limitations</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="bootstrap.html" class="btn btn-neutral float-right" title="Bootstrap" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="reference.html" class="btn btn-neutral float-right" title="Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
+      
+        <a href="code-generation.html" class="btn btn-neutral float-left" title="Code Generation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

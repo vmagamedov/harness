@@ -1,0 +1,13 @@
+harness/http.proto
+==================
+
+.. proto:package:: harness.http
+
+.. proto:message:: Connection
+
+  .. proto:field:: harness.net.Socket address
+
+.. proto:message:: Server
+
+  .. proto:field:: harness.net.Socket bind
+

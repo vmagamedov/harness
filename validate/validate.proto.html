@@ -1,0 +1,1018 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>validate/validate.proto &mdash; Harness  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="aiohttp" href="../python/wires/aiohttp.html" />
+    <link rel="prev" title="harness/wire.proto" href="../harness/wire.proto.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Harness
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../bootstrap.html">Bootstrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../wires.html">Wires</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../runtime.html">Runtime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code-generation.html">Code Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment.html">Deployment</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../reference.html">Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#message-types">Message Types</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../reference.html#proto-files">Proto Files</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../harness/wire.proto.html">harness/wire.proto</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">validate/validate.proto</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#python-wires">Python Wires</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Runtimes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../python/guide.html">Python Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../python/wires/index.html">Python Wires</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Harness</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../reference.html">Reference</a> &raquo;</li>
+        
+      <li>validate/validate.proto</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/vmagamedov/harness/blob/master/docs/validate/validate.proto.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="validate-validate-proto">
+<h1>validate/validate.proto<a class="headerlink" href="#validate-validate-proto" title="Permalink to this headline">¶</a></h1>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">validate/validate.proto</span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
+<div class="highlight-protobuf notranslate"><div class="highlight"><pre><span></span><span class="na">syntax</span> <span class="o">=</span> <span class="s">&quot;proto2&quot;</span><span class="p">;</span>
+<span class="kn">package</span> <span class="nn">validate</span><span class="p">;</span>
+
+<span class="k">option</span> <span class="na">go_package</span> <span class="o">=</span> <span class="s">&quot;github.com/envoyproxy/protoc-gen-validate/validate&quot;</span><span class="p">;</span>
+<span class="k">option</span> <span class="na">java_package</span> <span class="o">=</span> <span class="s">&quot;io.envoyproxy.pgv.validate&quot;</span><span class="p">;</span>
+
+<span class="k">import</span> <span class="s">&quot;google/protobuf/descriptor.proto&quot;</span><span class="p">;</span>
+<span class="k">import</span> <span class="s">&quot;google/protobuf/duration.proto&quot;</span><span class="p">;</span>
+<span class="k">import</span> <span class="s">&quot;google/protobuf/timestamp.proto&quot;</span><span class="p">;</span>
+
+<span class="c1">// Validation rules applied at the message level</span>
+<span class="kd">extend</span> <span class="nc">google</span><span class="o">.</span><span class="n">protobuf.MessageOptions</span> <span class="p">{</span>
+    <span class="c1">// Disabled nullifies any validation rules for this message, including any</span>
+    <span class="c1">// message fields associated with it that do support validation.</span>
+    <span class="k">optional</span> <span class="kt">bool</span> <span class="na">disabled</span> <span class="o">=</span> <span class="mi">1071</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Validation rules applied at the oneof level</span>
+<span class="kd">extend</span> <span class="nc">google</span><span class="o">.</span><span class="n">protobuf.OneofOptions</span> <span class="p">{</span>
+    <span class="c1">// Required ensures that exactly one the field options in a oneof is set;</span>
+    <span class="c1">// validation fails if no fields in the oneof are set.</span>
+    <span class="k">optional</span> <span class="kt">bool</span> <span class="k">required</span> <span class="o">=</span> <span class="mi">1071</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Validation rules applied at the field level</span>
+<span class="kd">extend</span> <span class="nc">google</span><span class="o">.</span><span class="n">protobuf.FieldOptions</span> <span class="p">{</span>
+    <span class="c1">// Rules specify the validations to be performed on this field. By default,</span>
+    <span class="c1">// no validation is performed against a field.</span>
+    <span class="k">optional</span> <span class="n">FieldRules</span> <span class="na">rules</span> <span class="o">=</span> <span class="mi">1071</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// FieldRules encapsulates the rules for each type of field. Depending on the</span>
+<span class="c1">// field, the correct set should be used to ensure proper validations.</span>
+<span class="kd">message</span> <span class="nc">FieldRules</span> <span class="p">{</span>
+    <span class="k">optional</span> <span class="n">MessageRules</span> <span class="kd">message</span> <span class="o">=</span> <span class="mi">17</span><span class="p">;</span>
+    <span class="k">oneof</span> <span class="n">type</span> <span class="p">{</span>
+        <span class="c1">// Scalar Field Types</span>
+        <span class="n">FloatRules</span>    <span class="kt">float</span>    <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">DoubleRules</span>   <span class="kt">double</span>   <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="n">Int32Rules</span>    <span class="kt">int32</span>    <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+        <span class="n">Int64Rules</span>    <span class="kt">int64</span>    <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+        <span class="n">UInt32Rules</span>   <span class="kt">uint32</span>   <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+        <span class="n">UInt64Rules</span>   <span class="kt">uint64</span>   <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+        <span class="n">SInt32Rules</span>   <span class="kt">sint32</span>   <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+        <span class="n">SInt64Rules</span>   <span class="kt">sint64</span>   <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+        <span class="n">Fixed32Rules</span>  <span class="kt">fixed32</span>  <span class="o">=</span> <span class="mi">9</span><span class="p">;</span>
+        <span class="n">Fixed64Rules</span>  <span class="kt">fixed64</span>  <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+        <span class="n">SFixed32Rules</span> <span class="kt">sfixed32</span> <span class="o">=</span> <span class="mi">11</span><span class="p">;</span>
+        <span class="n">SFixed64Rules</span> <span class="kt">sfixed64</span> <span class="o">=</span> <span class="mi">12</span><span class="p">;</span>
+        <span class="n">BoolRules</span>     <span class="kt">bool</span>     <span class="o">=</span> <span class="mi">13</span><span class="p">;</span>
+        <span class="n">StringRules</span>   <span class="kt">string</span>   <span class="o">=</span> <span class="mi">14</span><span class="p">;</span>
+        <span class="n">BytesRules</span>    <span class="kt">bytes</span>    <span class="o">=</span> <span class="mi">15</span><span class="p">;</span>
+
+        <span class="c1">// Complex Field Types</span>
+        <span class="n">EnumRules</span>     <span class="kd">enum</span>     <span class="o">=</span> <span class="mi">16</span><span class="p">;</span>
+        <span class="n">RepeatedRules</span> <span class="k">repeated</span> <span class="o">=</span> <span class="mi">18</span><span class="p">;</span>
+        <span class="n">MapRules</span>      <span class="na">map</span>      <span class="o">=</span> <span class="mi">19</span><span class="p">;</span>
+
+        <span class="c1">// Well-Known Field Types</span>
+        <span class="n">AnyRules</span>       <span class="na">any</span>       <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+        <span class="n">DurationRules</span>  <span class="na">duration</span>  <span class="o">=</span> <span class="mi">21</span><span class="p">;</span>
+        <span class="n">TimestampRules</span> <span class="na">timestamp</span> <span class="o">=</span> <span class="mi">22</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// FloatRules describes the constraints applied to `float` values</span>
+<span class="kd">message</span> <span class="nc">FloatRules</span> <span class="p">{</span>
+    <span class="c1">// Const specifies that this field must be exactly the specified value</span>
+    <span class="k">optional</span> <span class="kt">float</span> <span class="na">const</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// Lt specifies that this field must be less than the specified value,</span>
+    <span class="c1">// exclusive</span>
+    <span class="k">optional</span> <span class="kt">float</span> <span class="na">lt</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// Lte specifies that this field must be less than or equal to the</span>
+    <span class="c1">// specified value, inclusive</span>
+    <span class="k">optional</span> <span class="kt">float</span> <span class="na">lte</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// Gt specifies that this field must be greater than the specified value,</span>
+    <span class="c1">// exclusive. If the value of Gt is larger than a specified Lt or Lte, the</span>
+    <span class="c1">// range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">float</span> <span class="na">gt</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+    <span class="c1">// Gte specifies that this field must be greater than or equal to the</span>
+    <span class="c1">// specified value, inclusive. If the value of Gte is larger than a</span>
+    <span class="c1">// specified Lt or Lte, the range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">float</span> <span class="na">gte</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+    <span class="c1">// In specifies that this field must be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">float</span> <span class="na">in</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+
+    <span class="c1">// NotIn specifies that this field cannot be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">float</span> <span class="na">not_in</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// DoubleRules describes the constraints applied to `double` values</span>
+<span class="kd">message</span> <span class="nc">DoubleRules</span> <span class="p">{</span>
+    <span class="c1">// Const specifies that this field must be exactly the specified value</span>
+    <span class="k">optional</span> <span class="kt">double</span> <span class="na">const</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// Lt specifies that this field must be less than the specified value,</span>
+    <span class="c1">// exclusive</span>
+    <span class="k">optional</span> <span class="kt">double</span> <span class="na">lt</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// Lte specifies that this field must be less than or equal to the</span>
+    <span class="c1">// specified value, inclusive</span>
+    <span class="k">optional</span> <span class="kt">double</span> <span class="na">lte</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// Gt specifies that this field must be greater than the specified value,</span>
+    <span class="c1">// exclusive. If the value of Gt is larger than a specified Lt or Lte, the</span>
+    <span class="c1">// range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">double</span> <span class="na">gt</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+    <span class="c1">// Gte specifies that this field must be greater than or equal to the</span>
+    <span class="c1">// specified value, inclusive. If the value of Gte is larger than a</span>
+    <span class="c1">// specified Lt or Lte, the range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">double</span> <span class="na">gte</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+    <span class="c1">// In specifies that this field must be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">double</span> <span class="na">in</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+
+    <span class="c1">// NotIn specifies that this field cannot be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">double</span> <span class="na">not_in</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Int32Rules describes the constraints applied to `int32` values</span>
+<span class="kd">message</span> <span class="nc">Int32Rules</span> <span class="p">{</span>
+    <span class="c1">// Const specifies that this field must be exactly the specified value</span>
+    <span class="k">optional</span> <span class="kt">int32</span> <span class="na">const</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// Lt specifies that this field must be less than the specified value,</span>
+    <span class="c1">// exclusive</span>
+    <span class="k">optional</span> <span class="kt">int32</span> <span class="na">lt</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// Lte specifies that this field must be less than or equal to the</span>
+    <span class="c1">// specified value, inclusive</span>
+    <span class="k">optional</span> <span class="kt">int32</span> <span class="na">lte</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// Gt specifies that this field must be greater than the specified value,</span>
+    <span class="c1">// exclusive. If the value of Gt is larger than a specified Lt or Lte, the</span>
+    <span class="c1">// range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">int32</span> <span class="na">gt</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+    <span class="c1">// Gte specifies that this field must be greater than or equal to the</span>
+    <span class="c1">// specified value, inclusive. If the value of Gte is larger than a</span>
+    <span class="c1">// specified Lt or Lte, the range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">int32</span> <span class="na">gte</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+    <span class="c1">// In specifies that this field must be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">int32</span> <span class="na">in</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+
+    <span class="c1">// NotIn specifies that this field cannot be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">int32</span> <span class="na">not_in</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Int64Rules describes the constraints applied to `int64` values</span>
+<span class="kd">message</span> <span class="nc">Int64Rules</span> <span class="p">{</span>
+    <span class="c1">// Const specifies that this field must be exactly the specified value</span>
+    <span class="k">optional</span> <span class="kt">int64</span> <span class="na">const</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// Lt specifies that this field must be less than the specified value,</span>
+    <span class="c1">// exclusive</span>
+    <span class="k">optional</span> <span class="kt">int64</span> <span class="na">lt</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// Lte specifies that this field must be less than or equal to the</span>
+    <span class="c1">// specified value, inclusive</span>
+    <span class="k">optional</span> <span class="kt">int64</span> <span class="na">lte</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// Gt specifies that this field must be greater than the specified value,</span>
+    <span class="c1">// exclusive. If the value of Gt is larger than a specified Lt or Lte, the</span>
+    <span class="c1">// range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">int64</span> <span class="na">gt</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+    <span class="c1">// Gte specifies that this field must be greater than or equal to the</span>
+    <span class="c1">// specified value, inclusive. If the value of Gte is larger than a</span>
+    <span class="c1">// specified Lt or Lte, the range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">int64</span> <span class="na">gte</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+    <span class="c1">// In specifies that this field must be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">int64</span> <span class="na">in</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+
+    <span class="c1">// NotIn specifies that this field cannot be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">int64</span> <span class="na">not_in</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// UInt32Rules describes the constraints applied to `uint32` values</span>
+<span class="kd">message</span> <span class="nc">UInt32Rules</span> <span class="p">{</span>
+    <span class="c1">// Const specifies that this field must be exactly the specified value</span>
+    <span class="k">optional</span> <span class="kt">uint32</span> <span class="na">const</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// Lt specifies that this field must be less than the specified value,</span>
+    <span class="c1">// exclusive</span>
+    <span class="k">optional</span> <span class="kt">uint32</span> <span class="na">lt</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// Lte specifies that this field must be less than or equal to the</span>
+    <span class="c1">// specified value, inclusive</span>
+    <span class="k">optional</span> <span class="kt">uint32</span> <span class="na">lte</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// Gt specifies that this field must be greater than the specified value,</span>
+    <span class="c1">// exclusive. If the value of Gt is larger than a specified Lt or Lte, the</span>
+    <span class="c1">// range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">uint32</span> <span class="na">gt</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+    <span class="c1">// Gte specifies that this field must be greater than or equal to the</span>
+    <span class="c1">// specified value, inclusive. If the value of Gte is larger than a</span>
+    <span class="c1">// specified Lt or Lte, the range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">uint32</span> <span class="na">gte</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+    <span class="c1">// In specifies that this field must be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">uint32</span> <span class="na">in</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+
+    <span class="c1">// NotIn specifies that this field cannot be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">uint32</span> <span class="na">not_in</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// UInt64Rules describes the constraints applied to `uint64` values</span>
+<span class="kd">message</span> <span class="nc">UInt64Rules</span> <span class="p">{</span>
+    <span class="c1">// Const specifies that this field must be exactly the specified value</span>
+    <span class="k">optional</span> <span class="kt">uint64</span> <span class="na">const</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// Lt specifies that this field must be less than the specified value,</span>
+    <span class="c1">// exclusive</span>
+    <span class="k">optional</span> <span class="kt">uint64</span> <span class="na">lt</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// Lte specifies that this field must be less than or equal to the</span>
+    <span class="c1">// specified value, inclusive</span>
+    <span class="k">optional</span> <span class="kt">uint64</span> <span class="na">lte</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// Gt specifies that this field must be greater than the specified value,</span>
+    <span class="c1">// exclusive. If the value of Gt is larger than a specified Lt or Lte, the</span>
+    <span class="c1">// range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">uint64</span> <span class="na">gt</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+    <span class="c1">// Gte specifies that this field must be greater than or equal to the</span>
+    <span class="c1">// specified value, inclusive. If the value of Gte is larger than a</span>
+    <span class="c1">// specified Lt or Lte, the range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">uint64</span> <span class="na">gte</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+    <span class="c1">// In specifies that this field must be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">uint64</span> <span class="na">in</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+
+    <span class="c1">// NotIn specifies that this field cannot be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">uint64</span> <span class="na">not_in</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// SInt32Rules describes the constraints applied to `sint32` values</span>
+<span class="kd">message</span> <span class="nc">SInt32Rules</span> <span class="p">{</span>
+    <span class="c1">// Const specifies that this field must be exactly the specified value</span>
+    <span class="k">optional</span> <span class="kt">sint32</span> <span class="na">const</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// Lt specifies that this field must be less than the specified value,</span>
+    <span class="c1">// exclusive</span>
+    <span class="k">optional</span> <span class="kt">sint32</span> <span class="na">lt</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// Lte specifies that this field must be less than or equal to the</span>
+    <span class="c1">// specified value, inclusive</span>
+    <span class="k">optional</span> <span class="kt">sint32</span> <span class="na">lte</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// Gt specifies that this field must be greater than the specified value,</span>
+    <span class="c1">// exclusive. If the value of Gt is larger than a specified Lt or Lte, the</span>
+    <span class="c1">// range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">sint32</span> <span class="na">gt</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+    <span class="c1">// Gte specifies that this field must be greater than or equal to the</span>
+    <span class="c1">// specified value, inclusive. If the value of Gte is larger than a</span>
+    <span class="c1">// specified Lt or Lte, the range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">sint32</span> <span class="na">gte</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+    <span class="c1">// In specifies that this field must be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">sint32</span> <span class="na">in</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+
+    <span class="c1">// NotIn specifies that this field cannot be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">sint32</span> <span class="na">not_in</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// SInt64Rules describes the constraints applied to `sint64` values</span>
+<span class="kd">message</span> <span class="nc">SInt64Rules</span> <span class="p">{</span>
+    <span class="c1">// Const specifies that this field must be exactly the specified value</span>
+    <span class="k">optional</span> <span class="kt">sint64</span> <span class="na">const</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// Lt specifies that this field must be less than the specified value,</span>
+    <span class="c1">// exclusive</span>
+    <span class="k">optional</span> <span class="kt">sint64</span> <span class="na">lt</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// Lte specifies that this field must be less than or equal to the</span>
+    <span class="c1">// specified value, inclusive</span>
+    <span class="k">optional</span> <span class="kt">sint64</span> <span class="na">lte</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// Gt specifies that this field must be greater than the specified value,</span>
+    <span class="c1">// exclusive. If the value of Gt is larger than a specified Lt or Lte, the</span>
+    <span class="c1">// range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">sint64</span> <span class="na">gt</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+    <span class="c1">// Gte specifies that this field must be greater than or equal to the</span>
+    <span class="c1">// specified value, inclusive. If the value of Gte is larger than a</span>
+    <span class="c1">// specified Lt or Lte, the range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">sint64</span> <span class="na">gte</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+    <span class="c1">// In specifies that this field must be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">sint64</span> <span class="na">in</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+
+    <span class="c1">// NotIn specifies that this field cannot be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">sint64</span> <span class="na">not_in</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Fixed32Rules describes the constraints applied to `fixed32` values</span>
+<span class="kd">message</span> <span class="nc">Fixed32Rules</span> <span class="p">{</span>
+    <span class="c1">// Const specifies that this field must be exactly the specified value</span>
+    <span class="k">optional</span> <span class="kt">fixed32</span> <span class="na">const</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// Lt specifies that this field must be less than the specified value,</span>
+    <span class="c1">// exclusive</span>
+    <span class="k">optional</span> <span class="kt">fixed32</span> <span class="na">lt</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// Lte specifies that this field must be less than or equal to the</span>
+    <span class="c1">// specified value, inclusive</span>
+    <span class="k">optional</span> <span class="kt">fixed32</span> <span class="na">lte</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// Gt specifies that this field must be greater than the specified value,</span>
+    <span class="c1">// exclusive. If the value of Gt is larger than a specified Lt or Lte, the</span>
+    <span class="c1">// range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">fixed32</span> <span class="na">gt</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+    <span class="c1">// Gte specifies that this field must be greater than or equal to the</span>
+    <span class="c1">// specified value, inclusive. If the value of Gte is larger than a</span>
+    <span class="c1">// specified Lt or Lte, the range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">fixed32</span> <span class="na">gte</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+    <span class="c1">// In specifies that this field must be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">fixed32</span> <span class="na">in</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+
+    <span class="c1">// NotIn specifies that this field cannot be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">fixed32</span> <span class="na">not_in</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Fixed64Rules describes the constraints applied to `fixed64` values</span>
+<span class="kd">message</span> <span class="nc">Fixed64Rules</span> <span class="p">{</span>
+    <span class="c1">// Const specifies that this field must be exactly the specified value</span>
+    <span class="k">optional</span> <span class="kt">fixed64</span> <span class="na">const</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// Lt specifies that this field must be less than the specified value,</span>
+    <span class="c1">// exclusive</span>
+    <span class="k">optional</span> <span class="kt">fixed64</span> <span class="na">lt</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// Lte specifies that this field must be less than or equal to the</span>
+    <span class="c1">// specified value, inclusive</span>
+    <span class="k">optional</span> <span class="kt">fixed64</span> <span class="na">lte</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// Gt specifies that this field must be greater than the specified value,</span>
+    <span class="c1">// exclusive. If the value of Gt is larger than a specified Lt or Lte, the</span>
+    <span class="c1">// range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">fixed64</span> <span class="na">gt</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+    <span class="c1">// Gte specifies that this field must be greater than or equal to the</span>
+    <span class="c1">// specified value, inclusive. If the value of Gte is larger than a</span>
+    <span class="c1">// specified Lt or Lte, the range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">fixed64</span> <span class="na">gte</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+    <span class="c1">// In specifies that this field must be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">fixed64</span> <span class="na">in</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+
+    <span class="c1">// NotIn specifies that this field cannot be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">fixed64</span> <span class="na">not_in</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// SFixed32Rules describes the constraints applied to `sfixed32` values</span>
+<span class="kd">message</span> <span class="nc">SFixed32Rules</span> <span class="p">{</span>
+    <span class="c1">// Const specifies that this field must be exactly the specified value</span>
+    <span class="k">optional</span> <span class="kt">sfixed32</span> <span class="na">const</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// Lt specifies that this field must be less than the specified value,</span>
+    <span class="c1">// exclusive</span>
+    <span class="k">optional</span> <span class="kt">sfixed32</span> <span class="na">lt</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// Lte specifies that this field must be less than or equal to the</span>
+    <span class="c1">// specified value, inclusive</span>
+    <span class="k">optional</span> <span class="kt">sfixed32</span> <span class="na">lte</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// Gt specifies that this field must be greater than the specified value,</span>
+    <span class="c1">// exclusive. If the value of Gt is larger than a specified Lt or Lte, the</span>
+    <span class="c1">// range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">sfixed32</span> <span class="na">gt</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+    <span class="c1">// Gte specifies that this field must be greater than or equal to the</span>
+    <span class="c1">// specified value, inclusive. If the value of Gte is larger than a</span>
+    <span class="c1">// specified Lt or Lte, the range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">sfixed32</span> <span class="na">gte</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+    <span class="c1">// In specifies that this field must be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">sfixed32</span> <span class="na">in</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+
+    <span class="c1">// NotIn specifies that this field cannot be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">sfixed32</span> <span class="na">not_in</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// SFixed64Rules describes the constraints applied to `sfixed64` values</span>
+<span class="kd">message</span> <span class="nc">SFixed64Rules</span> <span class="p">{</span>
+    <span class="c1">// Const specifies that this field must be exactly the specified value</span>
+    <span class="k">optional</span> <span class="kt">sfixed64</span> <span class="na">const</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// Lt specifies that this field must be less than the specified value,</span>
+    <span class="c1">// exclusive</span>
+    <span class="k">optional</span> <span class="kt">sfixed64</span> <span class="na">lt</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// Lte specifies that this field must be less than or equal to the</span>
+    <span class="c1">// specified value, inclusive</span>
+    <span class="k">optional</span> <span class="kt">sfixed64</span> <span class="na">lte</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// Gt specifies that this field must be greater than the specified value,</span>
+    <span class="c1">// exclusive. If the value of Gt is larger than a specified Lt or Lte, the</span>
+    <span class="c1">// range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">sfixed64</span> <span class="na">gt</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+    <span class="c1">// Gte specifies that this field must be greater than or equal to the</span>
+    <span class="c1">// specified value, inclusive. If the value of Gte is larger than a</span>
+    <span class="c1">// specified Lt or Lte, the range is reversed.</span>
+    <span class="k">optional</span> <span class="kt">sfixed64</span> <span class="na">gte</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+    <span class="c1">// In specifies that this field must be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">sfixed64</span> <span class="na">in</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+
+    <span class="c1">// NotIn specifies that this field cannot be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">sfixed64</span> <span class="na">not_in</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// BoolRules describes the constraints applied to `bool` values</span>
+<span class="kd">message</span> <span class="nc">BoolRules</span> <span class="p">{</span>
+    <span class="c1">// Const specifies that this field must be exactly the specified value</span>
+    <span class="k">optional</span> <span class="kt">bool</span> <span class="na">const</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// StringRules describe the constraints applied to `string` values</span>
+<span class="kd">message</span> <span class="nc">StringRules</span> <span class="p">{</span>
+    <span class="c1">// Const specifies that this field must be exactly the specified value</span>
+    <span class="k">optional</span> <span class="kt">string</span> <span class="na">const</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// Len specifies that this field must be the specified number of</span>
+    <span class="c1">// characters (Unicode code points). Note that the number of</span>
+    <span class="c1">// characters may differ from the number of bytes in the string.</span>
+    <span class="k">optional</span> <span class="kt">uint64</span> <span class="na">len</span> <span class="o">=</span> <span class="mi">19</span><span class="p">;</span>
+
+    <span class="c1">// MinLen specifies that this field must be the specified number of</span>
+    <span class="c1">// characters (Unicode code points) at a minimum. Note that the number of</span>
+    <span class="c1">// characters may differ from the number of bytes in the string.</span>
+    <span class="k">optional</span> <span class="kt">uint64</span> <span class="na">min_len</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// MaxLen specifies that this field must be the specified number of</span>
+    <span class="c1">// characters (Unicode code points) at a maximum. Note that the number of</span>
+    <span class="c1">// characters may differ from the number of bytes in the string.</span>
+    <span class="k">optional</span> <span class="kt">uint64</span> <span class="na">max_len</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// LenBytes specifies that this field must be the specified number of bytes</span>
+    <span class="c1">// at a minimum</span>
+    <span class="k">optional</span> <span class="kt">uint64</span> <span class="na">len_bytes</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+
+    <span class="c1">// MinBytes specifies that this field must be the specified number of bytes</span>
+    <span class="c1">// at a minimum</span>
+    <span class="k">optional</span> <span class="kt">uint64</span> <span class="na">min_bytes</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+    <span class="c1">// MaxBytes specifies that this field must be the specified number of bytes</span>
+    <span class="c1">// at a maximum</span>
+    <span class="k">optional</span> <span class="kt">uint64</span> <span class="na">max_bytes</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+    <span class="c1">// Pattern specifes that this field must match against the specified</span>
+    <span class="c1">// regular expression (RE2 syntax). The included expression should elide</span>
+    <span class="c1">// any delimiters.</span>
+    <span class="k">optional</span> <span class="kt">string</span> <span class="na">pattern</span>  <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+
+    <span class="c1">// Prefix specifies that this field must have the specified substring at</span>
+    <span class="c1">// the beginning of the string.</span>
+    <span class="k">optional</span> <span class="kt">string</span> <span class="na">prefix</span>   <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+
+    <span class="c1">// Suffix specifies that this field must have the specified substring at</span>
+    <span class="c1">// the end of the string.</span>
+    <span class="k">optional</span> <span class="kt">string</span> <span class="na">suffix</span>   <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+
+    <span class="c1">// Contains specifies that this field must have the specified substring</span>
+    <span class="c1">// anywhere in the string.</span>
+    <span class="k">optional</span> <span class="kt">string</span> <span class="na">contains</span> <span class="o">=</span> <span class="mi">9</span><span class="p">;</span>
+
+    <span class="c1">// NotContains specifies that this field cannot have the specified substring</span>
+    <span class="c1">// anywhere in the string.</span>
+    <span class="k">optional</span> <span class="kt">string</span> <span class="na">not_contains</span> <span class="o">=</span> <span class="mi">23</span><span class="p">;</span>
+
+    <span class="c1">// In specifies that this field must be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">string</span> <span class="na">in</span>     <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+
+    <span class="c1">// NotIn specifies that this field cannot be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">string</span> <span class="na">not_in</span> <span class="o">=</span> <span class="mi">11</span><span class="p">;</span>
+
+    <span class="c1">// WellKnown rules provide advanced constraints against common string</span>
+    <span class="c1">// patterns</span>
+    <span class="k">oneof</span> <span class="n">well_known</span> <span class="p">{</span>
+        <span class="c1">// Email specifies that the field must be a valid email address as</span>
+        <span class="c1">// defined by RFC 5322</span>
+        <span class="kt">bool</span> <span class="na">email</span>    <span class="o">=</span> <span class="mi">12</span><span class="p">;</span>
+
+        <span class="c1">// Hostname specifies that the field must be a valid hostname as</span>
+        <span class="c1">// defined by RFC 1034. This constraint does not support</span>
+        <span class="c1">// internationalized domain names (IDNs).</span>
+        <span class="kt">bool</span> <span class="na">hostname</span> <span class="o">=</span> <span class="mi">13</span><span class="p">;</span>
+
+        <span class="c1">// Ip specifies that the field must be a valid IP (v4 or v6) address.</span>
+        <span class="c1">// Valid IPv6 addresses should not include surrounding square brackets.</span>
+        <span class="kt">bool</span> <span class="na">ip</span>       <span class="o">=</span> <span class="mi">14</span><span class="p">;</span>
+
+        <span class="c1">// Ipv4 specifies that the field must be a valid IPv4 address.</span>
+        <span class="kt">bool</span> <span class="na">ipv4</span>     <span class="o">=</span> <span class="mi">15</span><span class="p">;</span>
+
+        <span class="c1">// Ipv6 specifies that the field must be a valid IPv6 address. Valid</span>
+        <span class="c1">// IPv6 addresses should not include surrounding square brackets.</span>
+        <span class="kt">bool</span> <span class="na">ipv6</span>     <span class="o">=</span> <span class="mi">16</span><span class="p">;</span>
+
+        <span class="c1">// Uri specifies that the field must be a valid, absolute URI as defined</span>
+        <span class="c1">// by RFC 3986</span>
+        <span class="kt">bool</span> <span class="na">uri</span>      <span class="o">=</span> <span class="mi">17</span><span class="p">;</span>
+
+        <span class="c1">// UriRef specifies that the field must be a valid URI as defined by RFC</span>
+        <span class="c1">// 3986 and may be relative or absolute.</span>
+        <span class="kt">bool</span> <span class="na">uri_ref</span>  <span class="o">=</span> <span class="mi">18</span><span class="p">;</span>
+
+        <span class="c1">// Address specifies that the field must be either a valid hostname as</span>
+        <span class="c1">// defined by RFC 1034 (which does not support internationalized domain</span>
+        <span class="c1">// names or IDNs), or it can be a valid IP (v4 or v6).</span>
+        <span class="kt">bool</span> <span class="na">address</span>  <span class="o">=</span> <span class="mi">21</span><span class="p">;</span>
+
+        <span class="c1">// Uuid specifies that the field must be a valid UUID as defined by</span>
+        <span class="c1">// RFC 4122</span>
+        <span class="kt">bool</span> <span class="na">uuid</span>     <span class="o">=</span> <span class="mi">22</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// BytesRules describe the constraints applied to `bytes` values</span>
+<span class="kd">message</span> <span class="nc">BytesRules</span> <span class="p">{</span>
+    <span class="c1">// Const specifies that this field must be exactly the specified value</span>
+    <span class="k">optional</span> <span class="kt">bytes</span> <span class="na">const</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// Len specifies that this field must be the specified number of bytes</span>
+    <span class="k">optional</span> <span class="kt">uint64</span> <span class="na">len</span> <span class="o">=</span> <span class="mi">13</span><span class="p">;</span>
+
+    <span class="c1">// MinLen specifies that this field must be the specified number of bytes</span>
+    <span class="c1">// at a minimum</span>
+    <span class="k">optional</span> <span class="kt">uint64</span> <span class="na">min_len</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// MaxLen specifies that this field must be the specified number of bytes</span>
+    <span class="c1">// at a maximum</span>
+    <span class="k">optional</span> <span class="kt">uint64</span> <span class="na">max_len</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// Pattern specifes that this field must match against the specified</span>
+    <span class="c1">// regular expression (RE2 syntax). The included expression should elide</span>
+    <span class="c1">// any delimiters.</span>
+    <span class="k">optional</span> <span class="kt">string</span> <span class="na">pattern</span>  <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+    <span class="c1">// Prefix specifies that this field must have the specified bytes at the</span>
+    <span class="c1">// beginning of the string.</span>
+    <span class="k">optional</span> <span class="kt">bytes</span>  <span class="na">prefix</span>   <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+    <span class="c1">// Suffix specifies that this field must have the specified bytes at the</span>
+    <span class="c1">// end of the string.</span>
+    <span class="k">optional</span> <span class="kt">bytes</span>  <span class="na">suffix</span>   <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+
+    <span class="c1">// Contains specifies that this field must have the specified bytes</span>
+    <span class="c1">// anywhere in the string.</span>
+    <span class="k">optional</span> <span class="kt">bytes</span>  <span class="na">contains</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+
+    <span class="c1">// In specifies that this field must be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">bytes</span> <span class="na">in</span>     <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+
+    <span class="c1">// NotIn specifies that this field cannot be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">bytes</span> <span class="na">not_in</span> <span class="o">=</span> <span class="mi">9</span><span class="p">;</span>
+
+    <span class="c1">// WellKnown rules provide advanced constraints against common byte</span>
+    <span class="c1">// patterns</span>
+    <span class="k">oneof</span> <span class="n">well_known</span> <span class="p">{</span>
+        <span class="c1">// Ip specifies that the field must be a valid IP (v4 or v6) address in</span>
+        <span class="c1">// byte format</span>
+        <span class="kt">bool</span> <span class="na">ip</span>   <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+
+        <span class="c1">// Ipv4 specifies that the field must be a valid IPv4 address in byte</span>
+        <span class="c1">// format</span>
+        <span class="kt">bool</span> <span class="na">ipv4</span> <span class="o">=</span> <span class="mi">11</span><span class="p">;</span>
+
+        <span class="c1">// Ipv6 specifies that the field must be a valid IPv6 address in byte</span>
+        <span class="c1">// format</span>
+        <span class="kt">bool</span> <span class="na">ipv6</span> <span class="o">=</span> <span class="mi">12</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// EnumRules describe the constraints applied to enum values</span>
+<span class="kd">message</span> <span class="nc">EnumRules</span> <span class="p">{</span>
+    <span class="c1">// Const specifies that this field must be exactly the specified value</span>
+    <span class="k">optional</span> <span class="kt">int32</span> <span class="na">const</span>        <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// DefinedOnly specifies that this field must be only one of the defined</span>
+    <span class="c1">// values for this enum, failing on any undefined value.</span>
+    <span class="k">optional</span> <span class="kt">bool</span>  <span class="na">defined_only</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// In specifies that this field must be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">int32</span> <span class="na">in</span>           <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// NotIn specifies that this field cannot be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="kt">int32</span> <span class="na">not_in</span>       <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// MessageRules describe the constraints applied to embedded message values.</span>
+<span class="c1">// For message-type fields, validation is performed recursively.</span>
+<span class="kd">message</span> <span class="nc">MessageRules</span> <span class="p">{</span>
+    <span class="c1">// Skip specifies that the validation rules of this field should not be</span>
+    <span class="c1">// evaluated</span>
+    <span class="k">optional</span> <span class="kt">bool</span> <span class="na">skip</span>     <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// Required specifies that this field must be set</span>
+    <span class="k">optional</span> <span class="kt">bool</span> <span class="k">required</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// RepeatedRules describe the constraints applied to `repeated` values</span>
+<span class="kd">message</span> <span class="nc">RepeatedRules</span> <span class="p">{</span>
+    <span class="c1">// MinItems specifies that this field must have the specified number of</span>
+    <span class="c1">// items at a minimum</span>
+    <span class="k">optional</span> <span class="kt">uint64</span> <span class="na">min_items</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// MaxItems specifies that this field must have the specified number of</span>
+    <span class="c1">// items at a maximum</span>
+    <span class="k">optional</span> <span class="kt">uint64</span> <span class="na">max_items</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// Unique specifies that all elements in this field must be unique. This</span>
+    <span class="c1">// contraint is only applicable to scalar and enum types (messages are not</span>
+    <span class="c1">// supported).</span>
+    <span class="k">optional</span> <span class="kt">bool</span>   <span class="na">unique</span>    <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// Items specifies the contraints to be applied to each item in the field.</span>
+    <span class="c1">// Repeated message fields will still execute validation against each item</span>
+    <span class="c1">// unless skip is specified here.</span>
+    <span class="k">optional</span> <span class="n">FieldRules</span> <span class="na">items</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// MapRules describe the constraints applied to `map` values</span>
+<span class="kd">message</span> <span class="nc">MapRules</span> <span class="p">{</span>
+    <span class="c1">// MinPairs specifies that this field must have the specified number of</span>
+    <span class="c1">// KVs at a minimum</span>
+    <span class="k">optional</span> <span class="kt">uint64</span> <span class="na">min_pairs</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// MaxPairs specifies that this field must have the specified number of</span>
+    <span class="c1">// KVs at a maximum</span>
+    <span class="k">optional</span> <span class="kt">uint64</span> <span class="na">max_pairs</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// NoSparse specifies values in this field cannot be unset. This only</span>
+    <span class="c1">// applies to map&#39;s with message value types.</span>
+    <span class="k">optional</span> <span class="kt">bool</span> <span class="na">no_sparse</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// Keys specifies the constraints to be applied to each key in the field.</span>
+    <span class="k">optional</span> <span class="n">FieldRules</span> <span class="na">keys</span>   <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+    <span class="c1">// Values specifies the constraints to be applied to the value of each key</span>
+    <span class="c1">// in the field. Message values will still have their validations evaluated</span>
+    <span class="c1">// unless skip is specified here.</span>
+    <span class="k">optional</span> <span class="n">FieldRules</span> <span class="na">values</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// AnyRules describe constraints applied exclusively to the</span>
+<span class="c1">// `google.protobuf.Any` well-known type</span>
+<span class="kd">message</span> <span class="nc">AnyRules</span> <span class="p">{</span>
+    <span class="c1">// Required specifies that this field must be set</span>
+    <span class="k">optional</span> <span class="kt">bool</span> <span class="k">required</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// In specifies that this field&#39;s `type_url` must be equal to one of the</span>
+    <span class="c1">// specified values.</span>
+    <span class="k">repeated</span> <span class="kt">string</span> <span class="na">in</span>     <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// NotIn specifies that this field&#39;s `type_url` must not be equal to any of</span>
+    <span class="c1">// the specified values.</span>
+    <span class="k">repeated</span> <span class="kt">string</span> <span class="na">not_in</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// DurationRules describe the constraints applied exclusively to the</span>
+<span class="c1">// `google.protobuf.Duration` well-known type</span>
+<span class="kd">message</span> <span class="nc">DurationRules</span> <span class="p">{</span>
+    <span class="c1">// Required specifies that this field must be set</span>
+    <span class="k">optional</span> <span class="kt">bool</span> <span class="k">required</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// Const specifies that this field must be exactly the specified value</span>
+    <span class="k">optional</span> <span class="n">google.protobuf.Duration</span> <span class="na">const</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// Lt specifies that this field must be less than the specified value,</span>
+    <span class="c1">// exclusive</span>
+    <span class="k">optional</span> <span class="n">google.protobuf.Duration</span> <span class="na">lt</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// Lt specifies that this field must be less than the specified value,</span>
+    <span class="c1">// inclusive</span>
+    <span class="k">optional</span> <span class="n">google.protobuf.Duration</span> <span class="na">lte</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+    <span class="c1">// Gt specifies that this field must be greater than the specified value,</span>
+    <span class="c1">// exclusive</span>
+    <span class="k">optional</span> <span class="n">google.protobuf.Duration</span> <span class="na">gt</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+    <span class="c1">// Gte specifies that this field must be greater than the specified value,</span>
+    <span class="c1">// inclusive</span>
+    <span class="k">optional</span> <span class="n">google.protobuf.Duration</span> <span class="na">gte</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+
+    <span class="c1">// In specifies that this field must be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="n">google.protobuf.Duration</span> <span class="na">in</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+
+    <span class="c1">// NotIn specifies that this field cannot be equal to one of the specified</span>
+    <span class="c1">// values</span>
+    <span class="k">repeated</span> <span class="n">google.protobuf.Duration</span> <span class="na">not_in</span> <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// TimestampRules describe the constraints applied exclusively to the</span>
+<span class="c1">// `google.protobuf.Timestamp` well-known type</span>
+<span class="kd">message</span> <span class="nc">TimestampRules</span> <span class="p">{</span>
+    <span class="c1">// Required specifies that this field must be set</span>
+    <span class="k">optional</span> <span class="kt">bool</span> <span class="k">required</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="c1">// Const specifies that this field must be exactly the specified value</span>
+    <span class="k">optional</span> <span class="n">google.protobuf.Timestamp</span> <span class="na">const</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="c1">// Lt specifies that this field must be less than the specified value,</span>
+    <span class="c1">// exclusive</span>
+    <span class="k">optional</span> <span class="n">google.protobuf.Timestamp</span> <span class="na">lt</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="c1">// Lte specifies that this field must be less than the specified value,</span>
+    <span class="c1">// inclusive</span>
+    <span class="k">optional</span> <span class="n">google.protobuf.Timestamp</span> <span class="na">lte</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+    <span class="c1">// Gt specifies that this field must be greater than the specified value,</span>
+    <span class="c1">// exclusive</span>
+    <span class="k">optional</span> <span class="n">google.protobuf.Timestamp</span> <span class="na">gt</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+    <span class="c1">// Gte specifies that this field must be greater than the specified value,</span>
+    <span class="c1">// inclusive</span>
+    <span class="k">optional</span> <span class="n">google.protobuf.Timestamp</span> <span class="na">gte</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+
+    <span class="c1">// LtNow specifies that this must be less than the current time. LtNow</span>
+    <span class="c1">// can only be used with the Within rule.</span>
+    <span class="k">optional</span> <span class="kt">bool</span> <span class="na">lt_now</span>  <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+
+    <span class="c1">// GtNow specifies that this must be greater than the current time. GtNow</span>
+    <span class="c1">// can only be used with the Within rule.</span>
+    <span class="k">optional</span> <span class="kt">bool</span> <span class="na">gt_now</span>  <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+
+    <span class="c1">// Within specifies that this field must be within this duration of the</span>
+    <span class="c1">// current time. This constraint can be used alone or with the LtNow and</span>
+    <span class="c1">// GtNow rules.</span>
+    <span class="k">optional</span> <span class="n">google.protobuf.Duration</span> <span class="na">within</span> <span class="o">=</span> <span class="mi">9</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../python/wires/aiohttp.html" class="btn btn-neutral float-right" title="aiohttp" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../harness/wire.proto.html" class="btn btn-neutral float-left" title="harness/wire.proto" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Vladimir Magamedov
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+ 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-136602285-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-136602285-3');
+</script>
+
+
+</body>
+</html>
