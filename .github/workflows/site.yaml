@@ -1,0 +1,55 @@
+name: Site
+on:
+  push:
+    branches:
+    - master
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - uses: actions/checkout@v2
+      with:
+        ref: master
+        path: master
+    - uses: actions/checkout@v2
+      with:
+        ref: gh-pages
+        path: gh-pages
+
+    - uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: pip-${{ hashFiles('master/requirements/docs.txt') }} }}
+    - uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: node-${{ hashFiles('master/package-lock.json') }}
+
+    - run: pip3 install -r master/requirements/docs.txt
+    - run: cd master && pip3 install -e . --no-deps
+    - run: cd master && npm ci
+
+    - run: cd master && make reference
+    - run: cd master && ./node_modules/.bin/webpack --mode=production
+
+    - run: cd gh-pages && git rm -r '*'
+    - run: cd master && sphinx-build docs ../gh-pages
+      env:
+        PYTHONPATH: docs
+    - run: cp master/docs/CNAME gh-pages/CNAME
+    - run: touch gh-pages/.nojekyll
+    - run: cd gh-pages && git add --all
+    - run: cd gh-pages && git status
+    - run: |
+        cd gh-pages
+        git config --global user.email "vladimir@magamedov.com"
+        git config --global user.name "Vladimir Magamedov"
+        git commit -m "Build for ${GITHUB_SHA} on `date -u`"
+    - run: cd gh-pages && git push

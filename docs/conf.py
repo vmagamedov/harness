@@ -11,10 +11,20 @@ extensions = [
 ]
 
 autoclass_content = 'both'
+autodoc_mock_imports = [
+    'aiohttp',
+    'aiomonitor',
+    'apscheduler',
+    'asyncpg',
+    'grpclib',
+    'opentelemetry',
+    'prometheus',
+    'jaeger',
+]
 
 intersphinx_mapping = {
-    # 'python': ('https://docs.python.org/3.7', None),
-    # 'aiohttp': ('https://docs.aiohttp.org/en/stable', None),
+    'python': ('https://docs.python.org/3.7', None),
+    'aiohttp': ('https://docs.aiohttp.org/en/stable', None),
 }
 
 exclude_patterns = ['_build']
