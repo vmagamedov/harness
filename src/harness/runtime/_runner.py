@@ -7,6 +7,8 @@ from dataclasses import fields
 from grpclib.utils import graceful_exit
 from google.protobuf.json_format import ParseDict
 
+from ..wires.base import Wire
+
 from ._utils import load_config
 from ._validate import validate
 
@@ -57,10 +59,19 @@ class Runner(Generic[_CT, _WI, _WO]):
                     continue
                 if config.HasField(field.name):
                     wire_config = getattr(config, field.name)
-                    wire = field.type()
+                    if isinstance(field.type, type) and issubclass(field.type, Wire):
+                        wire_type = field.type
+                    else:
+                        # Optional[wire_type]
+                        wire_type = field.type.__args__[0]
+                        assert isinstance(wire_type, Wire), type(wire_type)
+                    wire = wire_type()
                     wire.configure(wire_config)
                     await stack.enter_async_context(wire)
                 else:
+                    if isinstance(field.type, type) and issubclass(field.type, Wire):
+                        raise RuntimeError(f'Missing configuration for'
+                                           f' required wire: {field.name}')
                     wire = None
                 input_wires[field.name] = wire
             wires_in = self._wires_in_type(**input_wires)
