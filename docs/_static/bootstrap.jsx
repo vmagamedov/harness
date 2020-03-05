@@ -9,6 +9,8 @@ import ClipboardJS from "clipboard";
 
 import {TypeInfo} from './typeinfo';
 
+const VALIDATE_PROTO = 'validate/validate.proto';
+
 const LANGUAGES = [
   {value: 'python', title: 'Python'},
 ];
@@ -33,9 +35,11 @@ const Visibility = {
 };
 
 function useSetter(setter) {
-  return (event) => {
-    setter(event.target.value)
-  }
+  return (event) => setter(event.target.value)
+}
+
+function toggler(setter, value) {
+  return () => setter(!value)
 }
 
 function itemSetter(value, setValue, i, name) {
@@ -62,7 +66,12 @@ function formatField(i, wire, options) {
 }
 
 function formatInput(i, wire, deployEnabled) {
-  let options = [`(harness.wire).input = "${wire.value}"`];
+  let options = [];
+  if (!wire.optional) {
+    options.push('(validate.rules).message.required = true');
+  }
+  options.push(`(harness.wire).output = "${wire.value}"`);
+  options.push(`(harness.wire).output = "${wire.value}"`);
   if (deployEnabled && wire.accessibility.length > 0) {
     options.push(`(harness.wire).access = ${wire.accessibility}`);
   }
@@ -70,7 +79,11 @@ function formatInput(i, wire, deployEnabled) {
 }
 
 function formatOutput(i, wire, deployEnabled) {
-  let options = [`(harness.wire).output = "${wire.value}"`];
+  let options = [];
+  if (!wire.optional) {
+    options.push('(validate.rules).message.required = true');
+  }
+  options.push(`(harness.wire).output = "${wire.value}"`);
   if (deployEnabled && wire.visibility.length > 0) {
     options.push(`(harness.wire).visibility = ${wire.visibility}`);
   }
@@ -79,8 +92,18 @@ function formatOutput(i, wire, deployEnabled) {
 
 function collectImports(inputs, outputs) {
   const items = new Set(['harness/wire.proto']);
-  inputs.map(w => items.add(w.configProto));
-  outputs.map(w => items.add(w.configProto));
+  inputs.map(w => {
+    items.add(w.configProto);
+    if (!w.optional) {
+      items.add(VALIDATE_PROTO);
+    }
+  });
+  outputs.map(w => {
+    items.add(w.configProto);
+    if (!w.optional) {
+      items.add(VALIDATE_PROTO);
+    }
+  });
   return Array.from(items).sort();
 }
 
@@ -128,6 +151,10 @@ function Input(props) {
       <span className="bootstrap-wire-value">{props.wire.value}</span>
       <div className="bootstrap-wire-inputs">
         <input className="bootstrap-wire-name" placeholder="name" type="text" value={props.wire.configName} onChange={useSetter(props.setConfigName)}/>
+        <label>
+          <input checked={props.wire.optional} onChange={toggler(props.setOptional, props.wire.optional)} type="checkbox"/>
+          Optional
+        </label>
         <select value={props.wire.accessibility} onChange={useSetter(props.setAccessibility)} disabled={!hasAccessibility}>
           <option key={-1} value="">---</option>
           {Object.entries(Accessibility).map(([key, value]) => {
@@ -147,6 +174,10 @@ function Output(props) {
       <span className="bootstrap-wire-value">{props.wire.value}</span>
       <div className="bootstrap-wire-inputs">
         <input className="bootstrap-wire-name" placeholder="name" type="text" value={props.wire.configName} onChange={useSetter(props.setConfigName)}/>
+        <label>
+          <input checked={props.wire.optional} onChange={toggler(props.setOptional, props.wire.optional)} type="checkbox"/>
+          Optional
+        </label>
         <select value={props.wire.visibility} onChange={useSetter(props.setVisibility)} disabled={!hasVisibility}>
           <option key={-1} value="">---</option>
           {Object.entries(Visibility).map(([key, value]) => {
@@ -209,6 +240,7 @@ function Bootstrap(props) {
     const accessibility = TypeInfo.hasOwnProperty(wire.config)? Accessibility.Cluster: '';
     setInputs([...inputs, {
       ...wire,
+      optional: false,
       configName: '',
       accessibility: accessibility,
     }]);
@@ -218,6 +250,7 @@ function Bootstrap(props) {
     const visibility = TypeInfo.hasOwnProperty(wire.config)? Visibility.Internal: '';
     setOutputs([...outputs, {
       ...wire,
+      optional: false,
       configName: '',
       visibility: visibility,
     }]);
@@ -264,7 +297,7 @@ function Bootstrap(props) {
       <div className="bootstrap-row">
         <label className="bootstrap-key">Deployment</label>
         <label className="bootstrap-value">
-          <input type="checkbox" checked={deployEnabled} onChange={() => {setDeployEnabled(!deployEnabled)}}/>
+          <input type="checkbox" checked={deployEnabled} onChange={toggler(setDeployEnabled, deployEnabled)}/>
           Enable
         </label>
       </div>
@@ -276,25 +309,35 @@ function Bootstrap(props) {
         <label className="bootstrap-key">Add Wire</label>
         <AddWireDialog className="bootstrap-value" wires={wires} addWire={addWire} />
       </div>
+      {inputs.length > 0 && <div className="bootstrap-row">
+        <div className="bootstrap-key">&nbsp;</div>
+        <div className="bootstrap-value">Inputs:</div>
+      </div>}
       <div>
         {inputs.map((w, i) => {
           return <div className="bootstrap-row" key={i}>
-            <label className="bootstrap-key">Input</label>
+            <div className="bootstrap-key">&nbsp;</div>
             <Input wire={w}
                    deployEnabled={deployEnabled}
                    setConfigName={itemSetter(inputs, setInputs, i, 'configName')}
+                   setOptional={itemSetter(inputs, setInputs, i, 'optional')}
                    setAccessibility={itemSetter(inputs, setInputs, i, 'accessibility')}
                    delete={itemDeleter(inputs, setInputs, i)}/>
           </div>
         })}
       </div>
+      {outputs.length > 0 && <div className="bootstrap-row">
+        <div className="bootstrap-key">&nbsp;</div>
+        <div className="bootstrap-value">Outputs:</div>
+      </div>}
       <div>
         {outputs.map((w, i) => {
           return <div className="bootstrap-row" key={i}>
-            <label className="bootstrap-key">Output</label>
+            <div className="bootstrap-key">&nbsp;</div>
             <Output wire={w}
                     deployEnabled={deployEnabled}
                     setConfigName={itemSetter(outputs, setOutputs, i, 'configName')}
+                    setOptional={itemSetter(outputs, setOutputs, i, 'optional')}
                     setVisibility={itemSetter(outputs, setOutputs, i, 'visibility')}
                     delete={itemDeleter(outputs, setOutputs, i)}/>
           </div>

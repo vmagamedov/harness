@@ -56,6 +56,7 @@ label {
     font-size: 12px;
     line-height: 1.4;
     margin: 0;
+    overflow: scroll;
 }
 .bootstrap h3 {
     margin-top: 20px;
@@ -104,6 +105,9 @@ label {
 }
 .bootstrap-wire-inputs select {
     flex: 1;
+    margin-left: 6px;
+}
+.bootstrap-wire-inputs label {
     margin-left: 6px;
 }
 .cbcopy-container {
