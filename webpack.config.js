@@ -8,7 +8,10 @@ module.exports = {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
+        include: [
+          __dirname + '/docs',
+          __dirname + '/node_modules/clipboard/src'
+        ],
         use: {
           loader: "babel-loader"
         }

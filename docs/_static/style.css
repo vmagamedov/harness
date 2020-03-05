@@ -55,9 +55,7 @@ label {
 .bootstrap pre {
     font-size: 12px;
     line-height: 1.4;
-    background: #f8f8f8;
-    padding: 12px;
-    border: 1px solid #e1e4e5;
+    margin: 0;
 }
 .bootstrap h3 {
     margin-top: 20px;
@@ -107,6 +105,17 @@ label {
 .bootstrap-wire-inputs select {
     flex: 1;
     margin-left: 6px;
+}
+.cbcopy-container {
+    background: #f8f8f8;
+    padding: 12px;
+    border: 1px solid #e1e4e5;
+    position: relative;
+}
+.cbcopy-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
 }
 
 /*

@@ -5,6 +5,8 @@ import Prism from 'prismjs';
 import 'prismjs/components/prism-protobuf';
 import 'prismjs/themes/prism.css';
 
+import ClipboardJS from "clipboard";
+
 import {TypeInfo} from './typeinfo';
 
 const LANGUAGES = [
@@ -300,13 +302,17 @@ function Bootstrap(props) {
       </div>
       <div>
         <h3>Configuration</h3>
-        <div>
-          <pre dangerouslySetInnerHTML={configMarkup}/>
+        <div className="cbcopy-container">
+          {ClipboardJS.isSupported() && <button className="cbcopy-btn" data-clipboard-target="#config">copy</button>}
+          <pre dangerouslySetInnerHTML={configMarkup} id="config"/>
         </div>
       </div>
       <div>
         <h3>Requirements</h3>
-        <pre>{requirements.join('\n')}</pre>
+        <div className="cbcopy-container">
+          {ClipboardJS.isSupported() && <button className="cbcopy-btn" data-clipboard-target="#requirements">copy</button>}
+          <pre id="requirements">{requirements.join('\n')}</pre>
+        </div>
       </div>
     </div>
   )
@@ -315,4 +321,10 @@ function Bootstrap(props) {
 const mountPoint = document.getElementById('placeholder');
 const wiresDataElement = document.getElementById('wires-data');
 const wiresData = JSON.parse(wiresDataElement.innerText);
+
 ReactDOM.render(<Bootstrap wiresData={wiresData}/>, mountPoint);
+
+const clipboard = new ClipboardJS('.cbcopy-btn');
+clipboard.on('success', (event) => {
+    event.clearSelection();
+});
