@@ -13,7 +13,7 @@ Here is how service startup looks like:
 .. code-block:: text
 
   entrypoint(argv):
-    setup(wires-in) -> wires-out
+    setup(config, wires-in) -> wires-out
     runtime(wires-out)
 
 Where:

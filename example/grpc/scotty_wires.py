@@ -10,12 +10,9 @@ import harness.wires.logging
 import harness.wires.opentelemetry.ext.jaeger
 import harness.wires.prometheus
 
-import scotty_pb2
-
 
 @dataclass
 class WiresIn:
-    config: scotty_pb2.Configuration
     db: harness.wires.asyncpg.PoolWire
     console: Optional[harness.wires.logging.ConsoleWire]
     syslog: Optional[harness.wires.logging.SyslogWire]

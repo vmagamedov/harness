@@ -10,12 +10,9 @@ import harness.wires.grpclib.client
 import harness.wires.logging
 import harness.wires.opentelemetry.ext.jaeger
 
-import kirk_pb2
-
 
 @dataclass
 class WiresIn:
-    config: kirk_pb2.Configuration
     db: harness.wires.asyncpg.PoolWire
     scotty: harness.wires.grpclib.client.ChannelWire
     console: harness.wires.logging.ConsoleWire

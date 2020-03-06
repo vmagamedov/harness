@@ -1,11 +1,11 @@
-#db:
-#  address:
-#    host: db
-#    port: 5432
-#  username: postgres
-#  password: postgres
-#  database: postgres
-#  min_size: 1
+db:
+  address:
+    host: db
+    port: 5432
+  username: postgres
+  password: postgres
+  database: postgres
+  min_size: 1
 scotty:
   address:
     host: localhost

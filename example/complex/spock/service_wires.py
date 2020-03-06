@@ -6,12 +6,9 @@ from dataclasses import dataclass
 
 import harness.wires.logging
 
-import spock.service_pb2
-
 
 @dataclass
 class WiresIn:
-    config: spock.service_pb2.Configuration
     console: Optional[harness.wires.logging.ConsoleWire]
 
 

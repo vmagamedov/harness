@@ -7,6 +7,7 @@ from asyncpg.pool import Pool
 from grpclib.server import Stream
 from google.protobuf.empty_pb2 import Empty
 
+from scotty_pb2 import Configuration
 from scotty_grpc import ScottyBase
 from scotty_wires import WiresIn, WiresOut
 
@@ -16,6 +17,7 @@ log = logging.getLogger(__name__)
 
 @dataclass
 class Scotty(ScottyBase):
+    config: Configuration
     db: Pool
 
     async def BeamMeUp(self, stream: Stream[Empty, Empty]) -> None:
@@ -25,8 +27,8 @@ class Scotty(ScottyBase):
         await stream.send_message(Empty())
 
 
-async def setup(wires_in: WiresIn) -> WiresOut:
-    scotty = Scotty(db=wires_in.db.pool)
+async def setup(config: Configuration, wires_in: WiresIn) -> WiresOut:
+    scotty = Scotty(config=config, db=wires_in.db.pool)
     return WiresOut(
         server=harness.wires.grpclib.server.ServerWire([scotty]),
         prometheus=harness.wires.prometheus.ServerWire(),

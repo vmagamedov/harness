@@ -50,13 +50,11 @@ class Runner(Generic[_CT, _WI, _WO]):
         )
 
     async def _wrapper(
-        self, main_func: Callable[[_WI], Awaitable[_WO]], config: _CT,
+        self, main_func: Callable[[_CT, _WI], Awaitable[_WO]], config: _CT,
     ) -> None:
         async with AsyncExitStack() as stack:
-            input_wires = {'config': config}
+            input_wires = {}
             for field in fields(self._wires_in_type):
-                if field.name == 'config':
-                    continue
                 if config.HasField(field.name):
                     wire_config = getattr(config, field.name)
                     if isinstance(field.type, type) and issubclass(field.type, Wire):
@@ -76,7 +74,7 @@ class Runner(Generic[_CT, _WI, _WO]):
                 input_wires[field.name] = wire
             wires_in = self._wires_in_type(**input_wires)
 
-            wires_out = await main_func(wires_in)
+            wires_out = await main_func(config, wires_in)
 
             if not isinstance(wires_out, self._wires_out_type):
                 raise RuntimeError(

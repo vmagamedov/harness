@@ -29,16 +29,12 @@ def _render_wires(proto_file: str, spec: ConfigSpec):
     for module_name in sorted(imports):
         buf.add(f'import {module_name}')
     buf.add('')
-
-    pb2_module = proto_file.replace('/', '.').replace('.proto', '_pb2')
-    buf.add(f'import {pb2_module}')
-    buf.add('')
     buf.add('')
 
     buf.add('@dataclass')
     buf.add(f'class WiresIn:')
     with buf.indent():
-        buf.add(f'config: {pb2_module}.Configuration')
+        empty = True
         for wire in spec.wires:
             if wire.value.WhichOneof('type') == 'input':
                 if wire.optional:
@@ -46,6 +42,9 @@ def _render_wires(proto_file: str, spec: ConfigSpec):
                 else:
                     wire_type = wire.value.input
                 buf.add(f'{wire.name}: {wire_type}')
+                empty = False
+        if empty:
+            buf.add('pass')
     buf.add('')
     buf.add('')
     buf.add('@dataclass')

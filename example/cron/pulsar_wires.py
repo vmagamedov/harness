@@ -7,12 +7,9 @@ import harness.wires.apscheduler
 import harness.wires.apscheduler.jobstores.redis
 import harness.wires.logging
 
-import pulsar_pb2
-
 
 @dataclass
 class WiresIn:
-    config: pulsar_pb2.Configuration
     redis_job_store: harness.wires.apscheduler.jobstores.redis.RedisJobStoreWire
     console: harness.wires.logging.ConsoleWire
 
