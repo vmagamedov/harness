@@ -7,6 +7,9 @@ from contextlib import closing
 from dataclasses import dataclass
 
 import yaml
+
+from google.protobuf.message import Message
+from google.protobuf.descriptor import FieldDescriptor
 from google.protobuf.json_format import ParseDict
 from google.protobuf.message_factory import GetMessages
 
@@ -181,25 +184,37 @@ class Context:
             return f'{sub_domain}.{self.base_domain}'
 
 
-def get_socket(wire, message_classes, config):
-    if wire.type:
-        wire_type = message_classes[wire.type]
-        for field_desc in wire_type.DESCRIPTOR.fields:
-            if (
-                field_desc.message_type
-                and field_desc.message_type.full_name == 'harness.net.Socket'
-            ):
-                protocol = HarnessWire.TCP
-                for _, option in field_desc.GetOptions().ListFields():
-                    if isinstance(option, HarnessWire):
-                        protocol = option.protocol
-                wire_value = getattr(config, wire.name)
-                socket_value = getattr(wire_value, field_desc.name)
-                return Socket(
-                    host=socket_value.host,
-                    port=socket_value.port,
-                    _protocol=protocol,
-                )
+def get_socket(
+    wire: WireSpec, message_classes, config: Message,
+) -> Optional[Socket]:
+    if wire.optional:
+        if not config.HasField(wire.name):
+            return None
+    else:
+        assert config.HasField(wire.name), f'Config unset: {wire.name}'
+
+    wire_type = message_classes[wire.type]
+    socket_type_fd = next(
+        (fd for fd in wire_type.DESCRIPTOR.fields
+         if fd.type == FieldDescriptor.TYPE_MESSAGE
+         and fd.message_type.full_name == 'harness.net.Socket'),
+        None,
+    )
+    if socket_type_fd is None:
+        return None
+
+    protocol = HarnessWire.TCP
+    for _, option in socket_type_fd.GetOptions().ListFields():
+        if isinstance(option, HarnessWire):
+            protocol = option.protocol
+
+    wire_value = getattr(config, wire.name)
+    socket_value = getattr(wire_value, socket_type_fd.name)
+    return Socket(
+        host=socket_value.host,
+        port=socket_value.port,
+        _protocol=protocol,
+    )
 
 
 def get_context(

@@ -9,16 +9,6 @@ from harness.runtime import Runner, ValidationError
 from harness.wires.base import Wire
 
 
-@pytest.fixture()
-def config_type(message_types, package):
-    return message_types[f'{package}.Configuration']
-
-
-@pytest.fixture()
-def empty_type(message_types):
-    return message_types['google.protobuf.Empty']
-
-
 async def awaitable(value):
     return value
 

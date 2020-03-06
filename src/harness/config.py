@@ -12,7 +12,7 @@ from .wire_pb2 import HarnessWire, HarnessService
 @dataclass
 class WireSpec:
     name: str
-    type: Optional[str]
+    type: str
     value: HarnessWire
     optional: bool
 
@@ -23,7 +23,7 @@ class ConfigSpec:
     wires: List[WireSpec]
 
 
-def translate_descriptor_proto(config_descriptor_proto):
+def translate_descriptor_proto(config_descriptor_proto) -> ConfigSpec:
     for _, option in config_descriptor_proto.options.ListFields():
         if isinstance(option, HarnessService):
             service = option
@@ -40,11 +40,9 @@ def translate_descriptor_proto(config_descriptor_proto):
             None,
         )
         if wire_option:
+            assert field.type == FieldDescriptorProto.TYPE_MESSAGE, field.type
             validate(wire_option)
-            if field.type == FieldDescriptorProto.TYPE_MESSAGE:
-                type_ = field.type_name[1:]
-            else:
-                type_ = None
+            type_ = field.type_name[1:]
             rules_option = next(
                 (option for _, option in field.options.ListFields()
                  if isinstance(option, FieldRules)),
@@ -55,7 +53,7 @@ def translate_descriptor_proto(config_descriptor_proto):
     return ConfigSpec(service=service, wires=wires)
 
 
-def translate_descriptor(config_descriptor):
+def translate_descriptor(config_descriptor) -> ConfigSpec:
     proto = DescriptorProto()
     config_descriptor.CopyToProto(proto)
     return translate_descriptor_proto(proto)

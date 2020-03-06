@@ -42,3 +42,13 @@ def message_proto(request, package):
 def message_types(request, package):
     file_descriptor_set = _load(package, request.function.__doc__)
     return GetMessages(file_descriptor_set.file)
+
+
+@pytest.fixture()
+def config_type(message_types, package):
+    return message_types[f'{package}.Configuration']
+
+
+@pytest.fixture()
+def empty_type(message_types):
+    return message_types['google.protobuf.Empty']

@@ -47,10 +47,11 @@ def test_invalid_request():
 
 def test_python_optional_input(proto_file_name, python_request):
     """
+    import "google/protobuf/wrappers.proto";
     import "harness/wire.proto";
 
     message Configuration {
-        string db = 1 [
+        google.protobuf.StringValue db = 1 [
             (harness.wire).input = "path.to.implementation.Wire"
         ];
     }
@@ -83,10 +84,11 @@ def test_python_optional_input(proto_file_name, python_request):
 
 def test_python_required_input(proto_file_name, python_request):
     """
+    import "google/protobuf/wrappers.proto";
     import "harness/wire.proto";
 
     message Configuration {
-        string db = 1 [
+        google.protobuf.StringValue db = 1 [
             (validate.rules).message.required = true,
             (harness.wire).input = "path.to.implementation.Wire"
         ];
