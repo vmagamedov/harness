@@ -6,7 +6,7 @@ from logging import Logger
 from aiohttp.web import Application, AppRunner, TCPSite, Request, Response
 from aiohttp.web import HTTPException, middleware
 
-from opentelemetry.trace import SpanKind, tracer
+from opentelemetry.trace import get_tracer, SpanKind
 from opentelemetry.propagators import extract
 from opentelemetry.trace.status import Status, StatusCanonicalCode
 
@@ -61,9 +61,9 @@ async def _opentracing_middleware(
     request: Request,
     handler: Callable[[Request], Awaitable[Response]],
 ) -> Response:
-    tracer_ = tracer()
+    tracer = get_tracer(__name__)
     parent_span = extract(_headers_getter, request)
-    with tracer_.start_as_current_span(
+    with tracer.start_as_current_span(
         request.path,
         parent_span,
         kind=SpanKind.SERVER,

@@ -1,13 +1,9 @@
-from typing import TYPE_CHECKING
-
-from asyncpg import Connection
-from opentelemetry.trace import tracer, SpanKind
+from asyncpg import Connection, create_pool
+from asyncpg.pool import Pool
+from opentelemetry.trace import get_tracer, SpanKind
 
 from .. import postgres_pb2
 from .base import Wire
-
-if TYPE_CHECKING:
-    from asyncpg.pool import Pool
 
 
 def _wrap_do_execute(fn):
@@ -21,7 +17,7 @@ def _wrap_do_execute(fn):
         else:
             operation_name = 'SQL'
         statement = ' '.join(line.strip() for line in query.splitlines())
-        with tracer().start_as_current_span(
+        with get_tracer(__name__).start_span(
             operation_name, kind=SpanKind.CLIENT,
         ) as span:
             span.set_attribute("component", "sql")
@@ -41,15 +37,12 @@ class PoolWire(Wire):
       :requirements: asyncpg
 
     """
-    pool: 'Pool'
+    pool: Pool
     _connect = None
     _connect_params = None
-    connection = None
 
     def configure(self, value: postgres_pb2.Pool):
         assert isinstance(value, postgres_pb2.Pool), type(value)
-
-        from asyncpg import create_pool
 
         self.pool = create_pool(
             host=value.address.host,

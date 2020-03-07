@@ -1,6 +1,6 @@
 from contextvars import ContextVar
 
-from opentelemetry.trace import tracer, SpanKind
+from opentelemetry.trace import get_tracer, SpanKind
 from opentelemetry.propagators import inject
 
 from grpclib.client import Channel
@@ -14,8 +14,8 @@ _client_span = ContextVar('client_span')
 
 
 async def _send_request(event: SendRequest) -> None:
-    tracer_ = tracer()
-    span = tracer_.start_span(
+    tracer = get_tracer(__name__)
+    span = tracer.start_span(
         event.method_name,
         kind=SpanKind.CLIENT,
         attributes={
@@ -24,7 +24,7 @@ async def _send_request(event: SendRequest) -> None:
         },
     )
     _client_span.set(span)
-    inject(tracer_, type(event.metadata).__setitem__, event.metadata)
+    inject(tracer, type(event.metadata).__setitem__, event.metadata)
 
 
 async def _recv_trailing_metadata(event: RecvTrailingMetadata) -> None:
@@ -38,7 +38,9 @@ class ChannelWire(Wire):
       :type: input
       :runtime: python
       :config: harness.grpc.Channel
-      :requirements: grpclib protobuf
+      :requirements:
+        grpclib
+        protobuf
 
     """
     channel: Channel

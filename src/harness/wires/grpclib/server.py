@@ -2,7 +2,7 @@ import logging
 from typing import TYPE_CHECKING, List, Any
 from contextvars import ContextVar
 
-from opentelemetry.trace import tracer, SpanKind
+from opentelemetry.trace import get_tracer, SpanKind
 from opentelemetry.propagators import extract
 
 from grpclib.server import Server
@@ -30,9 +30,9 @@ _server_span_ctx = ContextVar('server_span_ctx')
 
 
 async def _recv_request(event: RecvRequest) -> None:
-    tracer_ = tracer()
+    tracer = get_tracer(__name__)
     parent_span = extract(_metadata_getter, event.metadata)
-    span = tracer_.start_span(
+    span = tracer.start_span(
         event.method_name,
         parent_span,
         kind=SpanKind.SERVER,
@@ -41,7 +41,7 @@ async def _recv_request(event: RecvRequest) -> None:
             "grpc.method": event.method_name,
         },
     )
-    span_ctx = tracer_.use_span(span, True)
+    span_ctx = tracer.use_span(span, True)
     span_ctx.__enter__()
     _server_span_ctx.set(span_ctx)
 
@@ -57,7 +57,9 @@ class ServerWire(Wire):
       :type: output
       :runtime: python
       :config: harness.grpc.Server
-      :requirements: grpclib protobuf
+      :requirements:
+        grpclib
+        protobuf
 
     """
     _config: grpc_pb2.Server
