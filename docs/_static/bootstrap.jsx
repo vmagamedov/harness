@@ -71,7 +71,6 @@ function formatInput(i, wire, deployEnabled) {
     options.push('(validate.rules).message.required = true');
   }
   options.push(`(harness.wire).output = "${wire.value}"`);
-  options.push(`(harness.wire).output = "${wire.value}"`);
   if (deployEnabled && wire.accessibility.length > 0) {
     options.push(`(harness.wire).access = ${wire.accessibility}`);
   }
