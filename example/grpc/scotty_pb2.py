@@ -16,8 +16,8 @@ from harness import wire_pb2 as harness_dot_wire__pb2
 from harness import postgres_pb2 as harness_dot_postgres__pb2
 from harness import grpc_pb2 as harness_dot_grpc__pb2
 from harness import logging_pb2 as harness_dot_logging__pb2
-from harness import http_pb2 as harness_dot_http__pb2
 from harness import tracing_pb2 as harness_dot_tracing__pb2
+from harness import metrics_pb2 as harness_dot_metrics__pb2
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
@@ -26,9 +26,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='scotty',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\x0cscotty.proto\x12\x06scotty\x1a\x17validate/validate.proto\x1a\x12harness/wire.proto\x1a\x16harness/postgres.proto\x1a\x12harness/grpc.proto\x1a\x15harness/logging.proto\x1a\x12harness/http.proto\x1a\x15harness/tracing.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xbf\x04\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12O\n\x02\x64\x62\x18\x02 \x01(\x0b\x32\x16.harness.postgres.PoolB+\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a} \n\x1eharness.wires.asyncpg.PoolWire\x12Q\n\x07\x63onsole\x18\x04 \x01(\x0b\x32\x18.harness.logging.ConsoleB&\x8a}#\n!harness.wires.logging.ConsoleWire\x12N\n\x06syslog\x18\x05 \x01(\x0b\x32\x17.harness.logging.SyslogB%\x8a}\"\n harness.wires.logging.SyslogWire\x12n\n\x07tracing\x18\x06 \x01(\x0b\x32\x19.harness.tracing.ExporterBB\x8a}?\n=harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire\x12Z\n\x06server\x18\x07 \x01(\x0b\x32\x14.harness.grpc.ServerB4\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a})\x12\'harness.wires.grpclib.server.ServerWire\x12R\n\nprometheus\x18\x08 \x01(\x0b\x32\x14.harness.http.ServerB(\x8a}%\x12#harness.wires.prometheus.ServerWire:\x0b\x8a}\x08\n\x06scotty2F\n\x06Scotty\x12<\n\x08\x42\x65\x61mMeUp\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x0cscotty.proto\x12\x06scotty\x1a\x17validate/validate.proto\x1a\x12harness/wire.proto\x1a\x16harness/postgres.proto\x1a\x12harness/grpc.proto\x1a\x15harness/logging.proto\x1a\x15harness/tracing.proto\x1a\x15harness/metrics.proto\x1a\x1bgoogle/protobuf/empty.proto\"\x84\x05\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12X\n\x02\x64\x62\x18\x02 \x01(\x0b\x32\x16.harness.postgres.PoolB4\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}\"\n \n\x1eharness.wires.asyncpg.PoolWire\x8a}\x04\n\x02\x10\x00\x12S\n\x07\x63onsole\x18\x04 \x01(\x0b\x32\x18.harness.logging.ConsoleB(\x8a}%\n#\n!harness.wires.logging.ConsoleWire\x12P\n\x06syslog\x18\x05 \x01(\x0b\x32\x17.harness.logging.SyslogB\'\x8a}$\n\"\n harness.wires.logging.SyslogWire\x12n\n\x07tracing\x18\x06 \x01(\x0b\x32\x17.harness.tracing.JaegerBD\x8a}A\n?\n=harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire\x12\x63\n\x06server\x18\x07 \x01(\x0b\x32\x14.harness.grpc.ServerB=\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}+\x12)\n\'harness.wires.grpclib.server.ServerWire\x8a}\x04\x12\x02\x10\x03\x12\x80\x01\n\nprometheus\x18\x08 \x01(\x0b\x32\x1b.harness.metrics.PrometheusBO\x8a}L\x12J\nHharness.wires.opentelemetry.ext.prometheus.PrometheusMetricsExporterWire:\x0b\x8a}\x08\n\x06scotty2F\n\x06Scotty\x12<\n\x08\x42\x65\x61mMeUp\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3'
   ,
-  dependencies=[validate_dot_validate__pb2.DESCRIPTOR,harness_dot_wire__pb2.DESCRIPTOR,harness_dot_postgres__pb2.DESCRIPTOR,harness_dot_grpc__pb2.DESCRIPTOR,harness_dot_logging__pb2.DESCRIPTOR,harness_dot_http__pb2.DESCRIPTOR,harness_dot_tracing__pb2.DESCRIPTOR,google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
+  dependencies=[validate_dot_validate__pb2.DESCRIPTOR,harness_dot_wire__pb2.DESCRIPTOR,harness_dot_postgres__pb2.DESCRIPTOR,harness_dot_grpc__pb2.DESCRIPTOR,harness_dot_logging__pb2.DESCRIPTOR,harness_dot_tracing__pb2.DESCRIPTOR,harness_dot_metrics__pb2.DESCRIPTOR,google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
 
 
@@ -53,42 +53,42 @@ _CONFIGURATION = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\372B\005\212\001\002\020\001\212} \n\036harness.wires.asyncpg.PoolWire', file=DESCRIPTOR),
+      serialized_options=b'\372B\005\212\001\002\020\001\212}\"\n \n\036harness.wires.asyncpg.PoolWire\212}\004\n\002\020\000', file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='console', full_name='scotty.Configuration.console', index=2,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\212}#\n!harness.wires.logging.ConsoleWire', file=DESCRIPTOR),
+      serialized_options=b'\212}%\n#\n!harness.wires.logging.ConsoleWire', file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='syslog', full_name='scotty.Configuration.syslog', index=3,
       number=5, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\212}\"\n harness.wires.logging.SyslogWire', file=DESCRIPTOR),
+      serialized_options=b'\212}$\n\"\n harness.wires.logging.SyslogWire', file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='tracing', full_name='scotty.Configuration.tracing', index=4,
       number=6, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\212}?\n=harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire', file=DESCRIPTOR),
+      serialized_options=b'\212}A\n?\n=harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire', file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='server', full_name='scotty.Configuration.server', index=5,
       number=7, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\372B\005\212\001\002\020\001\212})\022\'harness.wires.grpclib.server.ServerWire', file=DESCRIPTOR),
+      serialized_options=b'\372B\005\212\001\002\020\001\212}+\022)\n\'harness.wires.grpclib.server.ServerWire\212}\004\022\002\020\003', file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='prometheus', full_name='scotty.Configuration.prometheus', index=6,
       number=8, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\212}%\022#harness.wires.prometheus.ServerWire', file=DESCRIPTOR),
+      serialized_options=b'\212}L\022J\nHharness.wires.opentelemetry.ext.prometheus.PrometheusMetricsExporterWire', file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -101,16 +101,16 @@ _CONFIGURATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=209,
-  serialized_end=784,
+  serialized_start=212,
+  serialized_end=856,
 )
 
 _CONFIGURATION.fields_by_name['db'].message_type = harness_dot_postgres__pb2._POOL
 _CONFIGURATION.fields_by_name['console'].message_type = harness_dot_logging__pb2._CONSOLE
 _CONFIGURATION.fields_by_name['syslog'].message_type = harness_dot_logging__pb2._SYSLOG
-_CONFIGURATION.fields_by_name['tracing'].message_type = harness_dot_tracing__pb2._EXPORTER
+_CONFIGURATION.fields_by_name['tracing'].message_type = harness_dot_tracing__pb2._JAEGER
 _CONFIGURATION.fields_by_name['server'].message_type = harness_dot_grpc__pb2._SERVER
-_CONFIGURATION.fields_by_name['prometheus'].message_type = harness_dot_http__pb2._SERVER
+_CONFIGURATION.fields_by_name['prometheus'].message_type = harness_dot_metrics__pb2._PROMETHEUS
 DESCRIPTOR.message_types_by_name['Configuration'] = _CONFIGURATION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -136,8 +136,8 @@ _SCOTTY = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=786,
-  serialized_end=856,
+  serialized_start=858,
+  serialized_end=928,
   methods=[
   _descriptor.MethodDescriptor(
     name='BeamMeUp',

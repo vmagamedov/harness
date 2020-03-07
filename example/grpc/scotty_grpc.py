@@ -14,8 +14,8 @@ import harness.wire_pb2
 import harness.postgres_pb2
 import harness.grpc_pb2
 import harness.logging_pb2
-import harness.http_pb2
 import harness.tracing_pb2
+import harness.metrics_pb2
 import google.protobuf.empty_pb2
 import scotty_pb2
 

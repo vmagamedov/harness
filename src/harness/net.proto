@@ -23,5 +23,5 @@ message Address {
 }
 
 message Server {
-    Socket bind = 1 [(harness.wire).protocol = TCP];
+    Socket bind = 1 [(harness.mark).protocol = TCP];
 }

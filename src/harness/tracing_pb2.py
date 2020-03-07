@@ -12,6 +12,7 @@ _sym_db = _symbol_database.Default()
 
 
 from harness import net_pb2 as harness_dot_net__pb2
+from validate import validate_pb2 as validate_dot_validate__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -19,29 +20,29 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='harness.tracing',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\x15harness/tracing.proto\x12\x0fharness.tracing\x1a\x11harness/net.proto\"F\n\x08\x45xporter\x12\x14\n\x0cservice_name\x18\x01 \x01(\t\x12$\n\x07\x61\x64\x64ress\x18\x02 \x01(\x0b\x32\x13.harness.net.Socketb\x06proto3'
+  serialized_pb=b'\n\x15harness/tracing.proto\x12\x0fharness.tracing\x1a\x11harness/net.proto\x1a\x17validate/validate.proto\"M\n\x06Jaeger\x12\x1d\n\x0cservice_name\x18\x01 \x01(\tB\x07\xfa\x42\x04r\x02\x10\x01\x12$\n\x07\x61\x64\x64ress\x18\x02 \x01(\x0b\x32\x13.harness.net.Socketb\x06proto3'
   ,
-  dependencies=[harness_dot_net__pb2.DESCRIPTOR,])
+  dependencies=[harness_dot_net__pb2.DESCRIPTOR,validate_dot_validate__pb2.DESCRIPTOR,])
 
 
 
 
-_EXPORTER = _descriptor.Descriptor(
-  name='Exporter',
-  full_name='harness.tracing.Exporter',
+_JAEGER = _descriptor.Descriptor(
+  name='Jaeger',
+  full_name='harness.tracing.Jaeger',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='service_name', full_name='harness.tracing.Exporter.service_name', index=0,
+      name='service_name', full_name='harness.tracing.Jaeger.service_name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=b'\372B\004r\002\020\001', file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='address', full_name='harness.tracing.Exporter.address', index=1,
+      name='address', full_name='harness.tracing.Jaeger.address', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -59,20 +60,21 @@ _EXPORTER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=61,
-  serialized_end=131,
+  serialized_start=86,
+  serialized_end=163,
 )
 
-_EXPORTER.fields_by_name['address'].message_type = harness_dot_net__pb2._SOCKET
-DESCRIPTOR.message_types_by_name['Exporter'] = _EXPORTER
+_JAEGER.fields_by_name['address'].message_type = harness_dot_net__pb2._SOCKET
+DESCRIPTOR.message_types_by_name['Jaeger'] = _JAEGER
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-Exporter = _reflection.GeneratedProtocolMessageType('Exporter', (_message.Message,), {
-  'DESCRIPTOR' : _EXPORTER,
+Jaeger = _reflection.GeneratedProtocolMessageType('Jaeger', (_message.Message,), {
+  'DESCRIPTOR' : _JAEGER,
   '__module__' : 'harness.tracing_pb2'
-  # @@protoc_insertion_point(class_scope:harness.tracing.Exporter)
+  # @@protoc_insertion_point(class_scope:harness.tracing.Jaeger)
   })
-_sym_db.RegisterMessage(Exporter)
+_sym_db.RegisterMessage(Jaeger)
 
 
+_JAEGER.fields_by_name['service_name']._options = None
 # @@protoc_insertion_point(module_scope)

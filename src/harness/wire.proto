@@ -5,40 +5,51 @@ package harness;
 import "google/protobuf/descriptor.proto";
 import "validate/validate.proto";
 
-message HarnessWire {
-    enum Visibility {
-        PRIVATE = 0;
-        HEADLESS = 1;
-        INTERNAL = 2;
-        PUBLIC = 3;
-    }
+message Mark {
     enum Protocol {
         TCP = 0;
         HTTP = 1;
         GRPC = 2;
     }
-    enum Accessibility {
-        LOCAL = 0;
+    optional Protocol protocol = 1;
+}
+
+message Input {
+    enum Reach {
+        LOCALHOST = 0;
         NAMESPACE = 1;
         CLUSTER = 2;
         EXTERNAL = 3;
     }
+    required string type = 1 [(validate.rules).string.min_len = 1];
+    optional Reach reach = 2;
+}
+
+message Output {
+    enum Expose {
+        PRIVATE = 0;
+        HEADLESS = 1;
+        INTERNAL = 2;
+        PUBLIC = 3;
+    }
+    required string type = 1 [(validate.rules).string.min_len = 1];
+    optional Expose expose = 2;
+}
+
+message Wire {
     oneof type {
         option (validate.required) = true;
-
-        string input = 1;
-        string output = 2;
+        Input input = 1;
+        Output output = 2;
     }
-    optional Visibility visibility = 3;
-    optional Protocol protocol = 4;
-    optional Accessibility access = 5;
 }
 
 extend google.protobuf.FieldOptions {
-    optional HarnessWire wire = 2001;
+    optional Wire wire = 2001;
+    optional Mark mark = 2002;
 }
 
-message HarnessService {
+message Service {
     message Resource {
         optional string cpu = 1;
         optional string memory = 2;
@@ -56,5 +67,5 @@ message HarnessService {
 }
 
 extend google.protobuf.MessageOptions {
-    optional HarnessService service = 2001;
+    optional Service service = 2001;
 }

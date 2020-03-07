@@ -1,2 +1,0 @@
-async def main():
-    pass

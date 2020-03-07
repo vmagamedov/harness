@@ -20,14 +20,14 @@ const WireType = {
     Output: 2,
 };
 
-const Accessibility = {
-  Local: 'LOCAL',
+const Reach = {
+  Localhost: 'LOCALHOST',
   Namespace: 'NAMESPACE',
   Cluster: 'CLUSTER',
   External: 'EXTERNAL',
 };
 
-const Visibility = {
+const Expose = {
   Private: "PRIVATE",
   Headless: "HEADLESS",
   Internal: "INTERNAL",
@@ -70,9 +70,9 @@ function formatInput(i, wire, deployEnabled) {
   if (!wire.optional) {
     options.push('(validate.rules).message.required = true');
   }
-  options.push(`(harness.wire).output = "${wire.value}"`);
-  if (deployEnabled && wire.accessibility.length > 0) {
-    options.push(`(harness.wire).access = ${wire.accessibility}`);
+  options.push(`(harness.wire).input.type = "${wire.value}"`);
+  if (deployEnabled && wire.reach.length > 0) {
+    options.push(`(harness.wire).input.reach = ${wire.reach}`);
   }
   return formatField(i, wire, options);
 }
@@ -82,9 +82,9 @@ function formatOutput(i, wire, deployEnabled) {
   if (!wire.optional) {
     options.push('(validate.rules).message.required = true');
   }
-  options.push(`(harness.wire).output = "${wire.value}"`);
-  if (deployEnabled && wire.visibility.length > 0) {
-    options.push(`(harness.wire).visibility = ${wire.visibility}`);
+  options.push(`(harness.wire).output.type = "${wire.value}"`);
+  if (deployEnabled && wire.expose.length > 0) {
+    options.push(`(harness.wire).output.expose = ${wire.expose}`);
   }
   return formatField(i, wire, options);
 }
@@ -144,7 +144,7 @@ function renderConfig(serviceName, deployEnabled, repository, inputs, outputs) {
 }
 
 function Input(props) {
-  const hasAccessibility = props.deployEnabled && TypeInfo.hasOwnProperty(props.wire.config);
+  const hasReach = props.deployEnabled && TypeInfo.hasOwnProperty(props.wire.config);
   return (
     <div className="bootstrap-value bootstrap-wire">
       <span className="bootstrap-wire-value">{props.wire.value}</span>
@@ -154,9 +154,9 @@ function Input(props) {
           <input checked={props.wire.optional} onChange={toggler(props.setOptional, props.wire.optional)} type="checkbox"/>
           Optional
         </label>
-        <select value={props.wire.accessibility} onChange={useSetter(props.setAccessibility)} disabled={!hasAccessibility}>
+        <select value={props.wire.reach} onChange={useSetter(props.setReach)} disabled={!hasReach}>
           <option key={-1} value="">---</option>
-          {Object.entries(Accessibility).map(([key, value]) => {
+          {Object.entries(Reach).map(([key, value]) => {
             return <option key={value} value={value}>{key}</option>
           })}
         </select>
@@ -167,7 +167,7 @@ function Input(props) {
 }
 
 function Output(props) {
-  const hasVisibility = props.deployEnabled && TypeInfo.hasOwnProperty(props.wire.config);
+  const hasExpose = props.deployEnabled && TypeInfo.hasOwnProperty(props.wire.config);
   return (
     <div className="bootstrap-value bootstrap-wire">
       <span className="bootstrap-wire-value">{props.wire.value}</span>
@@ -177,9 +177,9 @@ function Output(props) {
           <input checked={props.wire.optional} onChange={toggler(props.setOptional, props.wire.optional)} type="checkbox"/>
           Optional
         </label>
-        <select value={props.wire.visibility} onChange={useSetter(props.setVisibility)} disabled={!hasVisibility}>
+        <select value={props.wire.expose} onChange={useSetter(props.setExpose)} disabled={!hasExpose}>
           <option key={-1} value="">---</option>
-          {Object.entries(Visibility).map(([key, value]) => {
+          {Object.entries(Expose).map(([key, value]) => {
             return <option key={value} value={value}>{key}</option>
           })}
         </select>
@@ -236,22 +236,22 @@ function Bootstrap(props) {
   const [outputs, setOutputs] = useState([]);
 
   function addInput(wire) {
-    const accessibility = TypeInfo.hasOwnProperty(wire.config)? Accessibility.Cluster: '';
+    const reach = TypeInfo.hasOwnProperty(wire.config)? Reach.Cluster: '';
     setInputs([...inputs, {
       ...wire,
       optional: false,
       configName: '',
-      accessibility: accessibility,
+      reach: reach,
     }]);
   }
 
   function addOutput(wire) {
-    const visibility = TypeInfo.hasOwnProperty(wire.config)? Visibility.Internal: '';
+    const expose = TypeInfo.hasOwnProperty(wire.config)? Expose.Internal: '';
     setOutputs([...outputs, {
       ...wire,
       optional: false,
       configName: '',
-      visibility: visibility,
+      expose: expose,
     }]);
   }
 
@@ -320,7 +320,7 @@ function Bootstrap(props) {
                    deployEnabled={deployEnabled}
                    setConfigName={itemSetter(inputs, setInputs, i, 'configName')}
                    setOptional={itemSetter(inputs, setInputs, i, 'optional')}
-                   setAccessibility={itemSetter(inputs, setInputs, i, 'accessibility')}
+                   setReach={itemSetter(inputs, setInputs, i, 'reach')}
                    delete={itemDeleter(inputs, setInputs, i)}/>
           </div>
         })}
@@ -337,7 +337,7 @@ function Bootstrap(props) {
                     deployEnabled={deployEnabled}
                     setConfigName={itemSetter(outputs, setOutputs, i, 'configName')}
                     setOptional={itemSetter(outputs, setOutputs, i, 'optional')}
-                    setVisibility={itemSetter(outputs, setOutputs, i, 'visibility')}
+                    setExpose={itemSetter(outputs, setOutputs, i, 'expose')}
                     delete={itemDeleter(outputs, setOutputs, i)}/>
           </div>
         })}

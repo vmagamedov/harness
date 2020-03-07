@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 from dataclasses import dataclass
 
 from google.protobuf.descriptor_pb2 import DescriptorProto, FieldDescriptorProto
@@ -6,37 +6,37 @@ from google.protobuf.descriptor_pb2 import DescriptorProto, FieldDescriptorProto
 from validate.validate_pb2 import FieldRules
 
 from .runtime import validate
-from .wire_pb2 import HarnessWire, HarnessService
+from .wire_pb2 import Wire, Service
 
 
 @dataclass
 class WireSpec:
     name: str
     type: str
-    value: HarnessWire
+    value: Wire
     optional: bool
 
 
 @dataclass
 class ConfigSpec:
-    service: HarnessService
+    service: Service
     wires: List[WireSpec]
 
 
 def translate_descriptor_proto(config_descriptor_proto) -> ConfigSpec:
     for _, option in config_descriptor_proto.options.ListFields():
-        if isinstance(option, HarnessService):
+        if isinstance(option, Service):
             service = option
             break
     else:
-        service = HarnessService()
+        service = Service()
     validate(service)
 
     wires = []
     for field in config_descriptor_proto.field:
         wire_option = next(
             (option for _, option in field.options.ListFields()
-             if isinstance(option, HarnessWire)),
+             if isinstance(option, Wire)),
             None,
         )
         if wire_option:

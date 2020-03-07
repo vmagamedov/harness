@@ -13,9 +13,9 @@ from google.protobuf.descriptor import FieldDescriptor
 from google.protobuf.json_format import ParseDict
 from google.protobuf.message_factory import GetMessages
 
+from .. import wire_pb2
 from ..config import translate_descriptor, WireSpec
 from ..net_pb2 import Socket
-from ..wire_pb2 import HarnessWire, HarnessService
 from ..runtime._utils import load_config
 from ..runtime._validate import validate
 
@@ -42,16 +42,16 @@ def _ver(content_bytes):
 class Socket:
     host: str
     port: int
-    _protocol: HarnessWire.Protocol
+    _protocol: wire_pb2.Mark.Protocol
 
     def is_tcp(self):
-        return self._protocol == HarnessWire.TCP
+        return self._protocol == wire_pb2.Mark.TCP
 
     def is_http(self):
-        return self._protocol == HarnessWire.HTTP
+        return self._protocol == wire_pb2.Mark.HTTP
 
     def is_grpc(self):
-        return self._protocol == HarnessWire.GRPC
+        return self._protocol == wire_pb2.Mark.GRPC
 
 
 @dataclass
@@ -63,17 +63,17 @@ class Input:
     def name(self):
         return self._wire.name
 
-    def is_local(self):
-        return self._wire.value.access == HarnessWire.LOCAL
+    def is_localhost(self):
+        return self._wire.value.input.reach == wire_pb2.Input.LOCALHOST
 
     def is_namespace(self):
-        return self._wire.value.access == HarnessWire.NAMESPACE
+        return self._wire.value.input.reach == wire_pb2.Input.NAMESPACE
 
     def is_cluster(self):
-        return self._wire.value.access == HarnessWire.CLUSTER
+        return self._wire.value.input.reach == wire_pb2.Input.CLUSTER
 
     def is_external(self):
-        return self._wire.value.access == HarnessWire.EXTERNAL
+        return self._wire.value.input.reach == wire_pb2.Input.EXTERNAL
 
 
 @dataclass
@@ -85,14 +85,17 @@ class Output:
     def name(self):
         return self._wire.name
 
+    def is_private(self):
+        return self._wire.value.output.expose == wire_pb2.Output.PRIVATE
+
     def is_internal(self):
-        return self._wire.value.visibility == HarnessWire.INTERNAL
+        return self._wire.value.output.expose == wire_pb2.Output.INTERNAL
 
     def is_public(self):
-        return self._wire.value.visibility == HarnessWire.PUBLIC
+        return self._wire.value.output.expose == wire_pb2.Output.PUBLIC
 
     def is_headless(self):
-        return self._wire.value.visibility == HarnessWire.HEADLESS
+        return self._wire.value.output.expose == wire_pb2.Output.HEADLESS
 
 
 @dataclass
@@ -104,7 +107,7 @@ class HostPath:
 
 @dataclass
 class Context:
-    _container: HarnessService.Container
+    _container: wire_pb2.Service.Container
 
     name: str
     inputs: List[Input]
@@ -203,9 +206,9 @@ def get_socket(
     if socket_type_fd is None:
         return None
 
-    protocol = HarnessWire.TCP
+    protocol = wire_pb2.Mark.TCP
     for _, option in socket_type_fd.GetOptions().ListFields():
-        if isinstance(option, HarnessWire):
+        if isinstance(option, wire_pb2.Mark):
             protocol = option.protocol
 
     wire_value = getattr(config, wire.name)

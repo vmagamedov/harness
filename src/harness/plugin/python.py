@@ -19,9 +19,9 @@ def _render_wires(proto_file: str, spec: ConfigSpec):
     for wire in spec.wires:
         wire_type = wire.value.WhichOneof('type')
         if wire_type == 'input':
-            value = wire.value.input
+            value = wire.value.input.type
         elif wire_type == 'output':
-            value = wire.value.output
+            value = wire.value.output.type
         else:
             raise NotImplementedError(wire_type)
         module_name, _ = value.rsplit('.', 1)
@@ -38,9 +38,9 @@ def _render_wires(proto_file: str, spec: ConfigSpec):
         for wire in spec.wires:
             if wire.value.WhichOneof('type') == 'input':
                 if wire.optional:
-                    wire_type = f'Optional[{wire.value.input}]'
+                    wire_type = f'Optional[{wire.value.input.type}]'
                 else:
-                    wire_type = wire.value.input
+                    wire_type = wire.value.input.type
                 buf.add(f'{wire.name}: {wire_type}')
                 empty = False
         if empty:
@@ -53,7 +53,7 @@ def _render_wires(proto_file: str, spec: ConfigSpec):
         empty = True
         for wire in spec.wires:
             if wire.value.WhichOneof('type') == 'output':
-                buf.add(f'{wire.name}: {wire.value.output}')
+                buf.add(f'{wire.name}: {wire.value.output.type}')
                 empty = False
         if empty:
             buf.add('pass')

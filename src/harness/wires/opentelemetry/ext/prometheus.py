@@ -6,7 +6,7 @@ from opentelemetry import metrics
 from opentelemetry.ext.prometheus import PrometheusMetricsExporter
 from opentelemetry.sdk.metrics.export.controller import PushController
 
-from .... import http_pb2
+from .... import metrics_pb2
 from ...base import Wire, WaitMixin
 
 
@@ -19,20 +19,20 @@ class PrometheusMetricsExporterWire(WaitMixin, Wire):
     .. wire:: harness.wires.opentelemetry.ext.prometheus.PrometheusMetricsExporterWire
       :type: output
       :runtime: python
-      :config: harness.http.Server
+      :config: harness.metrics.Prometheus
       :requirements: opentelemetry-ext-prometheus==0.4a1
 
     """
-    _config: http_pb2.Server
+    _config: metrics_pb2.Prometheus
     _controller: PushController
 
-    def configure(self, value: http_pb2.Server):
-        assert isinstance(value, http_pb2.Server), type(value)
+    def configure(self, value: metrics_pb2.Prometheus):
+        assert isinstance(value, metrics_pb2.Prometheus), type(value)
         self._config = value
 
     async def __aenter__(self):
         meter = metrics.meter()
-        exporter = PrometheusMetricsExporter()
+        exporter = PrometheusMetricsExporter(self._config.prefix)
         self._controller = PushController(meter, exporter, 5)
 
         start_http_server(self._config.bind.port, self._config.bind.host)

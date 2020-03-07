@@ -45,33 +45,29 @@ def test_invalid_request():
         ))
 
 
-def test_python_optional_input(proto_file_name, python_request):
+def test_python_optional_input(python_request):
     """
     import "google/protobuf/wrappers.proto";
     import "harness/wire.proto";
 
     message Configuration {
         google.protobuf.StringValue db = 1 [
-            (harness.wire).input = "path.to.implementation.Wire"
+            (harness.wire).input.type = "path.to.implementation.Wire"
         ];
     }
     """
     response = process(python_request)
     assert response.file[0].name.endswith('_wires.py')
 
-    pb2_module_name = proto_file_name.replace('.proto', '_pb2')
     expected = prepare(f"""
     from typing import Optional
     from dataclasses import dataclass
 
     import path.to.implementation
 
-    import {pb2_module_name}
-
 
     @dataclass
     class WiresIn:
-        config: {pb2_module_name}.Configuration
         db: Optional[path.to.implementation.Wire]
 
 
@@ -82,7 +78,7 @@ def test_python_optional_input(proto_file_name, python_request):
     assert expected in response.file[0].content
 
 
-def test_python_required_input(proto_file_name, python_request):
+def test_python_required_input(python_request):
     """
     import "google/protobuf/wrappers.proto";
     import "harness/wire.proto";
@@ -90,25 +86,21 @@ def test_python_required_input(proto_file_name, python_request):
     message Configuration {
         google.protobuf.StringValue db = 1 [
             (validate.rules).message.required = true,
-            (harness.wire).input = "path.to.implementation.Wire"
+            (harness.wire).input.type = "path.to.implementation.Wire"
         ];
     }
     """
     response = process(python_request)
     assert response.file[0].name.endswith('_wires.py')
 
-    pb2_module_name = proto_file_name.replace('.proto', '_pb2')
     expected = prepare(f"""
     from dataclasses import dataclass
 
     import path.to.implementation
 
-    import {pb2_module_name}
-
 
     @dataclass
     class WiresIn:
-        config: {pb2_module_name}.Configuration
         db: path.to.implementation.Wire
 
 

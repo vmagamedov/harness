@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='harness.net',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\x11harness/net.proto\x12\x0bharness.net\x1a\x12harness/wire.proto\x1a\x17validate/validate.proto\"6\n\x06Socket\x12\x15\n\x04host\x18\x01 \x01(\tB\x07\xfa\x42\x04r\x02\x10\x01\x12\x15\n\x04port\x18\x02 \x01(\rB\x07\xfa\x42\x04*\x02 \x00\"\"\n\x04Pipe\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04mode\x18\x02 \x01(\r\"H\n\x07\x41\x64\x64ress\x12%\n\x06socket\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketH\x00\x12\x0e\n\x04pipe\x18\x02 \x01(\tH\x00\x42\x06\n\x04type\"2\n\x06Server\x12(\n\x04\x62ind\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketB\x05\x8a}\x02 \x00\x62\x06proto3'
+  serialized_pb=b'\n\x11harness/net.proto\x12\x0bharness.net\x1a\x12harness/wire.proto\x1a\x17validate/validate.proto\"6\n\x06Socket\x12\x15\n\x04host\x18\x01 \x01(\tB\x07\xfa\x42\x04r\x02\x10\x01\x12\x15\n\x04port\x18\x02 \x01(\rB\x07\xfa\x42\x04*\x02 \x00\"\"\n\x04Pipe\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04mode\x18\x02 \x01(\r\"H\n\x07\x41\x64\x64ress\x12%\n\x06socket\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketH\x00\x12\x0e\n\x04pipe\x18\x02 \x01(\tH\x00\x42\x06\n\x04type\"2\n\x06Server\x12(\n\x04\x62ind\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketB\x05\x92}\x02\x08\x00\x62\x06proto3'
   ,
   dependencies=[harness_dot_wire__pb2.DESCRIPTOR,validate_dot_validate__pb2.DESCRIPTOR,])
 
@@ -157,7 +157,7 @@ _SERVER = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\212}\002 \000', file=DESCRIPTOR),
+      serialized_options=b'\222}\002\010\000', file=DESCRIPTOR),
   ],
   extensions=[
   ],

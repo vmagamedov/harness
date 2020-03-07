@@ -3,14 +3,14 @@ import pytest
 
 from harness.cli import kubegen
 from harness.config import WireSpec
-from harness.wire_pb2 import HarnessService, HarnessWire
+from harness.wire_pb2 import Service, Wire, Output, Mark
 
 f = faker.Faker()
 
 
 def get_context(**kwargs):
     params = dict(
-        _container=HarnessService.Container(),
+        _container=Service.Container(),
         name=f.pystr(),
         inputs=[],
         outputs=[],
@@ -90,7 +90,7 @@ def test_get_socket(message_types, config_type, optional, empty):
     wire = WireSpec(
         name='server',
         type='harness.net.Server',
-        value=HarnessWire(output='path.to.OutputWire'),
+        value=Wire(output=Output(type='path.to.OutputWire')),
         optional=optional,
     )
     if empty:
@@ -113,5 +113,5 @@ def test_get_socket(message_types, config_type, optional, empty):
         assert socket == kubegen.Socket(
             host='localhost',
             port=5000,
-            _protocol=HarnessWire.Protocol.TCP,
+            _protocol=Mark.Protocol.TCP,
         )

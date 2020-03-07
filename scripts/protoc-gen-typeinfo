@@ -5,7 +5,7 @@ import sys
 from google.protobuf.compiler.plugin_pb2 import CodeGeneratorRequest
 from google.protobuf.compiler.plugin_pb2 import CodeGeneratorResponse
 
-from harness.wire_pb2 import HarnessWire
+from harness.wire_pb2 import Mark
 
 
 TEMPLATE = """\
@@ -21,9 +21,9 @@ export const TypeInfo = {{
 """
 
 protocols = {
-    HarnessWire.TCP: 'Protocol.TCP',
-    HarnessWire.HTTP: 'Protocol.HTTP',
-    HarnessWire.GRPC: 'Protocol.GRPC',
+    Mark.Protocol.TCP: 'Protocol.TCP',
+    Mark.Protocol.HTTP: 'Protocol.HTTP',
+    Mark.Protocol.GRPC: 'Protocol.GRPC',
 }
 
 
@@ -36,9 +36,9 @@ def main():
         for mt in pf.message_type:
             for f in mt.field:
                 if f.type_name == '.harness.net.Socket':
-                    protocol = HarnessWire.TCP
+                    protocol = Mark.Protocol.TCP
                     for _, opt in f.options.ListFields():
-                        if isinstance(opt, HarnessWire):
+                        if isinstance(opt, Mark):
                             protocol = opt.protocol
                     typeinfo.append(
                         f'  "{pf.package}.{mt.name}": {protocols[protocol]},'

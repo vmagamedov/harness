@@ -6,7 +6,7 @@ import "harness/wire.proto";
 import "harness/net.proto";
 
 message Pool {
-    harness.net.Socket address = 1 [(harness.wire).protocol = TCP];
+    harness.net.Socket address = 1 [(harness.mark).protocol = TCP];
     string username = 2;
     string password = 3;
     string database = 4;

@@ -19,7 +19,7 @@ def test_empty(config_type):
     """
     @dataclass
     class WiresIn:
-        config: config_type
+        pass
 
     @dataclass
     class WiresOut:
@@ -31,11 +31,11 @@ def test_empty(config_type):
         WiresOut,
     )
 
-    async def main(wires_in):
+    async def setup(config, wires_in):
         return WiresOut()
 
     with tempfile.NamedTemporaryFile(suffix='.yaml') as config_yaml:
-        assert runner.run(main, ['test', config_yaml.name]) == 0
+        assert runner.run(setup, ['test', config_yaml.name]) == 0
 
 
 @pytest.mark.parametrize('config_empty', [True, False])
@@ -59,7 +59,6 @@ def test_optional_wire(config_type, empty_type, config_empty):
 
     @dataclass
     class WiresIn:
-        config: config_type
         db: Optional[DBWire]
 
     @dataclass
@@ -72,24 +71,26 @@ def test_optional_wire(config_type, empty_type, config_empty):
         WiresOut,
     )
 
-    main = Mock()
-    main.return_value = awaitable(WiresOut())
+    setup = Mock()
+    setup.return_value = awaitable(WiresOut())
 
     with tempfile.NamedTemporaryFile(suffix='.yaml') as config_yaml:
         if not config_empty:
             config_yaml.write(b'db: {}\n')
             config_yaml.flush()
-        assert runner.run(main, ['test', config_yaml.name]) == 0
+        assert runner.run(setup, ['test', config_yaml.name]) == 0
 
     if config_empty:
-        main.assert_called_once_with(
-            WiresIn(config=config_type(), db=None),
+        setup.assert_called_once_with(
+            config_type(),
+            WiresIn(db=None),
         )
     else:
         expected_db = DBWire()
         expected_db.configure(empty_type())
-        main.assert_called_once_with(
-            WiresIn(config=config_type(db=empty_type()), db=expected_db),
+        setup.assert_called_once_with(
+            config_type(db=empty_type()),
+            WiresIn(db=expected_db),
         )
 
 
@@ -114,7 +115,6 @@ def test_required_wire(config_type, empty_type, config_empty):
 
     @dataclass
     class WiresIn:
-        config: config_type
         db: DBWire
 
     @dataclass
@@ -127,18 +127,19 @@ def test_required_wire(config_type, empty_type, config_empty):
         WiresOut,
     )
 
-    main = Mock()
+    setup = Mock()
     with tempfile.NamedTemporaryFile(suffix='.yaml') as config_yaml:
         if config_empty:
             with pytest.raises(ValidationError, match='db is required'):
-                runner.run(main, ['test', config_yaml.name])
+                runner.run(setup, ['test', config_yaml.name])
         else:
-            main.return_value = awaitable(WiresOut())
+            setup.return_value = awaitable(WiresOut())
             config_yaml.write(b'db: {}\n')
             config_yaml.flush()
-            assert runner.run(main, ['test', config_yaml.name]) == 0
+            assert runner.run(setup, ['test', config_yaml.name]) == 0
             expected_db = DBWire()
             expected_db.configure(empty_type())
-            main.assert_called_once_with(
-                WiresIn(config=config_type(db=empty_type()), db=expected_db),
+            setup.assert_called_once_with(
+                config_type(db=empty_type()),
+                WiresIn(db=expected_db),
             )

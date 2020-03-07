@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package harness.metrics;
+
+import "harness/net.proto";
+import "harness/wire.proto";
+
+message Prometheus {
+    string prefix = 1;
+    harness.net.Socket bind = 2 [(harness.mark).protocol = HTTP];
+}

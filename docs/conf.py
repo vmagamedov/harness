@@ -18,8 +18,7 @@ autodoc_mock_imports = [
     'asyncpg',
     'grpclib',
     'opentelemetry',
-    'prometheus',
-    'jaeger',
+    'prometheus_client',
 ]
 
 intersphinx_mapping = {

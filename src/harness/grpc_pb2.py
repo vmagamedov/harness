@@ -11,8 +11,8 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from harness import wire_pb2 as harness_dot_wire__pb2
 from harness import net_pb2 as harness_dot_net__pb2
+from harness import wire_pb2 as harness_dot_wire__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,9 +20,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='harness.grpc',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\x12harness/grpc.proto\x12\x0charness.grpc\x1a\x12harness/wire.proto\x1a\x11harness/net.proto\"6\n\x07\x43hannel\x12+\n\x07\x61\x64\x64ress\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketB\x05\x8a}\x02 \x02\"2\n\x06Server\x12(\n\x04\x62ind\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketB\x05\x8a}\x02 \x02\x62\x06proto3'
+  serialized_pb=b'\n\x12harness/grpc.proto\x12\x0charness.grpc\x1a\x11harness/net.proto\x1a\x12harness/wire.proto\"6\n\x07\x43hannel\x12+\n\x07\x61\x64\x64ress\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketB\x05\x92}\x02\x08\x02\"2\n\x06Server\x12(\n\x04\x62ind\x18\x01 \x01(\x0b\x32\x13.harness.net.SocketB\x05\x92}\x02\x08\x02\x62\x06proto3'
   ,
-  dependencies=[harness_dot_wire__pb2.DESCRIPTOR,harness_dot_net__pb2.DESCRIPTOR,])
+  dependencies=[harness_dot_net__pb2.DESCRIPTOR,harness_dot_wire__pb2.DESCRIPTOR,])
 
 
 
@@ -40,7 +40,7 @@ _CHANNEL = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\212}\002 \002', file=DESCRIPTOR),
+      serialized_options=b'\222}\002\010\002', file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -71,7 +71,7 @@ _SERVER = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\212}\002 \002', file=DESCRIPTOR),
+      serialized_options=b'\222}\002\010\002', file=DESCRIPTOR),
   ],
   extensions=[
   ],

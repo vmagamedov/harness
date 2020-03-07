@@ -25,7 +25,7 @@ setup(
         'protobuf',
         'json-merge-patch',
         'jsonpatch',
-        'opentelemetry-api==0.4a1',
+        'opentelemetry-sdk==0.4a1',
     ],
     entry_points={
         'console_scripts': [

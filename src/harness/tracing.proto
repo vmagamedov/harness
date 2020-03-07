@@ -3,8 +3,9 @@ syntax = "proto3";
 package harness.tracing;
 
 import "harness/net.proto";
+import "validate/validate.proto";
 
-message Exporter {
-    string service_name = 1;
+message Jaeger {
+    string service_name = 1 [(validate.rules).string.min_len = 1];
     harness.net.Socket address = 2;
 }

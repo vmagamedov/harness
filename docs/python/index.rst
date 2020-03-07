@@ -12,7 +12,7 @@ Observability
 -------------
 
 - Logs: :doc:`wires/logging`
-- Metrics: :doc:`wires/prometheus`
+- Metrics: :doc:`wires/opentelemetry`, :doc:`wires/prometheus`
 - Tracing: :doc:`wires/opentelemetry`
 - Debug: :doc:`wires/aiomonitor`
 

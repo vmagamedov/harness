@@ -18,14 +18,14 @@ class JaegerSpanExporterWire(Wire):
     .. wire:: harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire
       :type: input
       :runtime: python
-      :config: harness.tracing.Exporter
+      :config: harness.tracing.Jaeger
       :requirements: opentelemetry-ext-jaeger==0.4a1
 
     """
-    _config: tracing_pb2.Exporter
+    _config: tracing_pb2.Jaeger
 
-    def configure(self, value: tracing_pb2.Exporter):
-        assert isinstance(value, tracing_pb2.Exporter), type(value)
+    def configure(self, value: tracing_pb2.Jaeger):
+        assert isinstance(value, tracing_pb2.Jaeger), type(value)
         self._config = value
 
     async def __aenter__(self):

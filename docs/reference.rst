@@ -13,6 +13,7 @@ Protocols
   harness/postgres
   harness/redis
   harness/tracing
+  harness/metrics
   harness/wire.proto
   google/protobuf/empty
 

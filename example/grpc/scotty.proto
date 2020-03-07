@@ -7,8 +7,8 @@ import "harness/wire.proto";
 import "harness/postgres.proto";
 import "harness/grpc.proto";
 import "harness/logging.proto";
-import "harness/http.proto";
 import "harness/tracing.proto";
+import "harness/metrics.proto";
 
 import "google/protobuf/empty.proto";
 
@@ -19,23 +19,25 @@ message Configuration {
 
     harness.postgres.Pool db = 2 [
         (validate.rules).message.required = true,
-        (harness.wire).input = "harness.wires.asyncpg.PoolWire"
+        (harness.wire).input.type = "harness.wires.asyncpg.PoolWire",
+        (harness.wire).input.reach = LOCALHOST
     ];
     harness.logging.Console console = 4 [
-        (harness.wire).input = "harness.wires.logging.ConsoleWire"
+        (harness.wire).input.type = "harness.wires.logging.ConsoleWire"
     ];
     harness.logging.Syslog syslog = 5 [
-        (harness.wire).input = "harness.wires.logging.SyslogWire"
+        (harness.wire).input.type = "harness.wires.logging.SyslogWire"
     ];
-    harness.tracing.Exporter tracing = 6 [
-        (harness.wire).input = "harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire"
+    harness.tracing.Jaeger tracing = 6 [
+        (harness.wire).input.type = "harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire"
     ];
     harness.grpc.Server server = 7 [
         (validate.rules).message.required = true,
-        (harness.wire).output = "harness.wires.grpclib.server.ServerWire"
+        (harness.wire).output.type = "harness.wires.grpclib.server.ServerWire",
+        (harness.wire).output.expose = PUBLIC
     ];
-    harness.http.Server prometheus = 8 [
-        (harness.wire).output = "harness.wires.prometheus.ServerWire"
+    harness.metrics.Prometheus prometheus = 8 [
+        (harness.wire).output.type = "harness.wires.opentelemetry.ext.prometheus.PrometheusMetricsExporterWire"
     ];
 }
 

@@ -1,36 +1,38 @@
 __default__:
 	@echo "Please specify a target to make"
 
-PROTO_PATH=$(abspath src)
+PROTOC=python3 -m grpc_tools.protoc
+CLEAN=*{_pb2.py,_grpc.py,_wires.py,.pyi}
+
+HARNESS_PROTOS=$(wildcard src/harness/*.proto)
+WIRE_PROTOS=$(filter-out src/harness/wire.proto, $(HARNESS_PROTOS))
+
 GOOGLE_PATH=$(shell scripts/google-proto-path)
-GEN=python3 -m grpc_tools.protoc -I. -I$(PROTO_PATH) --python_out=. --mypy_out=.
-GENERATED=*{_pb2.py,_grpc.py,_wires.py,.pyi}
-WIRE_PROTOS=$(filter-out src/harness/wire.proto, $(wildcard src/harness/*.proto))
+GOOGLE_PROTOS=$(GOOGLE_PATH)/google/protobuf/empty.proto
 
-clean:
-	rm -f example/grpc/$(GENERATED)
-	rm -f example/web/$(GENERATED)
-	rm -f example/cron/$(GENERATED)
-	rm -f example/complex/spock/$(GENERATED)
-	rm -f src/harness/$(GENERATED)
-	rm -f src/validate/$(GENERATED)
+clean-validate-proto:
+	rm -f src/validate/$(CLEAN)
 
-proto: clean
-	cd src && $(GEN) harness/wire.proto
-	cd src && $(GEN) harness/net.proto
-	cd src && $(GEN) harness/logging.proto
-	cd src && $(GEN) harness/postgres.proto
-	cd src && $(GEN) harness/grpc.proto
-	cd src && $(GEN) harness/http.proto
-	cd src && $(GEN) harness/redis.proto
-	cd src && $(GEN) harness/tracing.proto
-	cd src && $(GEN) validate/validate.proto
-	cd example/web && $(GEN) --harness_out=runtime=python:. kirk.proto
-	cd example/grpc && $(GEN) --python_grpc_out=. --harness_out=runtime=python:. scotty.proto
-	cd example/cron && $(GEN) --harness_out=runtime=python:. pulsar.proto
-	cd example/complex && $(GEN) --harness_out=runtime=python:. spock/service.proto
+validate-proto: clean-validate-proto
+	$(PROTOC) -Isrc --python_out=src --mypy_out=quiet:src src/validate/validate.proto
 
-release: proto
+clean-harness-proto:
+	rm -f src/harness/$(CLEAN)
+
+harness-proto: clean-harness-proto
+	$(PROTOC) -Isrc --python_out=src --mypy_out=quiet:src $(HARNESS_PROTOS)
+
+clean-example-proto:
+	rm -f example/{web,grpc,cron}/$(CLEAN)
+
+example-proto: clean-example-proto
+	$(PROTOC) -Isrc -Iexample/web --python_out=example/web --mypy_out=quiet:example/web --harness_out=runtime=python:example/web example/web/kirk.proto
+	$(PROTOC) -Isrc -Iexample/grpc --python_out=example/grpc --python_grpc_out=example/grpc --mypy_out=quiet:example/grpc --harness_out=runtime=python:example/grpc example/grpc/scotty.proto
+	$(PROTOC) -Isrc -Iexample/cron --python_out=example/cron --mypy_out=quiet:example/cron --harness_out=runtime=python:example/cron example/cron/pulsar.proto
+
+proto: validate-proto harness-proto example-proto
+
+release: validate-proto harness-proto
 	./scripts/release_check.sh
 	rm -rf harness.egg-info
 	python setup.py sdist
@@ -53,7 +55,4 @@ run_cron:
 	@PYTHONPATH=example/cron python example/cron/entrypoint.py example/cron/pulsar.yaml
 
 test-kube:
-	harness kube-gen example/web/kirk.proto python example/web/kirk.yaml v1 --namespace=platform --instance=ua --base-domain=example.com | pygmentize -l yaml | less -r
-
-test-plugin:
-	python3 -m grpc_tools.protoc -Iexample/web -I$(shell harness proto-path) --python_out=example/web --harness_out=runtime=python:example/web example/web/kirk.proto
+	harness kube-gen python example/web/kirk.proto example/web/kirk.yaml v1 --namespace=platform --instance=ua --base-domain=example.com | pygmentize -l yaml | less -r
