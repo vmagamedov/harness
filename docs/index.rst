@@ -16,7 +16,8 @@ Harness Framework
   :hidden:
   :caption: Runtimes
 
-  python/index
+  python/guide
+  python/wires/index
 
 Introduction
 ~~~~~~~~~~~~

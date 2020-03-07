@@ -1,5 +1,5 @@
-User Guide
-==========
+Python Guide
+============
 
 We start with an empty directory on the file system.
 
