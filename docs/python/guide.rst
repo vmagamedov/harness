@@ -28,7 +28,7 @@ Here is our initial minimal configuration:
       option (harness.service).name = "status";
 
       harness.http.Server server = 1 [
-          (harness.wire).output = "harness.wires.aiohttp.web.ServerWire"
+          (harness.wire).output.type = "harness.wires.aiohttp.web.ServerWire"
       ];
   }
 

@@ -21,10 +21,10 @@ this:
       bool debug = 1;
 
       harness.postgres.Pool db = 2 [
-          (harness.wire).input = "harness.wires.asyncpg.PoolWire"
+          (harness.wire).input.type = "harness.wires.asyncpg.PoolWire"
       ];
       harness.http.Server server = 3 [
-          (harness.wire).output = "harness.wires.aiohttp.web.ServerWire"
+          (harness.wire).output.type = "harness.wires.aiohttp.web.ServerWire"
       ];
   }
 
