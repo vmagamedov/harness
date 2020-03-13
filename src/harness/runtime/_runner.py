@@ -4,12 +4,11 @@ from typing import Generic, TypeVar, Callable, Awaitable, List, Type
 from contextlib import AsyncExitStack
 from dataclasses import fields
 
-from grpclib.utils import graceful_exit
 from google.protobuf.json_format import ParseDict
 
 from ..wires.base import Wire
 
-from ._utils import load_config
+from ._utils import load_config, graceful_exit
 from ._validate import validate
 from ._features import enable_metrics, enable_tracing
 
