@@ -9,8 +9,9 @@ with open(
 
 setup(
     name='harness',
-    version='0.1.0rc3',
-    description='Language-neutral microservices boilerplate as a code',
+    version='0.1.0rc4',
+    description=('Language-neutral meta-framework'
+                 ' for server-less style services'),
     long_description=DESCRIPTION,
     long_description_content_type='text/x-rst',
     author='Vladimir Magamedov',
