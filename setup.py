@@ -23,6 +23,7 @@ setup(
     python_requires='>=3.7',
     install_requires=[
         'protobuf',
+        'pyyaml',
         'json-merge-patch',
         'jsonpatch',
         'opentelemetry-sdk==0.4a1',
