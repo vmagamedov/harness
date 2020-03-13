@@ -1,5 +1,4 @@
 import sys
-from argparse import FileType
 from contextlib import closing
 
 from google.protobuf.json_format import ParseDict, ParseError
@@ -57,15 +56,4 @@ def check(args):
     except ValidationError as err:
         print(f'Validation error: {err}')
         sys.exit(1)
-
-
-def add_commands(subparsers):
-    check_parser = subparsers.add_parser('check')
-    check_parser.add_argument('-I', '--proto-path', action='append')
-    check_parser.add_argument('proto')
-    check_parser.add_argument('config', type=FileType(encoding='utf-8'))
-    check_parser.add_argument('--merge', type=FileType(encoding='utf-8'),
-                              default=None)
-    check_parser.add_argument('--patch', type=FileType(encoding='utf-8'),
-                              default=None)
-    check_parser.set_defaults(func=check)
+    print('OK')

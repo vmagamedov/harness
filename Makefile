@@ -56,3 +56,6 @@ run_cron:
 
 test-kube:
 	harness kube-gen python example/web/kirk.proto example/web/kirk.yaml v1 --namespace=platform --instance=ua --base-domain=example.com | pygmentize -l yaml | less -r
+
+test-check:
+	harness check example/web/kirk.proto example/web/kirk.yaml

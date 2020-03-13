@@ -1,7 +1,6 @@
 import hashlib
 from typing import List, Optional
 from base64 import b64encode
-from argparse import FileType
 from itertools import chain
 from contextlib import closing
 from dataclasses import dataclass
@@ -741,20 +740,3 @@ def kube_gen(args):
         gen_sidecars(ctx),
     ))
     print(yaml.dump_all(resources))
-
-
-def add_commands(subparsers):
-    kube_gen_parser = subparsers.add_parser('kube-gen')
-    kube_gen_parser.add_argument('-I', '--proto-path', action='append')
-    kube_gen_parser.add_argument('runtime', choices=frozenset(RUNTIMES.keys()))
-    kube_gen_parser.add_argument('proto')
-    kube_gen_parser.add_argument('config', type=FileType('rb'))
-    kube_gen_parser.add_argument('version')
-    kube_gen_parser.add_argument('--instance', default=None)
-    kube_gen_parser.add_argument('--namespace', default='default')
-    kube_gen_parser.add_argument('--secret-merge', type=FileType('rb'),
-                                 default=None)
-    kube_gen_parser.add_argument('--secret-patch', type=FileType('rb'),
-                                 default=None)
-    kube_gen_parser.add_argument('--base-domain', default=None)
-    kube_gen_parser.set_defaults(func=kube_gen)
