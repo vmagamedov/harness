@@ -1,0 +1,22 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements/release.txt') }} }}
+    - uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - run: pip3 install -r requirements/release.txt
+    - run: make release
+    - run: twine upload --repository-url https://upload.pypi.org/legacy/ dist/harness-*.tar.gz
+      env:
+        TWINE_USERNAME: "__token__"
+        TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}

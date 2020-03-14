@@ -34,7 +34,7 @@ proto: validate-proto harness-proto example-proto
 
 release: validate-proto harness-proto
 	./scripts/release_check.sh
-	rm -rf harness.egg-info
+	rm -rf src/harness.egg-info
 	python setup.py sdist
 
 reference:
