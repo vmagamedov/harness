@@ -8,6 +8,7 @@ extensions = [
     'sphinx_ext_protobuf',
     'sphinx_ext_test',
     'sphinx_ext_wire',
+    'sphinx_ext_changelog',
 ]
 
 autoclass_content = 'both'
