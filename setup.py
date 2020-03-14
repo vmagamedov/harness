@@ -1,6 +1,12 @@
+import re
 import os.path
 
 from setuptools import setup, find_packages
+
+with open(
+    os.path.join(os.path.dirname(__file__), 'src', 'harness', '__init__.py')
+) as f:
+    VERSION = re.match(r".*__version__ = '(.*?)'", f.read(), re.S).group(1)
 
 with open(
     os.path.join(os.path.dirname(__file__), 'README.rst')
@@ -9,7 +15,7 @@ with open(
 
 setup(
     name='harness',
-    version='0.1.0rc4',
+    version=VERSION,
     description=('Language-neutral meta-framework'
                  ' for server-less style services'),
     long_description=DESCRIPTION,
