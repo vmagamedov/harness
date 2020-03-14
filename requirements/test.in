@@ -1,6 +1,4 @@
+-r setup.txt
 pytest
 faker
-protobuf
-pyyaml
 grpcio-tools
-grpclib

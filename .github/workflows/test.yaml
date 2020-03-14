@@ -18,6 +18,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - run: pip3 install -r requirements/test.txt
+    - run: pip3 install -e . --no-deps
     - run: py.test
   check:
     runs-on: ubuntu-latest
