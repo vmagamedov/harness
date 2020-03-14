@@ -10,7 +10,7 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements/release.txt') }} }}
+        key: pip-${{ hashFiles('requirements/release.txt') }} }}
     - uses: actions/setup-python@v1
       with:
         python-version: 3.7

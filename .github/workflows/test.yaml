@@ -13,9 +13,22 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('requirements/tox.txt') }}-${{ hashFiles('requirements/test.txt') }}
+        key: pip-${{ matrix.python-version }}-${{ hashFiles('requirements/test.txt') }}
     - uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
-    - run: pip3 install -r requirements/tox.txt
-    - run: tox
+    - run: pip3 install -r requirements/test.txt
+    - run: py.test
+  check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: pip-${{ hashFiles('requirements/check.txt') }}
+    - uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - run: pip3 install -r requirements/check.txt
+    - run: black --check example/web
