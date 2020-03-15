@@ -1,4 +1,5 @@
 import hashlib
+from io import BytesIO
 from typing import List, Optional
 from base64 import b64encode
 from itertools import chain
@@ -696,37 +697,49 @@ def gen_secrets(ctx: 'Context'):
         )
 
 
-def kube_gen(args):
+def kube_gen(
+    runtime: str,
+    proto: str,
+    config: BytesIO,
+    version: str,
+    *,
+    proto_path: List[str],
+    secret_merge: Optional[BytesIO] = None,
+    secret_patch: Optional[BytesIO] = None,
+    instance: Optional[str] = None,
+    namespace: Optional[str] = None,
+    base_domain: Optional[str] = None,
+) -> None:
     # configuration
-    with closing(args.config):
-        config_bytes = args.config.read()
+    with closing(config):
+        config_bytes = config.read()
 
     # merge
-    if args.secret_merge:
-        with closing(args.secret_merge):
-            secret_merge_bytes = args.secret_merge.read()
+    if secret_merge is not None:
+        with closing(secret_merge):
+            secret_merge_bytes = secret_merge.read()
     else:
         secret_merge_bytes = None
 
     # patch
-    if args.secret_patch:
-        with closing(args.secret_patch):
-            secret_patch_bytes = args.secret_patch.read()
+    if secret_patch is not None:
+        with closing(secret_patch):
+            secret_patch_bytes = secret_patch.read()
     else:
         secret_patch_bytes = None
 
     ctx = get_context(
-        proto_file=args.proto,
-        proto_path=args.proto_path,
-        runtime=args.runtime,
+        proto_file=proto,
+        proto_path=proto_path,
+        runtime=runtime,
         config_bytes=config_bytes,
         secret_merge_bytes=secret_merge_bytes,
         secret_patch_bytes=secret_patch_bytes,
         passthrough=dict(
-            version=args.version,
-            instance=args.instance,
-            namespace=args.namespace,
-            base_domain=args.base_domain,
+            version=version,
+            instance=instance,
+            namespace=namespace,
+            base_domain=base_domain,
         ),
     )
     resources = list(chain(

@@ -1,4 +1,6 @@
 import sys
+from io import StringIO
+from typing import List, Optional
 from contextlib import closing
 
 from google.protobuf.json_format import ParseDict, ParseError
@@ -10,29 +12,36 @@ from ..runtime._validate import validate, ValidationError
 from .utils import get_configuration, load_descriptor_set
 
 
-def check(args):
-    with closing(args.config):
-        config_content = args.config.read()
+def check(
+    proto: str,
+    config: StringIO,
+    proto_path: List[str],
+    *,
+    merge: Optional[StringIO] = None,
+    patch: Optional[StringIO] = None,
+) -> None:
+    with closing(config):
+        config_content = config.read()
 
-    if args.merge:
-        with closing(args.merge):
-            merge_content = args.merge.read()
+    if merge is not None:
+        with closing(merge):
+            merge_content = merge.read()
     else:
         merge_content = None
 
-    if args.patch:
-        with closing(args.patch):
-            patch_content = args.patch.read()
+    if patch is not None:
+        with closing(patch):
+            patch_content = patch.read()
     else:
         patch_content = None
 
-    descriptor_set = load_descriptor_set(args.proto, args.proto_path)
+    descriptor_set = load_descriptor_set(proto, proto_path)
     file_descriptor, = (f for f in descriptor_set.file
-                        if args.proto.endswith(f.name))
+                        if proto.endswith(f.name))
 
     config_descriptor = get_configuration(file_descriptor)
     if config_descriptor is None:
-        raise Exception(f'Configuration message not found in the {args.proto}')
+        raise Exception(f'Configuration message not found in the {proto}')
 
     config_data = load_config(
         config_content=config_content,
