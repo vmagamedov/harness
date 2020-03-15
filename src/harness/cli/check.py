@@ -36,12 +36,11 @@ def check(
         patch_content = None
 
     descriptor_set = load_descriptor_set(proto, proto_path)
-    file_descriptor, = (f for f in descriptor_set.file
-                        if proto.endswith(f.name))
+    (file_descriptor,) = (f for f in descriptor_set.file if proto.endswith(f.name))
 
     config_descriptor = get_configuration(file_descriptor)
     if config_descriptor is None:
-        raise Exception(f'Configuration message not found in the {proto}')
+        raise Exception(f"Configuration message not found in the {proto}")
 
     config_data = load_config(
         config_content=config_content,
@@ -49,20 +48,19 @@ def check(
         patch_content=patch_content,
     )
     message_classes = GetMessages(descriptor_set.file)
-    config_full_name = '.'.join(filter(None, (
-        file_descriptor.package,
-        config_descriptor.name,
-    )))
+    config_full_name = ".".join(
+        filter(None, (file_descriptor.package, config_descriptor.name))
+    )
     config_cls = message_classes[config_full_name]
     config = config_cls()
     try:
         ParseDict(config_data, config)
     except ParseError as err:
-        print(f'Parse error: {err}')
+        print(f"Parse error: {err}")
         sys.exit(1)
     try:
         validate(config)
     except ValidationError as err:
-        print(f'Validation error: {err}')
+        print(f"Validation error: {err}")
         sys.exit(1)
-    print('OK')
+    print("OK")

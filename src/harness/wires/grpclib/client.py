@@ -10,7 +10,7 @@ from harness import grpc_pb2
 from harness.wires.base import Wire
 
 
-_client_span = ContextVar('client_span')
+_client_span = ContextVar("client_span")
 
 
 async def _send_request(event: SendRequest) -> None:
@@ -18,10 +18,7 @@ async def _send_request(event: SendRequest) -> None:
     span = tracer.start_span(
         event.method_name,
         kind=SpanKind.CLIENT,
-        attributes={
-            "component": "grpc",
-            "grpc.method": event.method_name,
-        },
+        attributes={"component": "grpc", "grpc.method": event.method_name},
     )
     _client_span.set(span)
     inject(tracer, type(event.metadata).__setitem__, event.metadata)
@@ -43,6 +40,7 @@ class ChannelWire(Wire):
         protobuf
 
     """
+
     channel: Channel
 
     def configure(self, value: grpc_pb2.Channel):

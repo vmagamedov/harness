@@ -22,6 +22,7 @@ class JaegerSpanExporterWire(Wire):
       :requirements: opentelemetry-ext-jaeger==0.4a1
 
     """
+
     _config: tracing_pb2.Jaeger
 
     def configure(self, value: tracing_pb2.Jaeger):
@@ -37,6 +38,10 @@ class JaegerSpanExporterWire(Wire):
         span_processor = BatchExportSpanProcessor(exporter)
         source: TracerSource = tracer_source()
         source.add_span_processor(span_processor)
-        _log.info('%s started: service_name=%s; addr=%s:%d',
-                  self.__class__.__name__, self._config.service_name,
-                  self._config.address.host, self._config.address.port)
+        _log.info(
+            "%s started: service_name=%s; addr=%s:%d",
+            self.__class__.__name__,
+            self._config.service_name,
+            self._config.address.host,
+            self._config.address.port,
+        )

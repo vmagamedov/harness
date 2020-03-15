@@ -7,22 +7,22 @@ from harness.runtime._validate import validate, ValidationError
 
 @pytest.fixture()
 def message_type(message_types, package):
-    return message_types[f'{package}.Message']
+    return message_types[f"{package}.Message"]
 
 
 @pytest.fixture()
 def timestamp_type(message_types):
-    return message_types['google.protobuf.Timestamp']
+    return message_types["google.protobuf.Timestamp"]
 
 
 @pytest.fixture()
 def duration_type(message_types):
-    return message_types['google.protobuf.Duration']
+    return message_types["google.protobuf.Duration"]
 
 
 @pytest.fixture()
 def any_type(message_types):
-    return message_types['google.protobuf.Any']
+    return message_types["google.protobuf.Any"]
 
 
 def test_disabled(message_type):
@@ -50,7 +50,7 @@ def test_oneof_required(message_type):
     """
     validate(message_type(foo="test"))
     validate(message_type(bar=42))
-    with pytest.raises(ValidationError, match='Oneof type is required'):
+    with pytest.raises(ValidationError, match="Oneof type is required"):
         validate(message_type())
 
 
@@ -61,7 +61,7 @@ def test_float_const(message_type):
     }
     """
     validate(message_type(value=4.2))
-    with pytest.raises(ValidationError, match='value not equal to'):
+    with pytest.raises(ValidationError, match="value not equal to"):
         validate(message_type(value=2.4))
 
 
@@ -74,7 +74,7 @@ def test_timestamp_lt(message_type, timestamp_type):
     }
     """
     validate(message_type(value=timestamp_type(seconds=999)))
-    with pytest.raises(ValidationError, match='is not lesser than'):
+    with pytest.raises(ValidationError, match="is not lesser than"):
         validate(message_type(value=timestamp_type(seconds=1000)))
 
 
@@ -90,10 +90,10 @@ def test_timestamp_within(message_type, timestamp_type):
     value.GetCurrentTime()
     validate(message_type(value=value))
     valid_seconds = value.seconds
-    with pytest.raises(ValidationError, match='value is not within 60s from now'):
+    with pytest.raises(ValidationError, match="value is not within 60s from now"):
         value.seconds = valid_seconds - 100
         validate(message_type(value=value))
-    with pytest.raises(ValidationError, match='value is not within 60s from now'):
+    with pytest.raises(ValidationError, match="value is not within 60s from now"):
         value.seconds = valid_seconds - 100
         validate(message_type(value=value))
     value.seconds = valid_seconds
@@ -110,7 +110,7 @@ def test_duration_in(message_type, duration_type):
     }
     """
     validate(message_type(value=duration_type(seconds=60)))
-    with pytest.raises(ValidationError, match='value not in {60s, 30s}'):
+    with pytest.raises(ValidationError, match="value not in {60s, 30s}"):
         validate(message_type(value=duration_type(seconds=120)))
 
 
@@ -123,7 +123,9 @@ def test_duration_lte(message_type, duration_type):
     }
     """
     validate(message_type(value=duration_type(seconds=60)))
-    with pytest.raises(ValidationError, match='value is not lesser than or equal to 60s'):
+    with pytest.raises(
+        ValidationError, match="value is not lesser than or equal to 60s"
+    ):
         validate(message_type(value=duration_type(seconds=60, nanos=1)))
 
 
@@ -139,7 +141,7 @@ def test_enum_defined_only(message_type):
     """
     validate(message_type())
     validate(message_type(value=1))
-    with pytest.raises(ValidationError, match='value is not defined'):
+    with pytest.raises(ValidationError, match="value is not defined"):
         validate(message_type(value=2))
 
 
@@ -150,7 +152,10 @@ def test_repeated_unique(message_type):
     }
     """
     validate(message_type(value=[1, 2, 3]))
-    with pytest.raises(ValidationError, match='value must contain unique items; repeated items: \\[2, 3\\]'):
+    with pytest.raises(
+        ValidationError,
+        match="value must contain unique items; repeated items: \\[2, 3\\]",
+    ):
         validate(message_type(value=[1, 2, 3, 2, 4, 3, 5]))
 
 
@@ -161,7 +166,7 @@ def test_repeated_items(message_type):
     }
     """
     validate(message_type(field=[1, 2, 3, 4]))
-    with pytest.raises(ValidationError, match='field\\[\\] is not lesser than 5'):
+    with pytest.raises(ValidationError, match="field\\[\\] is not lesser than 5"):
         validate(message_type(field=[1, 2, 3, 4, 5]))
 
 
@@ -171,9 +176,9 @@ def test_map_key(message_type):
         map<string, int32> field = 1 [(validate.rules).map.keys.string.min_len = 3];
     }
     """
-    validate(message_type(field={'test': 42}))
-    with pytest.raises(ValidationError, match='field<key> length is less than 3'):
-        validate(message_type(field={'t': 42}))
+    validate(message_type(field={"test": 42}))
+    with pytest.raises(ValidationError, match="field<key> length is less than 3"):
+        validate(message_type(field={"t": 42}))
 
 
 def test_map_values(message_type):
@@ -182,9 +187,9 @@ def test_map_values(message_type):
         map<string, int32> field = 1 [(validate.rules).map.values.int32.const = 42];
     }
     """
-    validate(message_type(field={'test': 42}))
-    with pytest.raises(ValidationError, match='field<value> not equal to 42'):
-        validate(message_type(field={'test': 43}))
+    validate(message_type(field={"test": 42}))
+    with pytest.raises(ValidationError, match="field<value> not equal to 42"):
+        validate(message_type(field={"test": 43}))
 
 
 def test_any_in(message_type, any_type, duration_type, timestamp_type):
@@ -192,11 +197,11 @@ def test_any_in(message_type, any_type, duration_type, timestamp_type):
     message Message {
         google.protobuf.Any field = 1 [(validate.rules).any.in = "type.googleapis.com/google.protobuf.Duration"];
     }
-    """
+    """  # noqa
     any_1 = any_type()
     any_1.Pack(duration_type(seconds=42))
     validate(message_type(field=any_1))
-    with pytest.raises(ValidationError, match='field.type_url not in'):
+    with pytest.raises(ValidationError, match="field.type_url not in"):
         any_2 = any_type()
         any_2.Pack(timestamp_type(seconds=42))
         validate(message_type(field=any_2))
@@ -239,7 +244,7 @@ def test_message_required(message_type):
     }
     """
     validate(message_type(field=dict()))
-    validate(message_type(field=dict(value='test')))
+    validate(message_type(field=dict(value="test")))
     with pytest.raises(ValidationError, match="field is required"):
         validate(message_type())
 
@@ -251,10 +256,14 @@ def test_email(message_type):
     }
     """
     validate(message_type(field="admin@example.com"))
-    validate(message_type(field="Jean-Luc Picard <jean-luc.pickard@starfleet.milkyway>"))
-    with pytest.raises(ValidationError, match='field contains invalid email address'):
+    validate(
+        message_type(field="Jean-Luc Picard <jean-luc.pickard@starfleet.milkyway>")
+    )
+    with pytest.raises(ValidationError, match="field contains invalid email address"):
         validate(message_type(field="example.com"))
-    with pytest.raises(ValidationError, match='field contains more than one email address'):
+    with pytest.raises(
+        ValidationError, match="field contains more than one email address"
+    ):
         validate(message_type(field="foo@example.com, bar@example.com"))
 
 
@@ -266,7 +275,7 @@ def test_hostname(message_type):
     """
     validate(message_type(field="example.com"))
     validate(message_type(field="Example.com"))
-    with pytest.raises(ValidationError, match='field contains invalid hostname'):
+    with pytest.raises(ValidationError, match="field contains invalid hostname"):
         validate(message_type(field="-example.com"))
 
 
@@ -280,7 +289,7 @@ def test_string_ip(message_type):
     validate(message_type(field="127.0.0.1"))
     validate(message_type(field="::1"))
     validate(message_type(field="2001:0db8:85a3:0000:0000:8a2e:0370:7334"))
-    with pytest.raises(ValidationError, match='field contains invalid IP address'):
+    with pytest.raises(ValidationError, match="field contains invalid IP address"):
         validate(message_type(field="0.0.0"))
 
 
@@ -292,9 +301,9 @@ def test_string_ipv4(message_type):
     """
     validate(message_type(field="0.0.0.0"))
     validate(message_type(field="127.0.0.1"))
-    with pytest.raises(ValidationError, match='field contains invalid IPv4 address'):
+    with pytest.raises(ValidationError, match="field contains invalid IPv4 address"):
         validate(message_type(field="0.0.0"))
-    with pytest.raises(ValidationError, match='field contains invalid IPv4 address'):
+    with pytest.raises(ValidationError, match="field contains invalid IPv4 address"):
         validate(message_type(field="2001:0db8:85a3:0000:0000:8a2e:0370:7334"))
 
 
@@ -306,9 +315,9 @@ def test_string_ipv6(message_type):
     """
     validate(message_type(field="::1"))
     validate(message_type(field="2001:0db8:85a3:0000:0000:8a2e:0370:7334"))
-    with pytest.raises(ValidationError, match='field contains invalid IPv6 address'):
+    with pytest.raises(ValidationError, match="field contains invalid IPv6 address"):
         validate(message_type(field="2001:0db8:85a3:0000:0000:8a2e:0370:733."))
-    with pytest.raises(ValidationError, match='field contains invalid IPv6 address'):
+    with pytest.raises(ValidationError, match="field contains invalid IPv6 address"):
         validate(message_type(field="127.0.0.1"))
 
 
@@ -321,8 +330,10 @@ def test_bytes_ip(message_type):
     validate(message_type(field=ip_address("0.0.0.0").packed))
     validate(message_type(field=ip_address("127.0.0.1").packed))
     validate(message_type(field=ip_address("::1").packed))
-    validate(message_type(field=ip_address("2001:0db8:85a3:0000:0000:8a2e:0370:7334").packed))
-    with pytest.raises(ValidationError, match='field contains invalid IP address'):
+    validate(
+        message_type(field=ip_address("2001:0db8:85a3:0000:0000:8a2e:0370:7334").packed)
+    )
+    with pytest.raises(ValidationError, match="field contains invalid IP address"):
         validate(message_type(field=ip_address("0.0.0.0").packed[:-1]))
 
 
@@ -334,10 +345,14 @@ def test_bytes_ipv4(message_type):
     """
     validate(message_type(field=ip_address("0.0.0.0").packed))
     validate(message_type(field=ip_address("127.0.0.1").packed))
-    with pytest.raises(ValidationError, match='field contains invalid IPv4 address'):
-        validate(message_type(field=b'deadbeef'))
-    with pytest.raises(ValidationError, match='field contains invalid IPv4 address'):
-        validate(message_type(field=ip_address("2001:0db8:85a3:0000:0000:8a2e:0370:7334").packed))
+    with pytest.raises(ValidationError, match="field contains invalid IPv4 address"):
+        validate(message_type(field=b"deadbeef"))
+    with pytest.raises(ValidationError, match="field contains invalid IPv4 address"):
+        validate(
+            message_type(
+                field=ip_address("2001:0db8:85a3:0000:0000:8a2e:0370:7334").packed
+            )
+        )
 
 
 def test_bytes_ipv6(message_type):
@@ -347,10 +362,12 @@ def test_bytes_ipv6(message_type):
     }
     """
     validate(message_type(field=ip_address("::1").packed))
-    validate(message_type(field=ip_address("2001:0db8:85a3:0000:0000:8a2e:0370:7334").packed))
-    with pytest.raises(ValidationError, match='field contains invalid IPv6 address'):
-        validate(message_type(field=b'deadbeef'))
-    with pytest.raises(ValidationError, match='field contains invalid IPv6 address'):
+    validate(
+        message_type(field=ip_address("2001:0db8:85a3:0000:0000:8a2e:0370:7334").packed)
+    )
+    with pytest.raises(ValidationError, match="field contains invalid IPv6 address"):
+        validate(message_type(field=b"deadbeef"))
+    with pytest.raises(ValidationError, match="field contains invalid IPv6 address"):
         validate(message_type(field=ip_address("127.0.0.1").packed))
 
 
@@ -363,7 +380,7 @@ def test_address(message_type):
     validate(message_type(field="::1"))
     validate(message_type(field="127.0.0.1"))
     validate(message_type(field="Example.com"))
-    with pytest.raises(ValidationError, match='field contains invalid address'):
+    with pytest.raises(ValidationError, match="field contains invalid address"):
         validate(message_type(field="invalid"))
 
 
@@ -375,7 +392,7 @@ def test_uri(message_type):
     """
     validate(message_type(field="http://google.com"))
     validate(message_type(field="http://127.0.0.1/page.html#fragment"))
-    with pytest.raises(ValidationError, match='field contains invalid URI'):
+    with pytest.raises(ValidationError, match="field contains invalid URI"):
         validate(message_type(field="/local/path"))
 
 
@@ -387,7 +404,7 @@ def test_uri_ref(message_type):
     """
     validate(message_type(field="http://google.com"))
     validate(message_type(field="/local/path"))
-    with pytest.raises(ValidationError, match='field contains invalid URI-reference'):
+    with pytest.raises(ValidationError, match="field contains invalid URI-reference"):
         validate(message_type(field="\\invalid\\path"))
 
 
@@ -399,7 +416,7 @@ def test_uuid(message_type):
     """
     validate(message_type(field="adbf3fd4-6a41-41a8-b5c1-df09adc3a9b3"))
     validate(message_type(field="ADBF3FD4-6A41-41A8-B5C1-DF09ADC3A9B3"))
-    with pytest.raises(ValidationError, match='field contains invalid UUID'):
+    with pytest.raises(ValidationError, match="field contains invalid UUID"):
         validate(message_type(field="adbf3fd46a4141a8b5c1df09adc3a9b3"))
-    with pytest.raises(ValidationError, match='field contains invalid UUID'):
+    with pytest.raises(ValidationError, match="field contains invalid UUID"):
         validate(message_type(field="adbf3fd4-6a41-41a8-b5c1-df09adc3a9b3-ext"))

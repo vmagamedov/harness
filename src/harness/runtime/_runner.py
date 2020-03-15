@@ -19,13 +19,12 @@ enable_metrics()
 enable_tracing()
 
 
-_CT = TypeVar('_CT')
-_WI = TypeVar('_WI')
-_WO = TypeVar('_WO')
+_CT = TypeVar("_CT")
+_WI = TypeVar("_WI")
+_WO = TypeVar("_WO")
 
 
 class Runner(Generic[_CT, _WI, _WO]):
-
     def __init__(
         self,
         config_type: Type[_CT],
@@ -38,21 +37,21 @@ class Runner(Generic[_CT, _WI, _WO]):
 
         self._arg_parser = argparse.ArgumentParser()
         self._arg_parser.add_argument(
-            'config',
-            type=argparse.FileType('r', encoding='utf-8'),
-            help='Configuration file in the YAML format',
+            "config",
+            type=argparse.FileType("r", encoding="utf-8"),
+            help="Configuration file in the YAML format",
         )
         self._arg_parser.add_argument(
-            '--merge',
+            "--merge",
             default=None,
-            type=argparse.FileType('r', encoding='utf-8'),
-            help='Merge config with a file',
+            type=argparse.FileType("r", encoding="utf-8"),
+            help="Merge config with a file",
         )
         self._arg_parser.add_argument(
-            '--patch',
+            "--patch",
             default=None,
-            type=argparse.FileType('r', encoding='utf-8'),
-            help='Patch config with a file',
+            type=argparse.FileType("r", encoding="utf-8"),
+            help="Patch config with a file",
         )
 
     async def _wrapper(
@@ -68,14 +67,17 @@ class Runner(Generic[_CT, _WI, _WO]):
                     else:
                         # Optional[wire_type]
                         wire_type = field.type.__args__[0]
-                        assert isinstance(wire_type, type) and issubclass(wire_type, Wire), type(wire_type)
+                        assert isinstance(wire_type, type) and issubclass(
+                            wire_type, Wire
+                        ), type(wire_type)
                     wire = wire_type()
                     wire.configure(wire_config)
                     await stack.enter_async_context(wire)
                 else:
                     if isinstance(field.type, type) and issubclass(field.type, Wire):
-                        raise RuntimeError(f'Missing configuration for'
-                                           f' required wire: {field.name}')
+                        raise RuntimeError(
+                            f"Missing configuration for" f" required wire: {field.name}"
+                        )
                     wire = None
                 input_wires[field.name] = wire
             wires_in = self._wires_in_type(**input_wires)
@@ -84,8 +86,8 @@ class Runner(Generic[_CT, _WI, _WO]):
 
             if not isinstance(wires_out, self._wires_out_type):
                 raise RuntimeError(
-                    f'{main_func} returned invalid type: {type(wires_out)!r}; '
-                    f'expected: {self._wires_out_type!r}'
+                    f"{main_func} returned invalid type: {type(wires_out)!r}; "
+                    f"expected: {self._wires_out_type!r}"
                 )
 
             waiters = set()
@@ -106,9 +108,7 @@ class Runner(Generic[_CT, _WI, _WO]):
                         waiters, return_when=asyncio.FIRST_COMPLETED,
                     )
 
-    def run(
-        self, main_func: Callable[[_WI], Awaitable[_WO]], args: List[str],
-    ) -> int:
+    def run(self, main_func: Callable[[_WI], Awaitable[_WO]], args: List[str]) -> int:
         args = self._arg_parser.parse_args(args[1:])
 
         with args.config:

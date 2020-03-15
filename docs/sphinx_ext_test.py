@@ -21,8 +21,8 @@ class Test(todo.Todo):
 
     def run(self):
         (node,) = super(todo.Todo, self).run()
-        node.insert(0, nodes.title(text=_('Test')))
-        node['docname'] = self.env.docname
+        node.insert(0, nodes.title(text=_("Test")))
+        node["docname"] = self.env.docname
         self.add_name(node)
         self.set_source_info(node)
         self.state.document.note_explicit_target(node)
@@ -31,4 +31,4 @@ class Test(todo.Todo):
 
 def setup(app: Sphinx):
     app.add_node(test_node, html=(visit_test_node, depart_test_node))
-    app.add_directive('test', Test)
+    app.add_directive("test", Test)

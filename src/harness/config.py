@@ -35,8 +35,11 @@ def translate_descriptor_proto(config_descriptor_proto) -> ConfigSpec:
     wires = []
     for field in config_descriptor_proto.field:
         wire_option = next(
-            (option for _, option in field.options.ListFields()
-             if isinstance(option, Wire)),
+            (
+                option
+                for _, option in field.options.ListFields()
+                if isinstance(option, Wire)
+            ),
             None,
         )
         if wire_option:
@@ -44,8 +47,11 @@ def translate_descriptor_proto(config_descriptor_proto) -> ConfigSpec:
             validate(wire_option)
             type_ = field.type_name[1:]
             rules_option = next(
-                (option for _, option in field.options.ListFields()
-                 if isinstance(option, FieldRules)),
+                (
+                    option
+                    for _, option in field.options.ListFields()
+                    if isinstance(option, FieldRules)
+                ),
                 None,
             )
             optional = not (rules_option and rules_option.message.required)

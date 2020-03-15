@@ -17,6 +17,7 @@ def test_empty(config_type):
     """
     message Configuration {}
     """
+
     @dataclass
     class WiresIn:
         pass
@@ -25,20 +26,16 @@ def test_empty(config_type):
     class WiresOut:
         pass
 
-    runner = Runner(
-        config_type,
-        WiresIn,
-        WiresOut,
-    )
+    runner = Runner(config_type, WiresIn, WiresOut)
 
     async def setup(config, wires_in):
         return WiresOut()
 
-    with tempfile.NamedTemporaryFile(suffix='.yaml') as config_yaml:
-        assert runner.run(setup, ['test', config_yaml.name]) == 0
+    with tempfile.NamedTemporaryFile(suffix=".yaml") as config_yaml:
+        assert runner.run(setup, ["test", config_yaml.name]) == 0
 
 
-@pytest.mark.parametrize('config_empty', [True, False])
+@pytest.mark.parametrize("config_empty", [True, False])
 def test_optional_wire(config_type, empty_type, config_empty):
     """
     import "google/protobuf/empty.proto";
@@ -47,6 +44,7 @@ def test_optional_wire(config_type, empty_type, config_empty):
         google.protobuf.Empty db = 1;
     }
     """
+
     class DBWire(Wire):
         _value: empty_type
 
@@ -65,36 +63,30 @@ def test_optional_wire(config_type, empty_type, config_empty):
     class WiresOut:
         pass
 
-    runner = Runner(
-        config_type,
-        WiresIn,
-        WiresOut,
-    )
+    runner = Runner(config_type, WiresIn, WiresOut)
 
     setup = Mock()
     setup.return_value = awaitable(WiresOut())
 
-    with tempfile.NamedTemporaryFile(suffix='.yaml') as config_yaml:
+    with tempfile.NamedTemporaryFile(suffix=".yaml") as config_yaml:
         if not config_empty:
-            config_yaml.write(b'db: {}\n')
+            config_yaml.write(b"db: {}\n")
             config_yaml.flush()
-        assert runner.run(setup, ['test', config_yaml.name]) == 0
+        assert runner.run(setup, ["test", config_yaml.name]) == 0
 
     if config_empty:
         setup.assert_called_once_with(
-            config_type(),
-            WiresIn(db=None),
+            config_type(), WiresIn(db=None),
         )
     else:
         expected_db = DBWire()
         expected_db.configure(empty_type())
         setup.assert_called_once_with(
-            config_type(db=empty_type()),
-            WiresIn(db=expected_db),
+            config_type(db=empty_type()), WiresIn(db=expected_db),
         )
 
 
-@pytest.mark.parametrize('config_empty', [True, False])
+@pytest.mark.parametrize("config_empty", [True, False])
 def test_required_wire(config_type, empty_type, config_empty):
     """
     import "google/protobuf/empty.proto";
@@ -103,6 +95,7 @@ def test_required_wire(config_type, empty_type, config_empty):
         google.protobuf.Empty db = 1 [(validate.rules).message.required = true];
     }
     """
+
     class DBWire(Wire):
         _value: empty_type
 
@@ -121,25 +114,20 @@ def test_required_wire(config_type, empty_type, config_empty):
     class WiresOut:
         pass
 
-    runner = Runner(
-        config_type,
-        WiresIn,
-        WiresOut,
-    )
+    runner = Runner(config_type, WiresIn, WiresOut)
 
     setup = Mock()
-    with tempfile.NamedTemporaryFile(suffix='.yaml') as config_yaml:
+    with tempfile.NamedTemporaryFile(suffix=".yaml") as config_yaml:
         if config_empty:
-            with pytest.raises(ValidationError, match='db is required'):
-                runner.run(setup, ['test', config_yaml.name])
+            with pytest.raises(ValidationError, match="db is required"):
+                runner.run(setup, ["test", config_yaml.name])
         else:
             setup.return_value = awaitable(WiresOut())
-            config_yaml.write(b'db: {}\n')
+            config_yaml.write(b"db: {}\n")
             config_yaml.flush()
-            assert runner.run(setup, ['test', config_yaml.name]) == 0
+            assert runner.run(setup, ["test", config_yaml.name]) == 0
             expected_db = DBWire()
             expected_db.configure(empty_type())
             setup.assert_called_once_with(
-                config_type(db=empty_type()),
-                WiresIn(db=expected_db),
+                config_type(db=empty_type()), WiresIn(db=expected_db),
             )

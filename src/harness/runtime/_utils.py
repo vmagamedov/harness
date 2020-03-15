@@ -15,7 +15,7 @@ def load_config(config_content, merge_content=None, patch_content=None):
     if config_data is None:
         config_data = {}
     if not isinstance(config_data, dict):
-        raise SystemExit(f'Invalid configuration format: {type(config_data)!r}')
+        raise SystemExit(f"Invalid configuration format: {type(config_data)!r}")
 
     if merge_content is not None:
         merge_data = yaml.safe_load(merge_content)
@@ -28,10 +28,7 @@ def load_config(config_content, merge_content=None, patch_content=None):
     return config_data
 
 
-def _first_stage(
-    sig_num: signal.Signals,
-    wires: Collection[Wire],
-) -> None:
+def _first_stage(sig_num: signal.Signals, wires: Collection[Wire]) -> None:
     fail = False
     for wire in wires:
         try:
@@ -50,9 +47,7 @@ def _second_stage(sig_num: signal.Signals) -> None:
 
 
 def _exit_handler(
-    sig_num: signal.Signals,
-    wires: Collection[Wire],
-    flag: List[bool],
+    sig_num: signal.Signals, wires: Collection[Wire], flag: List[bool],
 ) -> None:
     if flag:
         _second_stage(sig_num)

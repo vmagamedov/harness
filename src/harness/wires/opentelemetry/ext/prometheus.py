@@ -23,6 +23,7 @@ class PrometheusMetricsExporterWire(WaitMixin, Wire):
       :requirements: opentelemetry-ext-prometheus==0.4a1
 
     """
+
     _config: metrics_pb2.Prometheus
     _controller: PushController
 
@@ -36,8 +37,12 @@ class PrometheusMetricsExporterWire(WaitMixin, Wire):
         self._controller = PushController(meter, exporter, 5)
 
         start_http_server(self._config.bind.port, self._config.bind.host)
-        _log.info('%s started: addr=%s:%d', self.__class__.__name__,
-                  self._config.bind.host, self._config.bind.port)
+        _log.info(
+            "%s started: addr=%s:%d",
+            self.__class__.__name__,
+            self._config.bind.host,
+            self._config.bind.port,
+        )
 
     def close(self):
         super().close()

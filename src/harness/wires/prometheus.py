@@ -20,6 +20,7 @@ class ServerWire(WaitMixin, Wire):
       :requirements: prometheus_client
 
     """
+
     _config: http_pb2.Server
 
     def configure(self, value: http_pb2.Server):
@@ -28,5 +29,9 @@ class ServerWire(WaitMixin, Wire):
 
     async def __aenter__(self):
         start_http_server(self._config.bind.port, self._config.bind.host)
-        _log.info('%s started: addr=%s:%d', self.__class__.__name__,
-                  self._config.bind.host, self._config.bind.port)
+        _log.info(
+            "%s started: addr=%s:%d",
+            self.__class__.__name__,
+            self._config.bind.host,
+            self._config.bind.port,
+        )

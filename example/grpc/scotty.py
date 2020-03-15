@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import harness.wires.prometheus
 import harness.wires.grpclib.server
-from harness.wires.opentelemetry.ext.prometheus import PrometheusMetricsExporterWire  # noqa
+from harness.wires.opentelemetry.ext.prometheus import PrometheusMetricsExporterWire
 
 from asyncpg.pool import Pool
 from grpclib.server import Stream
@@ -24,8 +24,8 @@ class Scotty(ScottyBase):
 
     async def BeamMeUp(self, stream: Stream[Empty, Empty]) -> None:
         await stream.recv_message()
-        result = await self.db.fetchval('SELECT $1;', '42')
-        assert result == '42', result
+        result = await self.db.fetchval("SELECT $1;", "42")
+        assert result == "42", result
         await stream.send_message(Empty())
 
 

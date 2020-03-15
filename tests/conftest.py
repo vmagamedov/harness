@@ -12,23 +12,23 @@ _counter = 1
 def package():
     global _counter
     try:
-        return f'test_{_counter}'
+        return f"test_{_counter}"
     finally:
         _counter += 1
 
 
 def _load(package, content):
     src = (
-            'syntax = "proto3"; '
-            + f'package {package}; '
-            + 'import "validate/validate.proto"; '
-            + 'import "google/protobuf/timestamp.proto"; '
-            + 'import "google/protobuf/duration.proto"; '
-            + 'import "google/protobuf/any.proto"; '
-            + content
+        'syntax = "proto3"; '
+        + f"package {package}; "
+        + 'import "validate/validate.proto"; '
+        + 'import "google/protobuf/timestamp.proto"; '
+        + 'import "google/protobuf/duration.proto"; '
+        + 'import "google/protobuf/any.proto"; '
+        + content
     )
-    with tempfile.NamedTemporaryFile(suffix='.proto') as proto_file:
-        proto_file.write(src.encode('utf-8'))
+    with tempfile.NamedTemporaryFile(suffix=".proto") as proto_file:
+        proto_file.write(src.encode("utf-8"))
         proto_file.flush()
         return load_descriptor_set(proto_file.name)
 
@@ -46,9 +46,9 @@ def message_types(request, package):
 
 @pytest.fixture()
 def config_type(message_types, package):
-    return message_types[f'{package}.Configuration']
+    return message_types[f"{package}.Configuration"]
 
 
 @pytest.fixture()
 def empty_type(message_types):
-    return message_types['google.protobuf.Empty']
+    return message_types["google.protobuf.Empty"]

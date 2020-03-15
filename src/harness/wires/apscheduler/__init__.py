@@ -13,7 +13,8 @@ class SchedulerWire(WaitMixin, Wire):
       :requirements: apscheduler
 
     """
-    def __init__(self, scheduler: 'BaseScheduler'):
+
+    def __init__(self, scheduler: "BaseScheduler"):
         self._scheduler = scheduler
 
     async def __aenter__(self):

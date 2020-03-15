@@ -31,15 +31,11 @@ def get_context(**kwargs):
     return kubegen.Context(**params)
 
 
-@pytest.mark.parametrize('instance', [None, 'org'])
-@pytest.mark.parametrize('namespace', [None, 'acme'])
-@pytest.mark.parametrize('base_domain', [None, 'example.com'])
+@pytest.mark.parametrize("instance", [None, "org"])
+@pytest.mark.parametrize("namespace", [None, "acme"])
+@pytest.mark.parametrize("base_domain", [None, "example.com"])
 def test_smoke(instance, namespace, base_domain):
-    ctx = get_context(
-        namespace=namespace,
-        instance=instance,
-        base_domain=base_domain,
-    )
+    ctx = get_context(namespace=namespace, instance=instance, base_domain=base_domain)
     list(kubegen.gen_deployments(ctx))
     list(kubegen.gen_services(ctx))
     list(kubegen.gen_virtualservices(ctx))
@@ -50,35 +46,30 @@ def test_smoke(instance, namespace, base_domain):
     list(kubegen.gen_secrets(ctx))
 
 
-@pytest.mark.parametrize('instance', [None, 'org'])
+@pytest.mark.parametrize("instance", [None, "org"])
 def test_gen_configmaps(instance):
     ctx = get_context(
-        name='foo',
-        namespace='bar',
+        name="foo",
+        namespace="bar",
         instance=instance,
-        config_content='<content>',
-        config_hash='beef',
+        config_content="<content>",
+        config_hash="beef",
     )
     assert list(kubegen.gen_configmaps(ctx)) == [
         dict(
-            apiVersion='v1',
-            kind='ConfigMap',
+            apiVersion="v1",
+            kind="ConfigMap",
             metadata=dict(
-                name=(
-                    'foo-org-config-beef' if instance
-                    else 'foo-config-beef'
-                ),
-                namespace='bar',
+                name=("foo-org-config-beef" if instance else "foo-config-beef"),
+                namespace="bar",
             ),
-            data={
-                'config.yaml': '<content>',
-            },
+            data={"config.yaml": "<content>"},
         )
     ]
 
 
-@pytest.mark.parametrize('optional', [True, False])
-@pytest.mark.parametrize('empty', [True, False])
+@pytest.mark.parametrize("optional", [True, False])
+@pytest.mark.parametrize("empty", [True, False])
 def test_get_socket(message_types, config_type, optional, empty):
     """
     import "harness/net.proto";
@@ -88,9 +79,9 @@ def test_get_socket(message_types, config_type, optional, empty):
     }
     """
     wire = WireSpec(
-        name='server',
-        type='harness.net.Server',
-        value=Wire(output=Output(type='path.to.OutputWire')),
+        name="server",
+        type="harness.net.Server",
+        value=Wire(output=Output(type="path.to.OutputWire")),
         optional=optional,
     )
     if empty:
@@ -98,20 +89,11 @@ def test_get_socket(message_types, config_type, optional, empty):
         if optional:
             assert kubegen.get_socket(wire, message_types, config) is None
         else:
-            with pytest.raises(AssertionError, match='Config unset'):
+            with pytest.raises(AssertionError, match="Config unset"):
                 kubegen.get_socket(wire, message_types, config)
     else:
-        config = config_type(
-            server=dict(
-                bind=dict(
-                    host='localhost',
-                    port=5000,
-                ),
-            ),
-        )
+        config = config_type(server=dict(bind=dict(host="localhost", port=5000)))
         socket = kubegen.get_socket(wire, message_types, config)
         assert socket == kubegen.Socket(
-            host='localhost',
-            port=5000,
-            _protocol=Mark.Protocol.TCP,
+            host="localhost", port=5000, _protocol=Mark.Protocol.TCP,
         )

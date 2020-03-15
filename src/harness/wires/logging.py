@@ -6,9 +6,9 @@ from .. import logging_pb2
 from .base import Wire
 
 
-if hasattr(sys.stderr, 'isatty') and sys.stderr.isatty():
+if hasattr(sys.stderr, "isatty") and sys.stderr.isatty():
     try:
-        import pygments
+        import pygments  # noqa
     except ImportError:
         _WITH_COLORS = False
     else:
@@ -16,6 +16,7 @@ if hasattr(sys.stderr, 'isatty') and sys.stderr.isatty():
         from pygments.console import ansiformat
         from pygments.lexers.python import PythonTracebackLexer
         from pygments.formatters.terminal import TerminalFormatter
+
         _WITH_COLORS = True
 else:
     _WITH_COLORS = False
@@ -31,19 +32,19 @@ _LEVELS_MAP = {
 }
 
 _LEVEL_COLORS = {
-    logging.DEBUG: 'brightblack',
-    logging.INFO: 'green',
-    logging.WARNING: 'yellow',
-    logging.ERROR: 'red',
-    logging.CRITICAL: '*red*',
+    logging.DEBUG: "brightblack",
+    logging.INFO: "green",
+    logging.WARNING: "yellow",
+    logging.ERROR: "red",
+    logging.CRITICAL: "*red*",
 }
 
 _TEXT_COLORS = {
-    logging.DEBUG: 'brightblack',
-    logging.INFO: '',
-    logging.WARNING: '',
-    logging.ERROR: '',
-    logging.CRITICAL: '',
+    logging.DEBUG: "brightblack",
+    logging.INFO: "",
+    logging.WARNING: "",
+    logging.ERROR: "",
+    logging.CRITICAL: "",
 }
 
 
@@ -56,15 +57,13 @@ def _wrap_level(level, value: str):
 
 
 def _highlight(text):
-    return highlight(text, lexer=PythonTracebackLexer(),
-                     formatter=TerminalFormatter())
+    return highlight(text, lexer=PythonTracebackLexer(), formatter=TerminalFormatter())
 
 
-_FMT = '{asctime} {levelname} {name} {message}'
+_FMT = "{asctime} {levelname} {name} {message}"
 
 
 class _ColorFormatter(logging.Formatter):
-
     def format(self, record):
         record.asctime = self.formatTime(record)
         record.message = record.getMessage()
@@ -77,8 +76,8 @@ class _ColorFormatter(logging.Formatter):
         if record.exc_info:
             exc_text = self.formatException(record.exc_info)
             if _WITH_COLORS:
-                exc_text = _highlight(exc_text).rstrip('\n')
-            message += '\n' + exc_text
+                exc_text = _highlight(exc_text).rstrip("\n")
+            message += "\n" + exc_text
         return message
 
 
@@ -92,6 +91,7 @@ class ConsoleWire(Wire):
       :requirements: pygments
 
     """
+
     _handler: logging.Handler
 
     def configure(self, value: logging_pb2.Console):
@@ -102,7 +102,7 @@ class ConsoleWire(Wire):
         if _WITH_COLORS:
             self._handler.setFormatter(_ColorFormatter())
         else:
-            self._handler.setFormatter(logging.Formatter(fmt=_FMT, style='{'))
+            self._handler.setFormatter(logging.Formatter(fmt=_FMT, style="{"))
 
         level = _LEVELS_MAP[value.level]
         self._handler.setLevel(level)
@@ -115,10 +115,9 @@ class ConsoleWire(Wire):
 
 
 class _SyslogHandler(logging.handlers.SysLogHandler):
-
     def __init__(self, *args, app_name, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ident = f'{app_name}: '
+        self.ident = f"{app_name}: "
 
 
 _FACILITY_MAP = {
@@ -145,6 +144,7 @@ class SyslogWire(Wire):
       :requirements:
 
     """
+
     _handler: logging
 
     def configure(self, value: logging_pb2.Syslog):
@@ -152,7 +152,7 @@ class SyslogWire(Wire):
 
         self._handler = _SyslogHandler(
             app_name=value.app,
-            address='/dev/log',
+            address="/dev/log",
             facility=_FACILITY_MAP[value.facility],
         )
 

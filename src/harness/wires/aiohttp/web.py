@@ -58,8 +58,7 @@ def _status_to_canonical_code(status_code: int):
 
 @middleware
 async def _opentracing_middleware(
-    request: Request,
-    handler: Callable[[Request], Awaitable[Response]],
+    request: Request, handler: Callable[[Request], Awaitable[Response]],
 ) -> Response:
     tracer = get_tracer(__name__)
     parent_span = extract(_headers_getter, request)
@@ -99,12 +98,13 @@ class ServerWire(WaitMixin, Wire):
       :requirements: aiohttp[speedups]
 
     """
+
     _runner: AppRunner
     _site: TCPSite
     _site_factory: Callable[[], TCPSite]
 
     def __init__(
-        self, app: 'Application', *, access_log: Optional[Logger] = None,
+        self, app: "Application", *, access_log: Optional[Logger] = None,
     ) -> None:
         """
         :param app: configured :py:class:`aiohttp:aiohttp.web.Application`
@@ -120,16 +120,14 @@ class ServerWire(WaitMixin, Wire):
         self._app.middlewares.append(_opentracing_middleware)
         self._runner = AppRunner(self._app, access_log=self._access_log)
         self._site_factory = lambda: TCPSite(
-            self._runner,
-            value.bind.host,
-            value.bind.port,
+            self._runner, value.bind.host, value.bind.port,
         )
 
     async def __aenter__(self):
         await self._runner.setup()
         self._site = self._site_factory()
         await self._site.start()
-        _log.info('%s started: %s', self.__class__.__name__, self._site.name)
+        _log.info("%s started: %s", self.__class__.__name__, self._site.name)
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self._runner.cleanup()

@@ -15,6 +15,7 @@ class MonitorWire(WaitMixin, Wire):
       :requirements: aiomonitor
 
     """
+
     _monitor = None
 
     def configure(self, value: net_pb2.Server):

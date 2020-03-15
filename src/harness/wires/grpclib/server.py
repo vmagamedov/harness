@@ -13,10 +13,11 @@ from ... import grpc_pb2
 from ..base import Wire
 
 if TYPE_CHECKING:
-    from typing_extensions import Protocol  # noqa
+    from typing_extensions import Protocol
 
     class _Servable(Protocol):
-        def __mapping__(self) -> Any: ...
+        def __mapping__(self) -> Any:
+            ...
 
 
 _log = logging.getLogger(__name__)
@@ -26,7 +27,7 @@ def _metadata_getter(metadata, header_name: str) -> List[str]:
     return metadata.getall(header_name, [])
 
 
-_server_span_ctx = ContextVar('server_span_ctx')
+_server_span_ctx = ContextVar("server_span_ctx")
 
 
 async def _recv_request(event: RecvRequest) -> None:
@@ -36,10 +37,7 @@ async def _recv_request(event: RecvRequest) -> None:
         event.method_name,
         parent_span,
         kind=SpanKind.SERVER,
-        attributes={
-            "component": "grpc",
-            "grpc.method": event.method_name,
-        },
+        attributes={"component": "grpc", "grpc.method": event.method_name},
     )
     span_ctx = tracer.use_span(span, True)
     span_ctx.__enter__()
@@ -62,10 +60,11 @@ class ServerWire(Wire):
         protobuf
 
     """
+
     _config: grpc_pb2.Server
     server: Server
 
-    def __init__(self, handlers: List['_Servable']):
+    def __init__(self, handlers: List["_Servable"]):
         self.handlers = handlers
 
     def configure(self, value: grpc_pb2.Server):
@@ -80,8 +79,12 @@ class ServerWire(Wire):
 
     async def __aenter__(self):
         await self.server.start(self._config.bind.host, self._config.bind.port)
-        _log.info('%s started: addr=%s:%d', self.__class__.__name__,
-                  self._config.bind.host, self._config.bind.port)
+        _log.info(
+            "%s started: addr=%s:%d",
+            self.__class__.__name__,
+            self._config.bind.host,
+            self._config.bind.port,
+        )
 
     def close(self):
         self.server.close()

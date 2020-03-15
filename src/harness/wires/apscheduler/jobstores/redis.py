@@ -15,7 +15,8 @@ class RedisJobStoreWire(Wire):
       :requirements: redis
 
     """
-    job_store: 'RedisJobStore'
+
+    job_store: "RedisJobStore"
 
     def configure(self, value: redis_pb2.Connection):
         self.job_store = RedisJobStore(
