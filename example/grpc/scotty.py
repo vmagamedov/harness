@@ -17,18 +17,6 @@ from scotty_wires import WiresIn, WiresOut
 log = logging.getLogger(__name__)
 
 
-from opentelemetry import metrics
-from opentelemetry.sdk.metrics import Counter
-counter = metrics.meter().create_metric(
-    "requests",
-    "number of requests",
-    "requests",
-    int,
-    Counter,
-    ("environment",),
-)
-
-
 @dataclass
 class Scotty(ScottyBase):
     config: Configuration
@@ -39,7 +27,6 @@ class Scotty(ScottyBase):
         result = await self.db.fetchval('SELECT $1;', '42')
         assert result == '42', result
         await stream.send_message(Empty())
-        counter.add(1, counter.meter.get_label_set({"environment": "staging"}))
 
 
 async def setup(config: Configuration, wires_in: WiresIn) -> WiresOut:
