@@ -11,6 +11,8 @@ this:
 
   package example;
 
+  import "validate/validate.proto";
+
   import "harness/wire.proto";
   import "harness/http.proto";
   import "harness/postgres.proto";
@@ -21,9 +23,11 @@ this:
       bool debug = 1;
 
       harness.postgres.Pool db = 2 [
+          (validate.rules).message.required = true,
           (harness.wire).input.type = "harness.wires.asyncpg.PoolWire"
       ];
       harness.http.Server server = 3 [
+          (validate.rules).message.required = true,
           (harness.wire).output.type = "harness.wires.aiohttp.web.ServerWire"
       ];
   }
@@ -40,6 +44,12 @@ files because we are using message and field options:
 These options are defined in the :doc:`harness/wire.proto` file
 and it is required to import this file in order to use them.
 
+Also:
+
+- ``(validate.rules).message.required`` - field option to mark field as required
+
+This option is defined in the :doc:`validate/validate.proto` file.
+
 Wires Definition
 ~~~~~~~~~~~~~~~~
 
@@ -48,16 +58,17 @@ Wire definition look like this:
 
 .. code-block:: text
 
-  harness.http.Server server = 3 [(harness.wire).output = "..."];
-  ^-----------------^             ^---------------------------^
-  wire's configuration               wire's type and options
+  harness.http.Server server = 3 [(harness.wire).output.type = "..."];
+  ^-----------------^             ^--------------------------------^
+  wire's configuration              wire's type and other options
 
 Where:
 
 - :proto:message:`harness.http.Server` - is a runtime configuration format
   of a wire
-- ``(harness.wire).output = "..."`` - is a compile-time configuration of a wire,
-  it describes which wire implementation you wish to use and other options
+- ``(harness.wire).output.type = "..."`` - is a compile-time configuration
+  of a wire, it describes which wire implementation you wish to use and other
+  options
 
 .. note:: There is a more detailed explanation of a :doc:`wires`.
 

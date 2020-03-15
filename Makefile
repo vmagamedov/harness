@@ -1,3 +1,5 @@
+.PHONY: docs
+
 __default__:
 	@echo "Please specify a target to make"
 
@@ -42,7 +44,7 @@ reference:
 	python3 -m grpc_tools.protoc --plugin=scripts/protoc-gen-reference -Isrc --reference_out=docs ${WIRE_PROTOS}
 	python3 -m grpc_tools.protoc --plugin=scripts/protoc-gen-typeinfo --typeinfo_out=docs/_static -Isrc ${WIRE_PROTOS}
 
-docs: reference
+docs:
 	PYTHONPATH=docs sphinx-build docs build
 
 run_web:

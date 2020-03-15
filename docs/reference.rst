@@ -15,6 +15,7 @@ Protocols
   harness/tracing
   harness/metrics
   harness/wire.proto
+  validate/validate.proto
   google/protobuf/empty
 
 Python
