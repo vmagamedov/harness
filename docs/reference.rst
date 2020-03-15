@@ -1,8 +1,8 @@
 Reference
 =========
 
-Protocols
-~~~~~~~~~
+Message Types
+~~~~~~~~~~~~~
 
 .. toctree::
 
@@ -14,12 +14,18 @@ Protocols
   harness/redis
   harness/tracing
   harness/metrics
-  harness/wire.proto
-  validate/validate.proto
   google/protobuf/empty
 
-Python
-~~~~~~
+Proto Files
+~~~~~~~~~~~
+
+.. toctree::
+
+  harness/wire.proto
+  validate/validate.proto
+
+Python Wires
+~~~~~~~~~~~~
 
 .. toctree::
 
