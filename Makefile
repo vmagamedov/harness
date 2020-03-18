@@ -1,4 +1,4 @@
-.PHONY: docs
+.PHONY: docs requirements
 
 __default__:
 	@echo "Please specify a target to make"
@@ -46,6 +46,13 @@ reference:
 
 docs:
 	PYTHONPATH=docs sphinx-build docs build
+
+requirements:
+	pip-compile --output-file=requirements/setup.txt setup.py
+	pip-compile requirements/check.in
+	pip-compile requirements/docs.in
+	pip-compile requirements/release.in
+	pip-compile requirements/test.in
 
 run_web:
 	@PYTHONPATH=example/web:example/grpc python example/web/entrypoint.py example/web/kirk.yaml

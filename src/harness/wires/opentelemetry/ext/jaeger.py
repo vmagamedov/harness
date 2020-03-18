@@ -1,7 +1,7 @@
 import logging
 
-from opentelemetry.trace import tracer_source
-from opentelemetry.sdk.trace import TracerSource
+from opentelemetry.trace import get_tracer_provider
+from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.ext.jaeger import JaegerSpanExporter
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 
@@ -19,7 +19,7 @@ class JaegerSpanExporterWire(Wire):
       :type: input
       :runtime: python
       :config: harness.tracing.Jaeger
-      :requirements: opentelemetry-ext-jaeger==0.4a1
+      :requirements: opentelemetry-ext-jaeger==0.5b0
 
     """
 
@@ -36,7 +36,7 @@ class JaegerSpanExporterWire(Wire):
             agent_port=self._config.address.port,
         )
         span_processor = BatchExportSpanProcessor(exporter)
-        source: TracerSource = tracer_source()
+        source: TracerProvider = get_tracer_provider()
         source.add_span_processor(span_processor)
         _log.info(
             "%s started: service_name=%s; addr=%s:%d",

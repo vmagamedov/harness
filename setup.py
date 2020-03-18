@@ -30,7 +30,7 @@ setup(
         "pyyaml",
         "json-merge-patch",
         "jsonpatch",
-        "opentelemetry-sdk==0.4a1",
+        "opentelemetry-sdk==0.5b0",
     ],
     entry_points={
         "console_scripts": [

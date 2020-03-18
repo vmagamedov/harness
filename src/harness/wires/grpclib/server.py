@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, List, Any
 from contextvars import ContextVar
 
 from opentelemetry.trace import get_tracer, SpanKind
+from opentelemetry.context import attach
 from opentelemetry.propagators import extract
 
 from grpclib.server import Server
@@ -32,14 +33,12 @@ _server_span_ctx = ContextVar("server_span_ctx")
 
 async def _recv_request(event: RecvRequest) -> None:
     tracer = get_tracer(__name__)
-    parent_span = extract(_metadata_getter, event.metadata)
-    span = tracer.start_span(
+    attach(extract(_metadata_getter, event.metadata))
+    span_ctx = tracer.start_as_current_span(
         event.method_name,
-        parent_span,
         kind=SpanKind.SERVER,
         attributes={"component": "grpc", "grpc.method": event.method_name},
     )
-    span_ctx = tracer.use_span(span, True)
     span_ctx.__enter__()
     _server_span_ctx.set(span_ctx)
 

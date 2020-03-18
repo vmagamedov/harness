@@ -20,7 +20,7 @@ class PrometheusMetricsExporterWire(WaitMixin, Wire):
       :type: output
       :runtime: python
       :config: harness.metrics.Prometheus
-      :requirements: opentelemetry-ext-prometheus==0.4a1
+      :requirements: opentelemetry-ext-prometheus==0.5b0
 
     """
 
@@ -32,7 +32,7 @@ class PrometheusMetricsExporterWire(WaitMixin, Wire):
         self._config = value
 
     async def __aenter__(self):
-        meter = metrics.meter()
+        meter = metrics.get_meter(__name__)
         exporter = PrometheusMetricsExporter(self._config.prefix)
         self._controller = PushController(meter, exporter, 5)
 

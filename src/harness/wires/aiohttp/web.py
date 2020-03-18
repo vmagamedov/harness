@@ -7,6 +7,7 @@ from aiohttp.web import Application, AppRunner, TCPSite, Request, Response
 from aiohttp.web import HTTPException, middleware
 
 from opentelemetry.trace import get_tracer, SpanKind
+from opentelemetry.context import attach
 from opentelemetry.propagators import extract
 from opentelemetry.trace.status import Status, StatusCanonicalCode
 
@@ -61,10 +62,9 @@ async def _opentracing_middleware(
     request: Request, handler: Callable[[Request], Awaitable[Response]],
 ) -> Response:
     tracer = get_tracer(__name__)
-    parent_span = extract(_headers_getter, request)
+    attach(extract(_headers_getter, request))
     with tracer.start_as_current_span(
         request.path,
-        parent_span,
         kind=SpanKind.SERVER,
         attributes={
             "component": "http",

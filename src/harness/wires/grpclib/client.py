@@ -21,7 +21,7 @@ async def _send_request(event: SendRequest) -> None:
         attributes={"component": "grpc", "grpc.method": event.method_name},
     )
     _client_span.set(span)
-    inject(tracer, type(event.metadata).__setitem__, event.metadata)
+    inject(type(event.metadata).__setitem__, event.metadata)
 
 
 async def _recv_trailing_metadata(event: RecvTrailingMetadata) -> None:
