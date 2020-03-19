@@ -11,6 +11,7 @@ Harness Framework
   code-generation
   deployment
   reference
+  contributing
   changelog
 
 .. toctree::
