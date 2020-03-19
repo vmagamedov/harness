@@ -1,6 +1,5 @@
-from grpclib.plugin.main import Buffer
-
 from ..config import ConfigSpec
+from ..runtime._utils import Buffer
 
 
 def _render_wires(proto_file: str, spec: ConfigSpec):

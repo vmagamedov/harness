@@ -7,13 +7,14 @@ from collections import Counter
 from urllib.parse import urlparse
 from email.headerregistry import AddressHeader
 
-from grpclib.plugin.main import Buffer
 from google.protobuf.message import Message
 from google.protobuf.descriptor import Descriptor, FieldDescriptor
 from google.protobuf.duration_pb2 import Duration
 from google.protobuf.timestamp_pb2 import Timestamp
 
 from validate import validate_pb2
+
+from ._utils import Buffer
 
 
 class ValidationError(ValueError):
@@ -723,7 +724,7 @@ def file_gen(message):
 
     buf = Buffer()
     buf.add("def _validate(p):")
-    pos = len(buf._lines)
+    pos = buf.position
     with buf.indent():
         for oneof in message.DESCRIPTOR.oneofs:
             buf.add(f"__{oneof.name} = p.WhichOneof('{oneof.name}')")
@@ -731,9 +732,9 @@ def file_gen(message):
                 ctrl = "elif" if i else "if"
                 buf.add(f"{ctrl} __{oneof.name} == '{field.name}':")
                 with buf.indent():
-                    inner_pos = len(buf._lines)
+                    inner_pos = buf.position
                     field_gen(buf, field, ["p", field.name], [field.name])
-                    if len(buf._lines) == inner_pos:
+                    if buf.position == inner_pos:
                         buf.add("pass")
             for opt, opt_value in oneof.GetOptions().ListFields():
                 if opt.name == "required" and opt_value:
@@ -743,7 +744,7 @@ def file_gen(message):
         for field in message.DESCRIPTOR.fields:
             if not field.containing_oneof:
                 field_gen(buf, field, ["p", field.name], [field.name])
-        if len(buf._lines) == pos:
+        if buf.position == pos:
             buf.add("pass")
     return buf.content()
 

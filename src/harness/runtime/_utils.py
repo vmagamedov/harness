@@ -1,6 +1,6 @@
 import signal
 import asyncio
-from typing import Collection, List, Optional, Iterator
+from typing import Collection, List, Optional, Iterator, Any
 from contextlib import contextmanager
 
 import yaml
@@ -73,3 +73,28 @@ def graceful_exit(
     finally:
         for sig_num in signals:
             loop.remove_signal_handler(sig_num)
+
+
+class Buffer:
+    def __init__(self) -> None:
+        self._lines: List[str] = []
+        self._indent = 0
+
+    def add(self, string: str, *args: Any, **kwargs: Any) -> None:
+        line = " " * self._indent * 4 + string.format(*args, **kwargs)
+        self._lines.append(line.rstrip(" "))
+
+    @contextmanager
+    def indent(self) -> Iterator[None]:
+        self._indent += 1
+        try:
+            yield
+        finally:
+            self._indent -= 1
+
+    def content(self) -> str:
+        return "\n".join(self._lines) + "\n"
+
+    @property
+    def position(self) -> int:
+        return len(self._lines)
