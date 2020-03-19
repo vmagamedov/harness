@@ -32,5 +32,5 @@ jobs:
       with:
         python-version: 3.7
     - run: pip3 install -r requirements/check.txt
-    - run: flake8
     - run: black --check .
+    - run: flake8
