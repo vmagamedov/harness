@@ -38,6 +38,13 @@ html_additional_pages = {
 html_theme_options = {
     "display_version": False,
 }
+html_context = {
+    "display_github": True,
+    "github_user": "vmagamedov",
+    "github_repo": "harness",
+    "github_version": "master",
+    "conf_py_path": "/docs/",
+}
 
 
 def setup(app):
