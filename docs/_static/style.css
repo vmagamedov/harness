@@ -29,6 +29,52 @@
 .rst-content a:hover code.literal {
     color: #3091d1;
 }
+.rst-content div[class^='highlight'] {
+    border: 1px solid rgb(225, 228, 232);
+    border-radius: 3px;
+    background-color: rgb(248, 248, 248);
+}
+
+/*
+    Buttons
+*/
+button {
+    padding: 3px 10px;
+    border: 1px solid rgba(27,31,35,.2);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 20px;
+    color: #333;
+    white-space: nowrap;
+    cursor: pointer;
+    outline: none;
+    background-color: #eff3f6;
+    background-image: linear-gradient(-180deg,#fafbfc,#eff3f6 90%);
+    -moz-background-clip: padding; /* for Firefox 3.6 */
+    background-clip: padding-box;
+    border-radius: 0.2em;
+}
+button:hover {
+    border-color: rgba(27,31,35,.35);
+    background-color: #e6ebf1;
+    background-image: linear-gradient(-180deg,#f0f3f6,#e6ebf1 90%);
+    text-decoration: none;
+    background-repeat: repeat-x;
+}
+button:active {
+    background-color: #e9ecef;
+    background-image: none;
+    border-color: rgba(27,31,35,.35);
+    box-shadow: inset 0 .15em .3em rgba(27,31,35,.15);
+}
+button:disabled {
+    cursor: default;
+    color: rgba(36,41,46,0.4);
+    background-color: #eff3f6;
+    background-image: none;
+    border-color: rgba(27,31,35,0.2);
+    box-shadow: none;
+}
 
 /*
     protobuf reference docs
@@ -111,16 +157,64 @@ label {
     margin-left: 6px;
 }
 .cbcopy-container {
-    background: #f8f8f8;
-    padding: 12px;
-    border: 1px solid #e1e4e5;
     position: relative;
 }
 .cbcopy-btn {
     position: absolute;
     top: 5px;
     right: 5px;
+    display: none;
 }
+.cbcopy-container:hover .cbcopy-btn {
+    display: block;
+}
+.bootstrap input[type="text"] {
+    min-height: 28px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    line-height: 20px;
+    color: #24292e;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    border: 1px solid #d1d5da;
+    border-radius: 3px;
+    outline: none;
+    box-shadow: inset 0 1px 2px rgba(27,31,35,0.075);
+    /* revert theme styles */
+    transition: none;
+}
+.bootstrap input[type="text"]:focus {
+    border-color: #2188ff;
+    outline: none;
+    box-shadow: inset 0 1px 2px rgba(27,31,35,0.075),0 0 0 0.2em rgba(3,102,214,0.3);
+}
+.bootstrap select {
+    height: 28px;
+    min-height: 28px;
+    font-size: 12px;
+    padding: 3px 24px 3px 8px;
+    background-color: #fff;
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAUCAMAAACzvE1FAAAADFBMVEUzMzMzMzMzMzMzMzMKAG/3AAAAA3RSTlMAf4C/aSLHAAAAPElEQVR42q3NMQ4AIAgEQTn//2cLdRKppSGzBYwzVXvznNWs8C58CiussPJj8h6NwgorrKRdTvuV9v16Afn0AYFOB7aYAAAAAElFTkSuQmCC");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 8px 10px;
+    border: 1px solid #d1d5da;
+    border-radius: 3px;
+    outline: none;
+    box-shadow: inset 0 1px 2px rgba(27,31,35,0.075);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* revert theme styles */
+    transition: none;
+}
+.bootstrap select:focus {
+    border-color: #2188ff;
+    outline: none;
+    box-shadow: inset 0 1px 2px rgba(27,31,35,0.075),0 0 0 0.2em rgba(3,102,214,0.3);
+}
+
 
 /*
     Code examples in the note/test directives

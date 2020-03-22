@@ -7,4 +7,5 @@ __pycache__
 .pytest_cache
 *.pyi
 *.egg-info
-*.js
+bootstrap.js
+typeinfo.js
