@@ -313,6 +313,15 @@ def istio_type(socket: Socket):
         return "TCP"
 
 
+def public_port(socket: Socket) -> int:
+    if socket.is_http():
+        return 80
+    elif socket.is_grpc():
+        return 50051
+    else:
+        return socket.port
+
+
 def istio_name(socket, suffix):
     if socket.is_tcp():
         name = "tcp"
@@ -433,7 +442,7 @@ def gen_services(ctx: Context):
     def port(value: Output):
         return dict(
             name=istio_name(value.socket, value.name),
-            port=value.socket.port,
+            port=public_port(value.socket),
             targetPort=istio_name(value.socket, value.name),
         )
 
@@ -483,11 +492,12 @@ def gen_virtualservices(ctx: Context):
         hosts=hosts,
         http=[
             dict(
-                match=[dict(port=i.socket.port)],
+                match=[dict(port=public_port(i.socket))],
                 route=[
                     dict(
                         destination=dict(
-                            host=ctx.full_name(), port=dict(number=i.socket.port),
+                            host=ctx.full_name(),
+                            port=dict(number=public_port(i.socket)),
                         )
                     )
                 ],
@@ -519,7 +529,9 @@ def gen_gateways(ctx: Context):
             selector={"istio": "ingressgateway"},
             servers=[
                 dict(
-                    port=dict(number=out.socket.port, protocol=istio_type(out.socket)),
+                    port=dict(
+                        number=public_port(out.socket), protocol=istio_type(out.socket)
+                    ),
                     hosts=[ctx.public_domain],
                 )
                 for out in public_outputs
