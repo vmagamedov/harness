@@ -40,13 +40,15 @@ jobs:
     - run: cd master && ./node_modules/.bin/webpack --mode=production
 
     - run: cd gh-pages && git rm -r '*'
-    - run: cd master && sphinx-build docs ../gh-pages
+    - run: cd master && sphinx-build -d . docs ../gh-pages
       env:
         PYTHONPATH: docs
     - run: cp master/docs/CNAME gh-pages/CNAME
     - run: touch gh-pages/.nojekyll
     - run: cd gh-pages && git add --all
-    - run: cd gh-pages && git status
+    - run: export DIFFERENCE="$(cd gh-pages && git status -s | egrep '\.(html|js|css)$')"
+    - run: |
+        [ -z $DIFFERENCE ] && exit 0
     - run: |
         cd gh-pages
         git config --global user.email "vladimir@magamedov.com"
