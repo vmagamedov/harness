@@ -352,7 +352,7 @@ def gen_deployments(ctx: Context):
         name="app",
         image=f"{ctx.repository}:{ctx.version}",
         command=command,
-        securityContext=dict(runAsNonRoot=True),
+        securityContext=dict(runAsUser=1000),
         volumeMounts=[dict(mountPath="/etc/config", name=ctx.config_volume)],
     )
     if ctx.secret_merge_content is not None:
