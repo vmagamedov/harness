@@ -104,7 +104,7 @@ class ServerWire(WaitMixin, Wire):
     _site_factory: Callable[[], TCPSite]
 
     def __init__(
-        self, app: "Application", *, access_log: Optional[Logger] = None,
+        self, app: Application, *, access_log: Optional[Logger] = None,
     ) -> None:
         """
         :param app: configured :py:class:`aiohttp:aiohttp.web.Application`

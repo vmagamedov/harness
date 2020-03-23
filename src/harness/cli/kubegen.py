@@ -325,7 +325,7 @@ def istio_name(socket, suffix):
     return name + "-" + suffix
 
 
-def gen_deployments(ctx: "Context"):
+def gen_deployments(ctx: Context):
     labels = ctx.labels()
     labels["app.kubernetes.io/version"] = ctx.version
 
@@ -427,7 +427,7 @@ def gen_deployments(ctx: "Context"):
     )
 
 
-def gen_services(ctx: "Context"):
+def gen_services(ctx: Context):
     def port(value: Output):
         return dict(
             name=istio_name(value.socket, value.name),
@@ -463,7 +463,7 @@ def gen_services(ctx: "Context"):
         )
 
 
-def gen_virtualservices(ctx: "Context"):
+def gen_virtualservices(ctx: Context):
     internal_outputs = [
         i for i in ctx.outputs if i.is_internal() and i.socket is not None
     ]
@@ -504,7 +504,7 @@ def gen_virtualservices(ctx: "Context"):
     )
 
 
-def gen_gateways(ctx: "Context"):
+def gen_gateways(ctx: Context):
     public_outputs = [out for out in ctx.outputs if out.is_public()]
     if not public_outputs or not ctx.public_domain:
         return
@@ -526,7 +526,7 @@ def gen_gateways(ctx: "Context"):
     )
 
 
-def gen_sidecars(ctx: "Context"):
+def gen_sidecars(ctx: Context):
     hosts = ["istio-system/*"]
     for inp in ctx.inputs:
         if inp.socket is None:
@@ -553,7 +553,7 @@ def gen_sidecars(ctx: "Context"):
     )
 
 
-def gen_serviceentries(ctx: "Context"):
+def gen_serviceentries(ctx: Context):
     for inp in ctx.inputs:
         if not inp.is_external():
             continue
@@ -569,7 +569,7 @@ def gen_serviceentries(ctx: "Context"):
         )
 
 
-def gen_configmaps(ctx: "Context"):
+def gen_configmaps(ctx: Context):
     yield dict(
         apiVersion="v1",
         kind="ConfigMap",
@@ -578,7 +578,7 @@ def gen_configmaps(ctx: "Context"):
     )
 
 
-def gen_secrets(ctx: "Context"):
+def gen_secrets(ctx: Context):
     def b64(string):
         return b64encode(string.encode("utf-8")).decode("ascii")
 
