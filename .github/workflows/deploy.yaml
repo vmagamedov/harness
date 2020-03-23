@@ -45,13 +45,12 @@ jobs:
         PYTHONPATH: docs
     - run: cp master/docs/CNAME gh-pages/CNAME
     - run: touch gh-pages/.nojekyll
-    - run: cd gh-pages && git add --all
-    - run: export DIFFERENCE="$(cd gh-pages && git status -s | egrep '\.(html|js|css)$')"
-    - run: |
-        [ -z $DIFFERENCE ] && exit 0
     - run: |
         cd gh-pages
+        git add --all
+        export DIFFERENCE="$(git status -s | egrep '\.(html|js|css)$')"
+        [ -z $DIFFERENCE ] && exit 0
         git config --global user.email "vladimir@magamedov.com"
         git config --global user.name "Vladimir Magamedov"
         git commit -m "Build for ${GITHUB_SHA} on `date -u`"
-    - run: cd gh-pages && git push
+        git push
