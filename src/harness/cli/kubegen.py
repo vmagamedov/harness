@@ -335,8 +335,10 @@ def istio_name(socket, suffix):
 
 
 def gen_deployments(ctx: Context):
-    labels = ctx.labels()
-    labels["app.kubernetes.io/version"] = ctx.version
+    match_labels = ctx.labels()
+
+    pod_labels = ctx.labels()
+    pod_labels["app.kubernetes.io/version"] = ctx.version
 
     annotations = {"sidecar.istio.io/inject": "true"}
 
@@ -435,9 +437,9 @@ def gen_deployments(ctx: Context):
         kind="Deployment",
         metadata=dict(name=ctx.full_name(), namespace=ctx.namespace),
         spec=dict(
-            selector=dict(matchLabels=labels),
+            selector=dict(matchLabels=match_labels),
             template=dict(
-                metadata=dict(labels=labels, annotations=annotations),
+                metadata=dict(labels=pod_labels, annotations=annotations),
                 spec=dict(containers=[container], volumes=volumes),
             ),
         ),
