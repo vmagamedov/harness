@@ -410,11 +410,17 @@ def gen_deployments(ctx: Context):
     ]
     if ctx.secret_merge_content is not None:
         volumes.append(
-            dict(name=ctx.secret_merge_volume, secret=dict(name=ctx.secret_merge_name))
+            dict(
+                name=ctx.secret_merge_volume,
+                secret=dict(secretName=ctx.secret_merge_name),
+            )
         )
     if ctx.secret_patch_content is not None:
         volumes.append(
-            dict(name=ctx.secret_patch_volume, secret=dict(name=ctx.secret_patch_name))
+            dict(
+                name=ctx.secret_patch_volume,
+                secret=dict(secretName=ctx.secret_patch_name),
+            )
         )
     for host_path in ctx.host_paths:
         volumes.append(
