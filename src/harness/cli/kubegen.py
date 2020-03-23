@@ -536,7 +536,9 @@ def gen_gateways(ctx: Context):
             servers=[
                 dict(
                     port=dict(
-                        number=public_port(out.socket), protocol=istio_type(out.socket)
+                        name=istio_name(out.socket, out.name),
+                        number=public_port(out.socket),
+                        protocol=istio_type(out.socket),
                     ),
                     hosts=[ctx.public_domain],
                 )
