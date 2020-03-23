@@ -329,6 +329,8 @@ def gen_deployments(ctx: Context):
     labels = ctx.labels()
     labels["app.kubernetes.io/version"] = ctx.version
 
+    annotations = {"sidecar.istio.io/inject": "true"}
+
     command = ctx.entrypoint + ["/etc/config/config.yaml"]
     if ctx.secret_merge_content is not None:
         command.extend(["--merge", "/etc/config-merge/config.yaml"])
@@ -420,7 +422,7 @@ def gen_deployments(ctx: Context):
         spec=dict(
             selector=dict(matchLabels=labels),
             template=dict(
-                metadata=dict(labels=labels),
+                metadata=dict(labels=labels, annotations=annotations),
                 spec=dict(containers=[container], volumes=volumes),
             ),
         ),
