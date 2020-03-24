@@ -72,10 +72,11 @@ class ServerWire(Wire):
         self._config = value
 
         handlers = list(self.handlers)
-        services = ServerReflection.extend(handlers)
-        if not any(isinstance(h, Health) for h in self.handlers):
+        if not any(isinstance(h, Health) for h in handlers):
             handlers.append(Health())
-        self.server = Server(services)
+        handlers = ServerReflection.extend(handlers)
+
+        self.server = Server(handlers)
         listen(self.server, RecvRequest, _recv_request)
         listen(self.server, SendTrailingMetadata, _send_trailing_metadata)
 
