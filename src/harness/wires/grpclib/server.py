@@ -8,6 +8,7 @@ from opentelemetry.propagators import extract
 
 from grpclib.server import Server
 from grpclib.events import listen, RecvRequest, SendTrailingMetadata
+from grpclib.health.service import Health
 from grpclib.reflection.service import ServerReflection
 
 from ... import grpc_pb2
@@ -72,6 +73,8 @@ class ServerWire(Wire):
 
         handlers = list(self.handlers)
         services = ServerReflection.extend(handlers)
+        if not any(isinstance(h, Health) for h in self.handlers):
+            handlers.append(Health())
         self.server = Server(services)
         listen(self.server, RecvRequest, _recv_request)
         listen(self.server, SendTrailingMetadata, _send_trailing_metadata)

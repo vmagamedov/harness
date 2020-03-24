@@ -1,4 +1,5 @@
 import logging
+import ipaddress
 from http import HTTPStatus
 from typing import Callable, Awaitable, List, Dict, Optional
 from logging import Logger
@@ -55,6 +56,27 @@ def _status_to_canonical_code(status_code: int):
             return StatusCanonicalCode.INTERNAL
         else:
             return StatusCanonicalCode.UNKNOWN
+
+
+def _internal_request(host: str) -> bool:
+    address, _, _ = host.partition(":")
+    try:
+        ipaddress.ip_address(address)
+    except ValueError:
+        return address == "localhost"
+    else:
+        return True
+
+
+@middleware
+async def _healthcheck_middleware(
+    request: Request, handler: Callable[[Request], Awaitable[Response]],
+) -> Response:
+    if request.path == "/_/health":
+        host = request.headers.get("host")
+        if not host or _internal_request(host):
+            return Response(text="OK")
+    return await handler(request)
 
 
 @middleware
@@ -117,6 +139,7 @@ class ServerWire(WaitMixin, Wire):
     def configure(self, value: http_pb2.Server):
         assert isinstance(value, http_pb2.Server), type(value)
 
+        self._app.middlewares.append(_healthcheck_middleware)
         self._app.middlewares.append(_opentracing_middleware)
         self._runner = AppRunner(self._app, access_log=self._access_log)
         self._site_factory = lambda: TCPSite(

@@ -384,12 +384,7 @@ def gen_deployments(ctx: Context):
         if wire.socket.is_http():
             container["readinessProbe"] = dict(
                 httpGet=dict(
-                    path="/health/ready", port=istio_name(wire.socket, wire.name),
-                ),
-            )
-            container["livenessProbe"] = dict(
-                httpGet=dict(
-                    path="/health/live", port=istio_name(wire.socket, wire.name),
+                    path="/_/health", port=istio_name(wire.socket, wire.name),
                 ),
             )
         elif wire.socket.is_grpc():
