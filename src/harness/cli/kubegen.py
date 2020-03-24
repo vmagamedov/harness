@@ -482,14 +482,14 @@ def gen_virtualservices(ctx: Context):
         i for i in ctx.outputs if i.is_internal() and i.socket is not None
     ]
     public_outputs = [i for i in ctx.outputs if i.is_public() and i.socket is not None]
-    if not internal_outputs and not public_outputs:
-        return
 
     hosts = []
     if internal_outputs:
         hosts.append(ctx.full_name())
     if public_outputs and ctx.public_domain:
         hosts.append(ctx.public_domain)
+    if not hosts:
+        return
 
     spec = dict(
         hosts=hosts,
@@ -520,8 +520,8 @@ def gen_virtualservices(ctx: Context):
 
 
 def gen_gateways(ctx: Context):
-    public_outputs = [out for out in ctx.outputs if out.is_public()]
-    if not public_outputs or not ctx.public_domain:
+    public_outputs = [i for i in ctx.outputs if i.is_public() and i.socket is not None]
+    if not (public_outputs and ctx.public_domain):
         return
 
     yield dict(
