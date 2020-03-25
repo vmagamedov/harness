@@ -1,4 +1,5 @@
 import sys
+import json
 import logging.handlers
 
 from .. import logging_pb2
@@ -114,6 +115,18 @@ class ConsoleWire(Wire):
             logging.root.setLevel(level)
 
 
+class _CEEFormatter(logging.Formatter):
+    def format(self, record):
+        message = record.getMessage()
+        if record.exc_info:
+            exc_text = self.formatException(record.exc_info)
+            if _WITH_COLORS:
+                exc_text = _highlight(exc_text).rstrip("\n")
+            message += "\n" + exc_text
+        value = json.dumps({"logger": record.name, "message": message})
+        return "@cee: {}".format(value)
+
+
 class _SyslogHandler(logging.handlers.SysLogHandler):
     def __init__(self, *args, app_name, **kwargs):
         super().__init__(*args, **kwargs)
@@ -155,6 +168,7 @@ class SyslogWire(Wire):
             address="/dev/log",
             facility=_FACILITY_MAP[value.facility],
         )
+        self._handler.setFormatter(_CEEFormatter())
 
         level = _LEVELS_MAP[value.level]
         self._handler.setLevel(level)
