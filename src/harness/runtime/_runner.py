@@ -10,11 +10,12 @@ from ..wires.base import Wire
 
 from ._utils import load_config, graceful_exit
 from ._validate import validate
-from ._features import enable_metrics, enable_tracing
+from ._features import enable_request_id, enable_metrics, enable_tracing
 
 
 # Temporary decision to enable metrics and tracing by default. But maybe it
 # would be better to make this [auto]configurable.
+enable_request_id()
 enable_metrics()
 enable_tracing()
 

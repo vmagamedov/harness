@@ -6,6 +6,11 @@ from contextlib import contextmanager
 import yaml
 from jsonpatch import JsonPatch
 from json_merge_patch import merge
+from opentelemetry.context import Context
+from opentelemetry.correlationcontext import get_correlation, set_correlation
+from opentelemetry.correlationcontext.propagation import CorrelationContextPropagator
+from opentelemetry.trace.propagation.httptextformat import Getter
+from opentelemetry.trace.propagation.httptextformat import HTTPTextFormatT
 
 from ..wires.base import Wire
 
@@ -98,3 +103,24 @@ class Buffer:
     @property
     def position(self) -> int:
         return len(self._lines)
+
+
+class CorrelationContextPropagatorWithRequestID(CorrelationContextPropagator):
+    REQUEST_ID_KEY = "x-request-id"
+    CORRELATION_NAME = "requestId"
+
+    def extract(
+        self,
+        get_from_carrier: Getter[HTTPTextFormatT],
+        carrier: HTTPTextFormatT,
+        context: Optional[Context] = None,
+    ) -> Context:
+        context = super().extract(get_from_carrier, carrier, context)
+        request_id = get_correlation(self.CORRELATION_NAME, context)
+        if not request_id:
+            request_id = next(
+                iter(get_from_carrier(carrier, self.REQUEST_ID_KEY)), None
+            )
+            if request_id:
+                return set_correlation(self.CORRELATION_NAME, request_id, context)
+        return context
