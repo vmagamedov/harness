@@ -1,3 +1,3 @@
 [tool.black]
 target-version = ["py37"]
-exclude = "(\\.git|\\.tox|env|node_modules|_pb2\\.py|_grpc\\.py|_wires\\.py|entrypoint.py)"
+exclude = "(.git|.tox|env|node_modules|_pb2.py|_grpc.py|_wires.py|entrypoint.py)"
