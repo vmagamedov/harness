@@ -4,6 +4,8 @@ repos:
   hooks:
   - id: black
     args: [--check]
+    pass_filenames: false
+    always_run: true
 - repo: https://gitlab.com/pycqa/flake8
   rev: 3.7.9
   hooks:

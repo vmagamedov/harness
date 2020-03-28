@@ -24,15 +24,15 @@ clean-harness-proto:
 harness-proto: clean-harness-proto
 	$(PROTOC) -Isrc --python_out=src --mypy_out=quiet:src $(HARNESS_PROTOS)
 
-clean-example-proto:
-	rm -f example/{web,grpc,cron}/$(CLEAN)
+clean-examples-proto:
+	rm -f examples/{web,grpc,cron}/$(CLEAN)
 
-example-proto: clean-example-proto
-	$(PROTOC) -Isrc -Iexample/web --python_out=example/web --mypy_out=quiet:example/web --harness_out=runtime=python:example/web example/web/kirk.proto
-	$(PROTOC) -Isrc -Iexample/grpc --python_out=example/grpc --python_grpc_out=example/grpc --mypy_out=quiet:example/grpc --harness_out=runtime=python:example/grpc example/grpc/scotty.proto
-	$(PROTOC) -Isrc -Iexample/cron --python_out=example/cron --mypy_out=quiet:example/cron --harness_out=runtime=python:example/cron example/cron/pulsar.proto
+examples-proto: clean-examples-proto
+	$(PROTOC) -Isrc -Iexamples/web --python_out=examples/web --mypy_out=quiet:examples/web --harness_out=runtime=python:examples/web examples/web/kirk.proto
+	$(PROTOC) -Isrc -Iexamples/grpc --python_out=examples/grpc --python_grpc_out=examples/grpc --mypy_out=quiet:examples/grpc --harness_out=runtime=python:examples/grpc examples/grpc/scotty.proto
+	$(PROTOC) -Isrc -Iexamples/cron --python_out=examples/cron --mypy_out=quiet:examples/cron --harness_out=runtime=python:examples/cron examples/cron/pulsar.proto
 
-proto: validate-proto harness-proto example-proto
+proto: validate-proto harness-proto examples-proto
 
 release: validate-proto harness-proto
 	./scripts/release_check.sh
@@ -55,16 +55,16 @@ requirements:
 	pip-compile requirements/test.in
 
 run_web:
-	@PYTHONPATH=example/web:example/grpc python example/web/entrypoint.py example/web/kirk.yaml
+	@PYTHONPATH=examples/web:examples/grpc python examples/web/entrypoint.py examples/web/kirk.yaml
 
 run_grpc:
-	@PYTHONPATH=example/grpc python example/grpc/entrypoint.py example/grpc/scotty.yaml
+	@PYTHONPATH=examples/grpc python examples/grpc/entrypoint.py examples/grpc/scotty.yaml
 
 run_cron:
-	@PYTHONPATH=example/cron python example/cron/entrypoint.py example/cron/pulsar.yaml
+	@PYTHONPATH=examples/cron python examples/cron/entrypoint.py examples/cron/pulsar.yaml
 
 test-kube:
-	harness kube-gen python example/web/kirk.proto example/web/kirk.yaml v1 --namespace=platform --instance=ua --base-domain=example.com | pygmentize -l yaml | less -r
+	harness kube-gen python examples/web/kirk.proto examples/web/kirk.yaml v1 --namespace=platform --instance=ua --base-domain=example.com | pygmentize -l yaml | less -r
 
 test-check:
-	harness check example/web/kirk.proto example/web/kirk.yaml
+	harness check examples/web/kirk.proto examples/web/kirk.yaml
