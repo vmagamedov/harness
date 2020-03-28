@@ -32,6 +32,7 @@ setup(
         "jsonpatch",
         "opentelemetry-sdk==0.5b0",
     ],
+    extras_require={"sdk": ["grpcio-tools"]},
     entry_points={
         "console_scripts": [
             "protoc-gen-harness=harness.plugin.main:main",
@@ -39,12 +40,13 @@ setup(
         ],
     },
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3 :: Only",
     ],
 )
