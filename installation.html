@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contributing &mdash; Harness  documentation</title>
+  <title>Installation &mdash; Harness  documentation</title>
   
 
   
@@ -36,8 +36,8 @@
   <link rel="stylesheet" href="_static/style.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Changelog" href="changelog.html" />
-    <link rel="prev" title="prometheus" href="python/wires/prometheus.html" /> 
+    <link rel="next" title="Bootstrap" href="bootstrap.html" />
+    <link rel="prev" title="Harness Framework" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -78,11 +78,20 @@
               
             
             
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ubuntu">Ubuntu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#macos">macOS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#windows">Windows</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#development-kit">Development Kit</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Guide</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="bootstrap.html">Bootstrap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wires.html">Wires</a></li>
@@ -90,11 +99,7 @@
 <li class="toctree-l1"><a class="reference internal" href="code-generation.html">Code Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#style-guide">Style Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#tests">Tests</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Runtimes</span></p>
@@ -146,14 +151,14 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Contributing</li>
+      <li>Installation</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/vmagamedov/harness/blob/master/docs/contributing.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/vmagamedov/harness/blob/master/docs/installation.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -167,46 +172,64 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="contributing">
-<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
-<p>Contributions are highly welcomed and appreciated.</p>
-<div class="section" id="style-guide">
-<h2>Style Guide<a class="headerlink" href="#style-guide" title="Permalink to this headline">¶</a></h2>
-<p>This project uses <a class="reference external" href="https://black.readthedocs.io">black</a> for formatting and <a class="reference external" href="https://flake8.pycqa.org">flake8</a> for linting. These tools
-are used in a pre-commit hook. Here is how to enable them:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install pre-commit
-<span class="gp">$</span> pre-commit install
-<span class="go">pre-commit installed at .git/hooks/pre-commit</span>
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>Harness SDK is written in Python and requires Python 3.7 or more recent version.
+Here are some decent ways to get Python installed on your system.</p>
+<div class="section" id="ubuntu">
+<h3>Ubuntu<a class="headerlink" href="#ubuntu" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p>You can use <code class="docutils literal notranslate"><span class="pre">python3</span></code> and <code class="docutils literal notranslate"><span class="pre">python3-pip</span></code> system packages since Ubuntu
+version 19.04</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> sudo apt-get update
+<span class="gp">$</span> sudo apt-get install python3 python3-pip
+<span class="gp">$</span> pip3 --version
+<span class="go">pip 18.1 from /usr/lib/python3/dist-packages/pip (python 3.7)</span>
 </pre></div>
 </div>
-<p>Optionally you can invoke pre-commit explicitly after you staged your changes
-and before you’re ready to commit:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pre-commit
-<span class="go">black....................................................................Passed</span>
-<span class="go">flake8...................................................................Passed</span>
+</li>
+<li><p>You can use <code class="docutils literal notranslate"><span class="pre">python3.x</span></code> system package from <a class="reference external" href="https://launchpad.net/~deadsnakes/+archive/ubuntu/ppa">deadsnakes</a> PPA if you have
+an older Ubuntu LTS version</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> sudo apt-get update
+<span class="gp">$</span> sudo apt-get install software-properties-common
+<span class="gp">$</span> sudo add-apt-repository ppa:deadsnakes/ppa
+<span class="gp">$</span> sudo apt-get install python3.7 python3.7-venv
+<span class="gp">$</span> sudo python3.7 -m ensurepip
+<span class="gp">$</span> pip3 --version
+<span class="go">pip 19.2.3 from /usr/local/lib/python3.7/dist-packages/pip (python 3.7)</span>
 </pre></div>
 </div>
-<p>You can also invoke <a class="reference external" href="https://black.readthedocs.io">black</a> and <a class="reference external" href="https://flake8.pycqa.org">flake8</a> explicitly:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install -r requirements/check.txt
-<span class="gp">$</span> black .
-<span class="go">All done! ✨ 🍰 ✨</span>
-<span class="go">49 files left unchanged.</span>
-<span class="gp">$</span> flake8
+</li>
+</ul>
+</div>
+<div class="section" id="macos">
+<h3>macOS<a class="headerlink" href="#macos" title="Permalink to this headline">¶</a></h3>
+<p>You can use <a class="reference external" href="https://brew.sh">Homebrew</a> to install Python:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> brew install python3
+<span class="gp">$</span> pip3 --version
+<span class="go">pip 19.3.1 from /usr/local/lib/python3.7/site-packages/pip (python 3.7)</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="tests">
-<h2>Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
-<p>This project uses <a class="reference external" href="https://pytest.org">pytest</a> framework and <a class="reference external" href="https://tox.readthedocs.io">tox</a> automation:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install tox
-<span class="gp">$</span> tox -e py37
+<div class="section" id="windows">
+<h3>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h3>
+<p>You can use one of these guides:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/using/windows.html">https://docs.python.org/3/using/windows.html</a></p></li>
+<li><p><a class="reference external" href="https://docs.microsoft.com/en-us/windows/python/beginners">https://docs.microsoft.com/en-us/windows/python/beginners</a></p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="development-kit">
+<h2>Development Kit<a class="headerlink" href="#development-kit" title="Permalink to this headline">¶</a></h2>
+<p>To get a latest stable version:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip3 install <span class="s2">&quot;harness[sdk]&quot;</span>
 </pre></div>
 </div>
-<p>Or to run <a class="reference external" href="https://pytest.org">pytest</a> explicitly:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install -r requirements/test.txt
-<span class="gp">$</span> pytest
-<span class="go">..................................................                       [100%]</span>
-<span class="go">50 passed in 0.58s</span>
+<p>New features and bug fixes are released often as release candidates:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip3 install --pre <span class="s2">&quot;harness[sdk]&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -220,10 +243,10 @@ and before you’re ready to commit:</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="changelog.html" class="btn btn-neutral float-right" title="Changelog" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="bootstrap.html" class="btn btn-neutral float-right" title="Bootstrap" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="python/wires/prometheus.html" class="btn btn-neutral float-left" title="prometheus" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Harness Framework" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

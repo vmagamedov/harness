@@ -79,6 +79,10 @@
             
             
               <ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Guide</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../bootstrap.html">Bootstrap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../wires.html">Wires</a></li>
@@ -206,7 +210,8 @@ Here is our initial minimal configuration:</p>
 </div>
 <div class="section" id="code-generation">
 <h2>Code Generation<a class="headerlink" href="#code-generation" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> protoc -I. -I<span class="k">$(</span>harness proto-path<span class="k">)</span> --harness_out<span class="o">=</span>python:. --python_out<span class="o">=</span>.
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python3 -m grpc_tools.protoc -I. -I<span class="k">$(</span>harness proto-path<span class="k">)</span> <span class="se">\</span>
+          --harness_out<span class="o">=</span>python:. --python_out<span class="o">=</span>.
 </pre></div>
 </div>
 <div class="admonition" id="id2">

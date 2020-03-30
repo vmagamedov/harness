@@ -4,6 +4,12 @@ Harness Framework
 .. toctree::
   :hidden:
 
+  installation
+
+.. toctree::
+  :hidden:
+  :caption: Guide
+
   bootstrap
   configuration
   wires
