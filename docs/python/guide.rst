@@ -44,7 +44,8 @@ Code Generation
 
 .. code-block:: console
 
-  $ protoc -I. -I$(harness proto-path) --harness_out=python:. --python_out=.
+  $ python3 -m grpc_tools.protoc -I. -I$(harness proto-path) \
+            --harness_out=python:. --python_out=.
 
 .. test::
 
