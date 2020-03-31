@@ -10,7 +10,7 @@ from kirk_pb2 import Configuration
 from kirk_wires import WiresIn, WiresOut
 
 
-async def index(request):
+async def index(request: web.Request) -> web.Response:
     now = await request.app["db"].fetchval("SELECT now();")
     await request.app["scotty"].BeamMeUp(Empty())
     version = await request.app["db"].fetchval("SELECT version();")

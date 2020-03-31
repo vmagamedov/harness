@@ -3,7 +3,27 @@ on:
 - push
 - pull_request
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: pip-${{ hashFiles('requirements/check.txt') }}
+    - uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - run: pip3 install -r requirements/check.txt
+    - run: pip3 install -e . --no-deps
+    - run: black --check .
+    - run: flake8
+    - run: make proto
+    - run: mypy --strict examples/web
+    - run: mypy --strict examples/grpc
+    - run: mypy --strict examples/cron
   test:
+    needs: check
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -20,17 +40,3 @@ jobs:
     - run: pip3 install -r requirements/test.txt
     - run: pip3 install -e . --no-deps
     - run: pytest
-  check:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/cache@v1
-      with:
-        path: ~/.cache/pip
-        key: pip-${{ hashFiles('requirements/check.txt') }}
-    - uses: actions/setup-python@v1
-      with:
-        python-version: 3.7
-    - run: pip3 install -r requirements/check.txt
-    - run: black --check .
-    - run: flake8

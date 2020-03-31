@@ -7,7 +7,7 @@ from pulsar_pb2 import Configuration
 from pulsar_wires import WiresIn, WiresOut
 
 
-async def tick():
+async def tick() -> None:
     logging.info("Tick")
 
 

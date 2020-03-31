@@ -1,2 +1,7 @@
+-r setup.txt
 black
 flake8
+mypy
+grpcio-tools
+grpclib
+mypy-protobuf

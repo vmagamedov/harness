@@ -1,6 +1,6 @@
 import asyncio
 import argparse
-from typing import Generic, TypeVar, Callable, Awaitable, List, Type
+from typing import Generic, TypeVar, Callable, List, Type, Coroutine, Any
 from contextlib import AsyncExitStack
 from dataclasses import fields
 
@@ -22,6 +22,8 @@ enable_tracing()
 _CT = TypeVar("_CT")
 _WI = TypeVar("_WI")
 _WO = TypeVar("_WO")
+
+_MainFunc = Callable[[_CT, _WI], Coroutine[Any, Any, _WO]]
 
 
 class Runner(Generic[_CT, _WI, _WO]):
@@ -54,9 +56,7 @@ class Runner(Generic[_CT, _WI, _WO]):
             help="Patch config with a file",
         )
 
-    async def _wrapper(
-        self, main_func: Callable[[_CT, _WI], Awaitable[_WO]], config: _CT,
-    ) -> None:
+    async def _wrapper(self, main_func: _MainFunc, config: _CT) -> None:
         async with AsyncExitStack() as stack:
             input_wires = {}
             for field in fields(self._wires_in_type):
@@ -108,7 +108,7 @@ class Runner(Generic[_CT, _WI, _WO]):
                         waiters, return_when=asyncio.FIRST_COMPLETED,
                     )
 
-    def run(self, main_func: Callable[[_WI], Awaitable[_WO]], args: List[str]) -> int:
+    def run(self, main_func: _MainFunc, args: List[str]) -> int:
         args = self._arg_parser.parse_args(args[1:])
 
         with args.config:
