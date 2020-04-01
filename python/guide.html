@@ -97,10 +97,11 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Python Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#service-configuration">Service Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#code-generation">Code Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#runtime-configuration">Runtime Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#service-implementation">Service Implementation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#entrypoint">Entrypoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#finish">Finish</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="wires/index.html">Python Wires</a></li>
@@ -181,8 +182,8 @@
 <h2>Service Configuration<a class="headerlink" href="#service-configuration" title="Permalink to this headline">¶</a></h2>
 <p>You can use <a class="reference internal" href="../bootstrap.html"><span class="doc">Bootstrap</span></a> page to start configuring your service.
 Here is our initial minimal configuration:</p>
-<div class="literal-block-wrapper docutils container" id="id5">
-<div class="code-block-caption"><span class="caption-text">status.proto</span><a class="headerlink" href="#id5" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">status.proto</span><a class="headerlink" href="#id7" title="Permalink to this code">¶</a></div>
 <div class="highlight-protobuf notranslate"><div class="highlight"><pre><span></span><span class="na">syntax</span> <span class="o">=</span> <span class="s">&quot;proto3&quot;</span><span class="p">;</span>
 
 <span class="kn">package</span> <span class="nn">status</span><span class="p">;</span>
@@ -200,6 +201,7 @@ Here is our initial minimal configuration:</p>
 </pre></div>
 </div>
 </div>
+<p>It only defines one wire - HTTP server used to serve requests.</p>
 <div class="admonition" id="id1">
 <p class="admonition-title">Test</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ls
@@ -208,13 +210,31 @@ Here is our initial minimal configuration:</p>
 </div>
 </div>
 </div>
-<div class="section" id="code-generation">
-<h2>Code Generation<a class="headerlink" href="#code-generation" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python3 -m grpc_tools.protoc -I. -I<span class="k">$(</span>harness proto-path<span class="k">)</span> <span class="se">\</span>
-          --harness_out<span class="o">=</span>python:. --python_out<span class="o">=</span>.
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<p>In order to proceed, we have to install our runtime and build dependencies:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip3 install <span class="s2">&quot;harness[sdk]&quot;</span> aiohttp
 </pre></div>
 </div>
-<div class="admonition" id="id2">
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These dependencies are great for development environments only, so:</p>
+<ul class="simple">
+<li><p>You probably don’t have to install <code class="docutils literal notranslate"><span class="pre">aiohttp</span></code> in CI environment</p></li>
+<li><p>You certainly don’t have to install <code class="docutils literal notranslate"><span class="pre">[sdk]</span></code> extras in runtime (production)
+environment</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="code-generation">
+<span id="id2"></span><h2>Code Generation<a class="headerlink" href="#code-generation" title="Permalink to this headline">¶</a></h2>
+<p>Here we generate runtime for our service:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python3 -m grpc_tools.protoc -I. -I<span class="k">$(</span>harness proto-path<span class="k">)</span> <span class="se">\</span>
+        --harness_out<span class="o">=</span><span class="nv">runtime</span><span class="o">=</span>python:. --python_out<span class="o">=</span>. status.proto
+</pre></div>
+</div>
+<p>Runtime consists of an entrypoint and a wires definition:</p>
+<div class="admonition" id="id3">
 <p class="admonition-title">Test</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ls
 <span class="go">status.proto</span>
@@ -227,8 +247,9 @@ Here is our initial minimal configuration:</p>
 </div>
 <div class="section" id="runtime-configuration">
 <h2>Runtime Configuration<a class="headerlink" href="#runtime-configuration" title="Permalink to this headline">¶</a></h2>
-<div class="literal-block-wrapper docutils container" id="id6">
-<div class="code-block-caption"><span class="caption-text">status.yaml</span><a class="headerlink" href="#id6" title="Permalink to this code">¶</a></div>
+<p>Here we add our runtime configuration in the YAML format:</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">status.yaml</span><a class="headerlink" href="#id8" title="Permalink to this code">¶</a></div>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">server</span><span class="p">:</span>
   <span class="nt">bind</span><span class="p">:</span>
     <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0.0.0</span>
@@ -236,7 +257,9 @@ Here is our initial minimal configuration:</p>
 </pre></div>
 </div>
 </div>
-<div class="admonition" id="id3">
+<p>Content of this file should conform to the <code class="docutils literal notranslate"><span class="pre">Configuration</span></code> message definition
+in the <code class="docutils literal notranslate"><span class="pre">status.proto</span></code> file.</p>
+<div class="admonition" id="id4">
 <p class="admonition-title">Test</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ls
 <span class="go">status.proto</span>
@@ -250,22 +273,27 @@ Here is our initial minimal configuration:</p>
 </div>
 <div class="section" id="service-implementation">
 <h2>Service Implementation<a class="headerlink" href="#service-implementation" title="Permalink to this headline">¶</a></h2>
+<p>Here we add implementation of our service:</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">aiohttp</span> <span class="kn">import</span> <span class="n">web</span>
 <span class="kn">from</span> <span class="nn">harness.wires.aiohttp.web</span> <span class="kn">import</span> <span class="n">ServerWire</span>
 
 <span class="kn">from</span> <span class="nn">status_pb2</span> <span class="kn">import</span> <span class="n">Configuration</span>
 <span class="kn">from</span> <span class="nn">status_wires</span> <span class="kn">import</span> <span class="n">WiresIn</span><span class="p">,</span> <span class="n">WiresOut</span>
 
-<span class="k">async</span> <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">Response</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s1">&#39;OK&#39;</span><span class="p">)</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">web</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">web</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">Response</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;OK&quot;</span><span class="p">)</span>
+
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">Configuration</span><span class="p">,</span> <span class="n">wires_in</span><span class="p">:</span> <span class="n">WiresIn</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WiresOut</span><span class="p">:</span>
     <span class="n">app</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">()</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">WiresOut</span><span class="p">(</span><span class="n">server</span><span class="o">=</span><span class="n">ServerWire</span><span class="p">(</span><span class="n">app</span><span class="p">))</span>
 </pre></div>
 </div>
-<div class="admonition" id="id4">
+<p>It must contain a <code class="docutils literal notranslate"><span class="pre">setup</span></code> coroutine function, which accepts configuration and
+initialized input wires, and returns output wires. Everything else is up to you.</p>
+<div class="admonition" id="id5">
 <p class="admonition-title">Test</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ls
 <span class="go">status.proto</span>
@@ -278,10 +306,35 @@ Here is our initial minimal configuration:</p>
 </div>
 </div>
 </div>
-<div class="section" id="entrypoint">
-<h2>Entrypoint<a class="headerlink" href="#entrypoint" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python3 entrypoint.py status.yaml
+<div class="section" id="finish">
+<h2>Finish<a class="headerlink" href="#finish" title="Permalink to this headline">¶</a></h2>
+<p>Now we can launch our service:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python3 entrypoint.py --help
+<span class="go">usage: entrypoint.py [-h] [--merge MERGE] [--patch PATCH] config</span>
+
+<span class="go">positional arguments:</span>
+<span class="go">  config         Configuration file in the YAML format</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help     show this help message and exit</span>
+<span class="go">  --merge MERGE  Merge config with a file</span>
+<span class="go">  --patch PATCH  Patch config with a file</span>
+<span class="gp">$</span> python3 entrypoint.py status.yaml
 </pre></div>
+</div>
+<p>Open <a class="reference external" href="http://localhost:8000/">http://localhost:8000/</a> url and check that your service is up and running.
+Now you can add more wires and implement your logic.</p>
+<div class="admonition" id="id6">
+<p class="admonition-title">Test</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> curl http://localhost:8000/
+<span class="go">OK</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Every time you change your configuration in the <code class="docutils literal notranslate"><span class="pre">status.proto</span></code> file,
+you must regenerate your runtime (see <a class="reference internal" href="#code-generation"><span class="std std-ref">Code Generation</span></a> section above).</p>
 </div>
 </div>
 </div>
