@@ -14,23 +14,11 @@ Service Configuration
 You can use :doc:`../bootstrap` page to start configuring your service.
 Here is our initial minimal configuration:
 
-.. code-block:: protobuf
+.. literalinclude:: source/status.proto
+  :language: protobuf
   :caption: status.proto
 
-  syntax = "proto3";
-
-  package status;
-
-  import "harness/wire.proto";
-  import "harness/http.proto";
-
-  message Configuration {
-      option (harness.service).name = "status";
-
-      harness.http.Server server = 1 [
-          (harness.wire).output.type = "harness.wires.aiohttp.web.ServerWire"
-      ];
-  }
+It only defines one wire - HTTP server used to serve requests.
 
 .. test::
 
@@ -39,13 +27,32 @@ Here is our initial minimal configuration:
     $ ls
     status.proto
 
-Code Generation
-~~~~~~~~~~~~~~~
+Requirements
+~~~~~~~~~~~~
+
+In order to proceed, we have to install our runtime and build dependencies:
 
 .. code-block:: console
 
-  $ python3 -m grpc_tools.protoc -I. -I$(harness proto-path) \
-            --harness_out=python:. --python_out=.
+  $ pip3 install "harness[sdk]" aiohttp
+
+.. note:: These dependencies are great for development environments only, so:
+
+  - You probably don't have to install ``aiohttp`` in CI environment
+  - You certainly don't have to install ``[sdk]`` extras in runtime (production)
+    environment
+
+.. _code-generation:
+
+Code Generation
+~~~~~~~~~~~~~~~
+
+Here we generate runtime for our service:
+
+.. literalinclude:: source/generate.sh
+  :language: sh
+
+Runtime consists of an entrypoint and a wires definition:
 
 .. test::
 
@@ -61,13 +68,14 @@ Code Generation
 Runtime Configuration
 ~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: yaml
+Here we add our runtime configuration in the YAML format:
+
+.. literalinclude:: source/status.yaml
+  :language: yaml
   :caption: status.yaml
 
-  server:
-    bind:
-      host: 0.0.0.0
-      port: 8000
+Content of this file should conform to the ``Configuration`` message definition
+in the ``status.proto`` file.
 
 .. test::
 
@@ -81,25 +89,16 @@ Runtime Configuration
     entrypoint.py
     status.yaml
 
-
 Service Implementation
 ~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python3
+Here we add implementation of our service:
 
-  from aiohttp import web
-  from harness.wires.aiohttp.web import ServerWire
+.. literalinclude:: source/status.py
+  :language: python3
 
-  from status_pb2 import Configuration
-  from status_wires import WiresIn, WiresOut
-
-  async def index(request):
-      return web.Response(text='OK')
-
-  async def setup(config: Configuration, wires_in: WiresIn) -> WiresOut:
-      app = web.Application()
-      app.router.add_get('/', index)
-      return WiresOut(server=ServerWire(app))
+It must contain a ``setup`` coroutine function, which accepts configuration and
+initialized input wires, and returns output wires. Everything else is up to you.
 
 .. test::
 
@@ -114,9 +113,34 @@ Service Implementation
     status.yaml
     status.py
 
-Entrypoint
-~~~~~~~~~~
+Finish
+~~~~~~
+
+Now we can launch our service:
 
 .. code-block:: console
 
+  $ python3 entrypoint.py --help
+  usage: entrypoint.py [-h] [--merge MERGE] [--patch PATCH] config
+
+  positional arguments:
+    config         Configuration file in the YAML format
+
+  optional arguments:
+    -h, --help     show this help message and exit
+    --merge MERGE  Merge config with a file
+    --patch PATCH  Patch config with a file
   $ python3 entrypoint.py status.yaml
+
+Open http://localhost:8000/ url and check that your service is up and running.
+Now you can add more wires and implement your logic.
+
+.. test::
+
+  .. code-block:: console
+
+    $ curl http://localhost:8000/
+    OK
+
+.. note:: Every time you change your configuration in the ``status.proto`` file,
+  you must regenerate your runtime (see :ref:`code-generation` section above).

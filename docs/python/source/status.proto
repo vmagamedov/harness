@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package status;
+
+import "harness/wire.proto";
+import "harness/http.proto";
+
+message Configuration {
+    option (harness.service).name = "status";
+
+    harness.http.Server server = 1 [
+        (harness.wire).output.type = "harness.wires.aiohttp.web.ServerWire"
+    ];
+}
