@@ -4,8 +4,7 @@ repos:
   hooks:
   - id: black
     args: [--check]
-    pass_filenames: false
-    always_run: true
+    exclude: "(_pb2.py|_grpc.py|_wires.py|entrypoint.py)$"
 - repo: https://gitlab.com/pycqa/flake8
   rev: 3.7.9
   hooks:

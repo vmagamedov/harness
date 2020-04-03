@@ -20,7 +20,7 @@ class Test(todo.Todo):
     node_class = test_node
 
     def run(self):
-        self.options['class'] = ['admonition-test']
+        self.options["class"] = ["admonition-test"]
         (node,) = super(todo.Todo, self).run()
         node.insert(0, nodes.title(text=_("Test")))
         node["docname"] = self.env.docname
