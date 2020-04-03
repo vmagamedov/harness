@@ -1,26 +1,26 @@
 Python Wires
 ============
 
-Observability
-~~~~~~~~~~~~~
+.. toctree::
+  :caption: Observability
 
-- Logs: :doc:`logging`
-- Metrics: :doc:`opentelemetry`, :doc:`prometheus`
-- Tracing: :doc:`opentelemetry`
-- Debug: :doc:`aiomonitor`
+  logging
+  opentelemetry
+  prometheus
+  aiomonitor
 
-Services
-~~~~~~~~
+.. toctree::
+  :caption: Services
 
-- Web: :doc:`aiohttp`
-- gRPC: :doc:`grpclib`
+  aiohttp
+  grpclib
 
-Drivers
-~~~~~~~
+.. toctree::
+  :caption: Drivers
 
-- PostgreSQL: :doc:`asyncpg`
+  asyncpg
 
-Other
-~~~~~
+.. toctree::
+  :caption: Other
 
-- Regular tasks: :doc:`apscheduler`
+  apscheduler
