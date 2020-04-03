@@ -202,7 +202,7 @@ Here is our initial minimal configuration:</p>
 </div>
 </div>
 <p>It only defines one wire - HTTP server used to serve requests.</p>
-<div class="admonition" id="id1">
+<div class="admonition-test admonition" id="id1">
 <p class="admonition-title">Test</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ls
 <span class="go">status.proto</span>
@@ -234,7 +234,7 @@ environment</p></li>
 </pre></div>
 </div>
 <p>Runtime consists of an entrypoint and a wires definition:</p>
-<div class="admonition" id="id3">
+<div class="admonition-test admonition" id="id3">
 <p class="admonition-title">Test</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ls
 <span class="go">status.proto</span>
@@ -259,7 +259,7 @@ environment</p></li>
 </div>
 <p>Content of this file should conform to the <code class="docutils literal notranslate"><span class="pre">Configuration</span></code> message definition
 in the <code class="docutils literal notranslate"><span class="pre">status.proto</span></code> file.</p>
-<div class="admonition" id="id4">
+<div class="admonition-test admonition" id="id4">
 <p class="admonition-title">Test</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ls
 <span class="go">status.proto</span>
@@ -293,7 +293,7 @@ in the <code class="docutils literal notranslate"><span class="pre">status.proto
 </div>
 <p>It must contain a <code class="docutils literal notranslate"><span class="pre">setup</span></code> coroutine function, which accepts configuration and
 initialized input wires, and returns output wires. Everything else is up to you.</p>
-<div class="admonition" id="id5">
+<div class="admonition-test admonition" id="id5">
 <p class="admonition-title">Test</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ls
 <span class="go">status.proto</span>
@@ -324,7 +324,7 @@ initialized input wires, and returns output wires. Everything else is up to you.
 </div>
 <p>Open <a class="reference external" href="http://localhost:8000/">http://localhost:8000/</a> url and check that your service is up and running.
 Now you can add more wires and implement your logic.</p>
-<div class="admonition" id="id6">
+<div class="admonition-test admonition" id="id6">
 <p class="admonition-title">Test</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> curl http://localhost:8000/
 <span class="go">OK</span>

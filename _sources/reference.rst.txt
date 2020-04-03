@@ -23,17 +23,3 @@ Proto Files
 
   harness/wire.proto
   validate/validate.proto
-
-Python Wires
-~~~~~~~~~~~~
-
-.. toctree::
-
-  python/wires/aiohttp
-  python/wires/aiomonitor
-  python/wires/apscheduler
-  python/wires/asyncpg
-  python/wires/grpclib
-  python/wires/logging
-  python/wires/opentelemetry
-  python/wires/prometheus

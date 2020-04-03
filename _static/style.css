@@ -15,6 +15,8 @@
 }
 .rst-content code {
     border-radius: 3px;
+    background-color: rgba(27,31,35,.05);
+    border-style: none;
 }
 .rst-content code.literal {
     color: black;
@@ -221,4 +223,17 @@ label {
 */
 div.admonition div.highlight-console {
     margin-bottom: 0;
+}
+
+/*
+
+    Test directive
+
+*/
+.rst-content .admonition-test {
+    background: #f4f4f4;
+}
+.rst-content .admonition-test .admonition-title {
+    color: #404040;
+    background: #fcfcfc;
 }
