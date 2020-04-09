@@ -1,9 +1,10 @@
 import asyncio
 import argparse
-from typing import Generic, TypeVar, Callable, List, Type, Coroutine, Any
+from typing import Generic, TypeVar, Callable, List, Type, Coroutine, Any, Optional
 from contextlib import AsyncExitStack
 from dataclasses import fields
 
+from google.protobuf.message import Message
 from google.protobuf.json_format import ParseDict
 
 from ..wires.base import Wire
@@ -19,11 +20,9 @@ enable_metrics()
 enable_tracing()
 
 
-_CT = TypeVar("_CT")
+_CT = TypeVar("_CT", bound=Message)
 _WI = TypeVar("_WI")
 _WO = TypeVar("_WO")
-
-_MainFunc = Callable[[_CT, _WI], Coroutine[Any, Any, _WO]]
 
 
 class Runner(Generic[_CT, _WI, _WO]):
@@ -56,10 +55,13 @@ class Runner(Generic[_CT, _WI, _WO]):
             help="Patch config with a file",
         )
 
-    async def _wrapper(self, main_func: _MainFunc, config: _CT) -> None:
+    async def _wrapper(
+        self, main_func: Callable[[_CT, _WI], Coroutine[Any, Any, _WO]], config: _CT
+    ) -> None:
         async with AsyncExitStack() as stack:
             input_wires = {}
             for field in fields(self._wires_in_type):
+                wire: Optional[Wire]
                 if config.HasField(field.name):
                     wire_config = getattr(config, field.name)
                     if isinstance(field.type, type) and issubclass(field.type, Wire):
@@ -80,7 +82,7 @@ class Runner(Generic[_CT, _WI, _WO]):
                         )
                     wire = None
                 input_wires[field.name] = wire
-            wires_in = self._wires_in_type(**input_wires)
+            wires_in = self._wires_in_type(**input_wires)  # type: ignore
 
             wires_out = await main_func(config, wires_in)
 
@@ -96,6 +98,7 @@ class Runner(Generic[_CT, _WI, _WO]):
                 if not config.HasField(field.name):
                     continue
                 wire = getattr(wires_out, field.name)
+                assert isinstance(wire, Wire), type(wire)
                 wire_config = getattr(config, field.name)
                 wire.configure(wire_config)
                 await stack.enter_async_context(wire)
@@ -108,8 +111,12 @@ class Runner(Generic[_CT, _WI, _WO]):
                         waiters, return_when=asyncio.FIRST_COMPLETED,
                     )
 
-    def run(self, main_func: _MainFunc, args: List[str]) -> int:
-        args = self._arg_parser.parse_args(args[1:])
+    def run(
+        self,
+        main_func: Callable[[_CT, _WI], Coroutine[Any, Any, _WO]],
+        argv: List[str],
+    ) -> int:
+        args = self._arg_parser.parse_args(argv[1:])
 
         with args.config:
             config_content = args.config.read()

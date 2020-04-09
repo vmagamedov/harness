@@ -1,6 +1,6 @@
 import signal
 import asyncio
-from typing import Collection, List, Optional, Iterator, Any
+from typing import Collection, List, Optional, Iterator, Any, Dict, cast
 from contextlib import contextmanager
 
 import yaml
@@ -10,7 +10,14 @@ from json_merge_patch import merge
 from ..wires.base import Wire
 
 
-def load_config(config_content, merge_content=None, patch_content=None):
+_JSONDict = Dict[str, Any]
+
+
+def load_config(
+    config_content: str,
+    merge_content: Optional[str] = None,
+    patch_content: Optional[str] = None,
+) -> _JSONDict:
     config_data = yaml.safe_load(config_content)
     if config_data is None:
         config_data = {}
@@ -25,7 +32,7 @@ def load_config(config_content, merge_content=None, patch_content=None):
         patch_data = yaml.safe_load(patch_content)
         json_patch = JsonPatch(patch_data)
         config_data = json_patch.apply(config_data)
-    return config_data
+    return cast(_JSONDict, config_data)
 
 
 def _first_stage(sig_num: signal.Signals, wires: Collection[Wire]) -> None:

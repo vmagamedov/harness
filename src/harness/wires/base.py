@@ -1,33 +1,42 @@
 import asyncio
+from types import TracebackType
+from typing import Optional, Type
+
+from google.protobuf.message import Message
 
 
 class Wire:
-    def configure(self, value):
+    def configure(self, value: Message) -> None:
         pass
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> None:
         pass
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> None:
         self.close()
         await self.wait_closed()
 
-    def close(self):
+    def close(self) -> None:
         pass
 
-    async def wait_closed(self):
+    async def wait_closed(self) -> None:
         pass
 
 
 class WaitMixin:
     _event: asyncio.Event
 
-    def close(self):
+    def close(self) -> None:
         if not hasattr(self, "_event"):
             self._event = asyncio.Event()
         self._event.set()
 
-    async def wait_closed(self):
+    async def wait_closed(self) -> None:
         if not hasattr(self, "_event"):
             self._event = asyncio.Event()
         await self._event.wait()

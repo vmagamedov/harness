@@ -1,3 +1,4 @@
+import re
 from ipaddress import ip_address
 
 import pytest
@@ -277,6 +278,32 @@ def test_hostname(message_type):
     validate(message_type(field="Example.com"))
     with pytest.raises(ValidationError, match="field contains invalid hostname"):
         validate(message_type(field="-example.com"))
+
+
+def test_string_prefix(message_type):
+    """
+    message Message {
+        string field = 1 [(validate.rules).string.prefix = "har"];
+    }
+    """
+    validate(message_type(field="harness"))
+    with pytest.raises(ValidationError, match="field does not start with prefix 'har'"):
+        validate(message_type(field="bottle"))
+
+
+def test_string_pattern(message_type):
+    """
+    message Message {
+        string field = 1 [(validate.rules).string.pattern = "^(foo|bar)-app$"];
+    }
+    """
+    validate(message_type(field="foo-app"))
+    validate(message_type(field="bar-app"))
+    with pytest.raises(
+        ValidationError,
+        match=re.escape("field does not match pattern '^(foo|bar)-app$'"),
+    ):
+        validate(message_type(field="invalid"))
 
 
 def test_string_ip(message_type):
