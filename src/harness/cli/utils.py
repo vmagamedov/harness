@@ -1,12 +1,23 @@
 import tempfile
+from typing import Optional, List, Sequence, Dict, Type, cast
 from pathlib import Path
 
 import pkg_resources
 from grpc_tools import protoc
-from google.protobuf.descriptor_pb2 import FileDescriptorSet
+from google.protobuf.message import Message
+from google.protobuf.descriptor_pb2 import FileDescriptorSet, FileDescriptorProto
+from google.protobuf.descriptor_pb2 import DescriptorProto
+from google.protobuf.message_factory import GetMessages
 
 
-def load_descriptor_set(proto_file, proto_path=None):
+def get_messages(files: Sequence[FileDescriptorProto]) -> Dict[str, Type[Message]]:
+    mapping = GetMessages(files)  # type: ignore
+    return cast("Dict[str, Type[Message]]", mapping)
+
+
+def load_descriptor_set(
+    proto_file: str, proto_path: Optional[List[str]] = None
+) -> FileDescriptorSet:
     wkt_protos = pkg_resources.resource_filename("grpc_tools", "_proto")
     validate_protos = str(
         Path(
@@ -34,7 +45,10 @@ def load_descriptor_set(proto_file, proto_path=None):
     return FileDescriptorSet.FromString(content)
 
 
-def get_configuration(file_descriptor):
+def get_configuration(
+    file_descriptor: FileDescriptorProto,
+) -> Optional[DescriptorProto]:
     for message_type in file_descriptor.message_type:
         if message_type.name == "Configuration":
             return message_type
+    return None

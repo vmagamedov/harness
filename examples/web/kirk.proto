@@ -14,8 +14,6 @@ import "harness/tracing.proto";
 message Configuration {
     option (harness.service).name = "kirk";
     option (harness.service).container.repository = "registry.acme.dev/team/kirk";
-    option (harness.service).container.resources.requests = {cpu: "300m" memory: "128Mi"};
-    option (harness.service).container.resources.limits = {cpu: "1" memory: "192Mi"};
 
     bool debug = 1;
 

@@ -22,7 +22,7 @@ jobs:
     - run: mypy --strict examples/web
     - run: mypy --strict examples/grpc
     - run: mypy --strict examples/cron
-    - run: mypy --strict src/harness/runtime
+    - run: mypy --strict src/harness/runtime src/harness/cli
   test:
     needs: check
     runs-on: ubuntu-latest

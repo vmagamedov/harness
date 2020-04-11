@@ -1,9 +1,10 @@
 import sys
 import argparse
+from typing import Any
 
 
-def add_kubegen(subparsers):
-    def func(args):
+def add_kubegen(subparsers: Any) -> None:
+    def func(args: argparse.Namespace) -> None:
         from . import kubegen
 
         kubegen.kube_gen(
@@ -33,16 +34,16 @@ def add_kubegen(subparsers):
     parser.set_defaults(func=func)
 
 
-def add_check(subparsers):
-    def func(args):
+def add_check(subparsers: Any) -> None:
+    def func(args: argparse.Namespace) -> None:
         from . import check
 
         check.check(
             args.proto,
             args.config,
             args.proto_path,
-            merge=args.merge,
-            patch=args.patch,
+            merge_file=args.merge,
+            patch_file=args.patch,
         )
 
     parser = subparsers.add_parser("check")
@@ -58,8 +59,8 @@ def add_check(subparsers):
     parser.set_defaults(func=func)
 
 
-def add_protopath(subparsers):
-    def func(_):
+def add_protopath(subparsers: Any) -> None:
+    def func(_: argparse.Namespace) -> None:
         from . import protopath
 
         protopath.proto_path()
@@ -68,7 +69,7 @@ def add_protopath(subparsers):
     check_parser.set_defaults(func=func)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
     subparser = parser.add_subparsers()
 

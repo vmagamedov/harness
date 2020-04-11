@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='harness',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=b'\n\x12harness/wire.proto\x12\x07harness\x1a google/protobuf/descriptor.proto\x1a\x17validate/validate.proto\"Y\n\x04Mark\x12(\n\x08protocol\x18\x01 \x01(\x0e\x32\x16.harness.Mark.Protocol\"\'\n\x08Protocol\x12\x07\n\x03TCP\x10\x00\x12\x08\n\x04HTTP\x10\x01\x12\x08\n\x04GRPC\x10\x02\"\x85\x01\n\x05Input\x12\x15\n\x04type\x18\x01 \x02(\tB\x07\xfa\x42\x04r\x02\x10\x01\x12#\n\x05reach\x18\x02 \x01(\x0e\x32\x14.harness.Input.Reach\"@\n\x05Reach\x12\r\n\tLOCALHOST\x10\x00\x12\r\n\tNAMESPACE\x10\x01\x12\x0b\n\x07\x43LUSTER\x10\x02\x12\x0c\n\x08\x45XTERNAL\x10\x03\"\x86\x01\n\x06Output\x12\x15\n\x04type\x18\x01 \x02(\tB\x07\xfa\x42\x04r\x02\x10\x01\x12&\n\x06\x65xpose\x18\x02 \x01(\x0e\x32\x16.harness.Output.Expose\"=\n\x06\x45xpose\x12\x0b\n\x07PRIVATE\x10\x00\x12\x0c\n\x08HEADLESS\x10\x01\x12\x0c\n\x08INTERNAL\x10\x02\x12\n\n\x06PUBLIC\x10\x03\"W\n\x04Wire\x12\x1f\n\x05input\x18\x01 \x01(\x0b\x32\x0e.harness.InputH\x00\x12!\n\x06output\x18\x02 \x01(\x0b\x32\x0f.harness.OutputH\x00\x42\x0b\n\x04type\x12\x03\xf8\x42\x01\"\xa4\x02\n\x07Service\x12\x0c\n\x04name\x18\x01 \x01(\t\x12-\n\tcontainer\x18\x02 \x01(\x0b\x32\x1a.harness.Service.Container\x1a\'\n\x08Resource\x12\x0b\n\x03\x63pu\x18\x01 \x01(\t\x12\x0e\n\x06memory\x18\x02 \x01(\t\x1a\x63\n\tResources\x12+\n\x08requests\x18\x01 \x01(\x0b\x32\x19.harness.Service.Resource\x12)\n\x06limits\x18\x02 \x01(\x0b\x32\x19.harness.Service.Resource\x1aN\n\tContainer\x12\x12\n\nrepository\x18\x01 \x01(\t\x12-\n\tresources\x18\x02 \x01(\x0b\x32\x1a.harness.Service.Resources:;\n\x04wire\x12\x1d.google.protobuf.FieldOptions\x18\xd1\x0f \x01(\x0b\x32\r.harness.Wire:;\n\x04mark\x12\x1d.google.protobuf.FieldOptions\x18\xd2\x0f \x01(\x0b\x32\r.harness.Mark:C\n\x07service\x12\x1f.google.protobuf.MessageOptions\x18\xd1\x0f \x01(\x0b\x32\x10.harness.Service'
+  serialized_pb=b'\n\x12harness/wire.proto\x12\x07harness\x1a google/protobuf/descriptor.proto\x1a\x17validate/validate.proto\"Y\n\x04Mark\x12(\n\x08protocol\x18\x01 \x01(\x0e\x32\x16.harness.Mark.Protocol\"\'\n\x08Protocol\x12\x07\n\x03TCP\x10\x00\x12\x08\n\x04HTTP\x10\x01\x12\x08\n\x04GRPC\x10\x02\"\x85\x01\n\x05Input\x12\x15\n\x04type\x18\x01 \x02(\tB\x07\xfa\x42\x04r\x02\x10\x01\x12#\n\x05reach\x18\x02 \x01(\x0e\x32\x14.harness.Input.Reach\"@\n\x05Reach\x12\r\n\tLOCALHOST\x10\x00\x12\r\n\tNAMESPACE\x10\x01\x12\x0b\n\x07\x43LUSTER\x10\x02\x12\x0c\n\x08\x45XTERNAL\x10\x03\"\x86\x01\n\x06Output\x12\x15\n\x04type\x18\x01 \x02(\tB\x07\xfa\x42\x04r\x02\x10\x01\x12&\n\x06\x65xpose\x18\x02 \x01(\x0e\x32\x16.harness.Output.Expose\"=\n\x06\x45xpose\x12\x0b\n\x07PRIVATE\x10\x00\x12\x0c\n\x08HEADLESS\x10\x01\x12\x0c\n\x08INTERNAL\x10\x02\x12\n\n\x06PUBLIC\x10\x03\"W\n\x04Wire\x12\x1f\n\x05input\x18\x01 \x01(\x0b\x32\x0e.harness.InputH\x00\x12!\n\x06output\x18\x02 \x01(\x0b\x32\x0f.harness.OutputH\x00\x42\x0b\n\x04type\x12\x03\xf8\x42\x01\"\xa8\x02\n\x07Service\x12\x0c\n\x04name\x18\x01 \x01(\t\x12-\n\tcontainer\x18\x02 \x01(\x0b\x32\x1a.harness.Service.Container\x1a\'\n\x08Resource\x12\x0b\n\x03\x63pu\x18\x01 \x01(\t\x12\x0e\n\x06memory\x18\x02 \x01(\t\x1a\x63\n\tResources\x12+\n\x08requests\x18\x01 \x01(\x0b\x32\x19.harness.Service.Resource\x12)\n\x06limits\x18\x02 \x01(\x0b\x32\x19.harness.Service.Resource\x1aR\n\tContainer\x12\x12\n\nrepository\x18\x01 \x01(\t\x12\x31\n\tresources\x18\x02 \x01(\x0b\x32\x1a.harness.Service.ResourcesB\x02\x18\x01:;\n\x04wire\x12\x1d.google.protobuf.FieldOptions\x18\xd1\x0f \x01(\x0b\x32\r.harness.Wire:;\n\x04mark\x12\x1d.google.protobuf.FieldOptions\x18\xd2\x0f \x01(\x0b\x32\r.harness.Mark:C\n\x07service\x12\x1f.google.protobuf.MessageOptions\x18\xd1\x0f \x01(\x0b\x32\x10.harness.Service'
   ,
   dependencies=[google_dot_protobuf_dot_descriptor__pb2.DESCRIPTOR,validate_dot_validate__pb2.DESCRIPTOR,])
 
@@ -382,7 +382,7 @@ _SERVICE_CONTAINER = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=b'\030\001', file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -396,7 +396,7 @@ _SERVICE_CONTAINER = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=758,
-  serialized_end=836,
+  serialized_end=840,
 )
 
 _SERVICE = _descriptor.Descriptor(
@@ -433,7 +433,7 @@ _SERVICE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=544,
-  serialized_end=836,
+  serialized_end=840,
 )
 
 _MARK.fields_by_name['protocol'].enum_type = _MARK_PROTOCOL
@@ -536,4 +536,5 @@ google_dot_protobuf_dot_descriptor__pb2.MessageOptions.RegisterExtension(service
 _INPUT.fields_by_name['type']._options = None
 _OUTPUT.fields_by_name['type']._options = None
 _WIRE.oneofs_by_name['type']._options = None
+_SERVICE_CONTAINER.fields_by_name['resources']._options = None
 # @@protoc_insertion_point(module_scope)

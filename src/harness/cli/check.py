@@ -4,34 +4,35 @@ from typing import List, Optional
 from contextlib import closing
 
 from google.protobuf.json_format import ParseDict, ParseError
-from google.protobuf.message_factory import GetMessages
 
 from ..runtime._utils import load_config
 from ..runtime._validate import validate, ValidationError
 
-from .utils import get_configuration, load_descriptor_set
+from .utils import get_configuration, load_descriptor_set, get_messages
 
 
 def check(
     proto: str,
-    config: StringIO,
+    config_file: StringIO,
     proto_path: List[str],
     *,
-    merge: Optional[StringIO] = None,
-    patch: Optional[StringIO] = None,
+    merge_file: Optional[StringIO] = None,
+    patch_file: Optional[StringIO] = None,
 ) -> None:
-    with closing(config):
-        config_content = config.read()
+    with closing(config_file):
+        config_content = config_file.read()
 
-    if merge is not None:
-        with closing(merge):
-            merge_content = merge.read()
+    merge_content: Optional[str]
+    if merge_file is not None:
+        with closing(merge_file):
+            merge_content = merge_file.read()
     else:
         merge_content = None
 
-    if patch is not None:
-        with closing(patch):
-            patch_content = patch.read()
+    patch_content: Optional[str]
+    if patch_file is not None:
+        with closing(patch_file):
+            patch_content = patch_file.read()
     else:
         patch_content = None
 
@@ -47,7 +48,7 @@ def check(
         merge_content=merge_content,
         patch_content=patch_content,
     )
-    message_classes = GetMessages(descriptor_set.file)
+    message_classes = get_messages(descriptor_set.file)
     config_full_name = ".".join(
         filter(None, (file_descriptor.package, config_descriptor.name))
     )

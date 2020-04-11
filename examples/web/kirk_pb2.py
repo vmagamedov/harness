@@ -26,7 +26,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='kirk',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\nkirk.proto\x12\x04kirk\x1a\x17validate/validate.proto\x1a\x12harness/wire.proto\x1a\x16harness/postgres.proto\x1a\x11harness/net.proto\x1a\x12harness/http.proto\x1a\x12harness/grpc.proto\x1a\x15harness/logging.proto\x1a\x15harness/tracing.proto\"\xc7\x05\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12X\n\x02\x64\x62\x18\x02 \x01(\x0b\x32\x16.harness.postgres.PoolB4\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}\"\n \n\x1eharness.wires.asyncpg.PoolWire\x8a}\x04\n\x02\x10\x03\x12\x65\n\x06scotty\x18\x03 \x01(\x0b\x32\x15.harness.grpc.ChannelB>\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a},\n*\n(harness.wires.grpclib.client.ChannelWire\x8a}\x04\n\x02\x10\x01\x12[\n\x07\x63onsole\x18\x04 \x01(\x0b\x32\x18.harness.logging.ConsoleB0\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}%\n#\n!harness.wires.logging.ConsoleWire\x12v\n\x07tracing\x18\x05 \x01(\x0b\x32\x17.harness.tracing.JaegerBL\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}A\n?\n=harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire\x12`\n\x06server\x18\x06 \x01(\x0b\x32\x14.harness.http.ServerB:\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}(\x12&\n$harness.wires.aiohttp.web.ServerWire\x8a}\x04\x12\x02\x10\x03\x12Y\n\x07monitor\x18\x07 \x01(\x0b\x32\x13.harness.net.ServerB3\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}(\x12&\n$harness.wires.aiomonitor.MonitorWire:T\x8a}\x06\n\x04kirk\x8a}\x1f\x12\x1d\n\x1bregistry.acme.dev/team/kirk\x8a}\x13\x12\x11\x12\x0f\n\r\n\x04\x33\x30\x30m\x12\x05\x31\x32\x38Mi\x8a}\x10\x12\x0e\x12\x0c\x12\n\n\x01\x31\x12\x05\x31\x39\x32Mib\x06proto3'
+  serialized_pb=b'\n\nkirk.proto\x12\x04kirk\x1a\x17validate/validate.proto\x1a\x12harness/wire.proto\x1a\x16harness/postgres.proto\x1a\x11harness/net.proto\x1a\x12harness/http.proto\x1a\x12harness/grpc.proto\x1a\x15harness/logging.proto\x1a\x15harness/tracing.proto\"\x9e\x05\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12X\n\x02\x64\x62\x18\x02 \x01(\x0b\x32\x16.harness.postgres.PoolB4\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}\"\n \n\x1eharness.wires.asyncpg.PoolWire\x8a}\x04\n\x02\x10\x03\x12\x65\n\x06scotty\x18\x03 \x01(\x0b\x32\x15.harness.grpc.ChannelB>\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a},\n*\n(harness.wires.grpclib.client.ChannelWire\x8a}\x04\n\x02\x10\x01\x12[\n\x07\x63onsole\x18\x04 \x01(\x0b\x32\x18.harness.logging.ConsoleB0\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}%\n#\n!harness.wires.logging.ConsoleWire\x12v\n\x07tracing\x18\x05 \x01(\x0b\x32\x17.harness.tracing.JaegerBL\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}A\n?\n=harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire\x12`\n\x06server\x18\x06 \x01(\x0b\x32\x14.harness.http.ServerB:\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}(\x12&\n$harness.wires.aiohttp.web.ServerWire\x8a}\x04\x12\x02\x10\x03\x12Y\n\x07monitor\x18\x07 \x01(\x0b\x32\x13.harness.net.ServerB3\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}(\x12&\n$harness.wires.aiomonitor.MonitorWire:+\x8a}\x06\n\x04kirk\x8a}\x1f\x12\x1d\n\x1bregistry.acme.dev/team/kirkb\x06proto3'
   ,
   dependencies=[validate_dot_validate__pb2.DESCRIPTOR,harness_dot_wire__pb2.DESCRIPTOR,harness_dot_postgres__pb2.DESCRIPTOR,harness_dot_net__pb2.DESCRIPTOR,harness_dot_http__pb2.DESCRIPTOR,harness_dot_grpc__pb2.DESCRIPTOR,harness_dot_logging__pb2.DESCRIPTOR,harness_dot_tracing__pb2.DESCRIPTOR,])
 
@@ -95,14 +95,14 @@ _CONFIGURATION = _descriptor.Descriptor(
   nested_types=[],
   enum_types=[
   ],
-  serialized_options=b'\212}\006\n\004kirk\212}\037\022\035\n\033registry.acme.dev/team/kirk\212}\023\022\021\022\017\n\r\n\004300m\022\005128Mi\212}\020\022\016\022\014\022\n\n\0011\022\005192Mi',
+  serialized_options=b'\212}\006\n\004kirk\212}\037\022\035\n\033registry.acme.dev/team/kirk',
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
   ],
   serialized_start=195,
-  serialized_end=906,
+  serialized_end=865,
 )
 
 _CONFIGURATION.fields_by_name['db'].message_type = harness_dot_postgres__pb2._POOL

@@ -60,7 +60,7 @@ message Service {
     }
     message Container {
         optional string repository = 1;
-        optional Resources resources = 2;
+        optional Resources resources = 2 [deprecated = true];
     }
     optional string name = 1;
     optional Container container = 2;
