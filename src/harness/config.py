@@ -1,6 +1,7 @@
 from typing import List
 from dataclasses import dataclass
 
+from google.protobuf.descriptor import Descriptor
 from google.protobuf.descriptor_pb2 import DescriptorProto, FieldDescriptorProto
 
 from validate.validate_pb2 import FieldRules
@@ -23,7 +24,7 @@ class ConfigSpec:
     wires: List[WireSpec]
 
 
-def translate_descriptor_proto(config_descriptor_proto) -> ConfigSpec:
+def translate_descriptor_proto(config_descriptor_proto: DescriptorProto) -> ConfigSpec:
     for _, option in config_descriptor_proto.options.ListFields():
         if isinstance(option, Service):
             service = option
@@ -59,7 +60,7 @@ def translate_descriptor_proto(config_descriptor_proto) -> ConfigSpec:
     return ConfigSpec(service=service, wires=wires)
 
 
-def translate_descriptor(config_descriptor) -> ConfigSpec:
+def translate_descriptor(config_descriptor: Descriptor) -> ConfigSpec:
     proto = DescriptorProto()
-    config_descriptor.CopyToProto(proto)
+    config_descriptor.CopyToProto(proto)  # type: ignore
     return translate_descriptor_proto(proto)

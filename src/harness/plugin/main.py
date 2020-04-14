@@ -1,10 +1,12 @@
 import os
 import sys
+from typing import Callable, Generator, Tuple
 
+from google.protobuf.descriptor_pb2 import FileDescriptorProto
 from google.protobuf.compiler.plugin_pb2 import CodeGeneratorRequest
 from google.protobuf.compiler.plugin_pb2 import CodeGeneratorResponse
 
-from ..config import translate_descriptor_proto
+from ..config import translate_descriptor_proto, ConfigSpec
 
 from . import python
 
@@ -18,7 +20,11 @@ class ConfigurationError(ValueError):
     pass
 
 
-def process_file(renderer, proto_file, response):
+def process_file(
+    renderer: Callable[[str, ConfigSpec], Generator[Tuple[str, str], None, None]],
+    proto_file: FileDescriptorProto,
+    response: CodeGeneratorResponse,
+) -> None:
     for config_message in proto_file.message_type:
         if config_message.name == "Configuration":
             break
