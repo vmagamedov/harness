@@ -1,11 +1,14 @@
 import logging
 import ipaddress
 from http import HTTPStatus
-from typing import Callable, Awaitable, List, Dict, Optional
+from types import TracebackType
+from typing import Callable, Awaitable, List, Dict, Optional, Type, TypeVar
+from typing import TYPE_CHECKING
 from logging import Logger
 
 from aiohttp.web import Application, AppRunner, TCPSite, Request, Response
 from aiohttp.web import HTTPException, middleware
+from aiohttp.web_response import StreamResponse
 
 from opentelemetry.trace import get_tracer, SpanKind
 from opentelemetry.context import attach
@@ -16,12 +19,21 @@ from ... import http_pb2
 
 from ..base import Wire, WaitMixin
 
+if TYPE_CHECKING:
+    from typing_extensions import Protocol
+
+    _RT = TypeVar("_RT", covariant=True)
+
+    class _Callback(Protocol[_RT]):
+        def __call__(self) -> _RT:
+            ...
+
 
 _log = logging.getLogger(__name__)
 
 
 def _headers_getter(request: Request, header_name: str) -> List[str]:
-    return request.headers.getall(header_name, [])
+    return request.headers.getall(header_name, [])  # type: ignore
 
 
 _HTTP_STATUS_TO_CODE_MAP: Dict[int, StatusCanonicalCode] = {
@@ -42,7 +54,7 @@ _HTTP_STATUS_TO_CODE_MAP: Dict[int, StatusCanonicalCode] = {
 }
 
 
-def _status_to_canonical_code(status_code: int):
+def _status_to_canonical_code(status_code: int) -> StatusCanonicalCode:
     try:
         return _HTTP_STATUS_TO_CODE_MAP[status_code]
     except KeyError:
@@ -70,8 +82,8 @@ def _internal_request(host: str) -> bool:
 
 @middleware
 async def _healthcheck_middleware(
-    request: Request, handler: Callable[[Request], Awaitable[Response]],
-) -> Response:
+    request: Request, handler: Callable[[Request], Awaitable[StreamResponse]],
+) -> StreamResponse:
     if request.path == "/_/health":
         host = request.headers.get("host")
         if not host or _internal_request(host):
@@ -81,8 +93,8 @@ async def _healthcheck_middleware(
 
 @middleware
 async def _opentracing_middleware(
-    request: Request, handler: Callable[[Request], Awaitable[Response]],
-) -> Response:
+    request: Request, handler: Callable[[Request], Awaitable[StreamResponse]],
+) -> StreamResponse:
     tracer = get_tracer(__name__)
     attach(extract(_headers_getter, request))
     with tracer.start_as_current_span(
@@ -123,7 +135,7 @@ class ServerWire(WaitMixin, Wire):
 
     _runner: AppRunner
     _site: TCPSite
-    _site_factory: Callable[[], TCPSite]
+    _site_factory: "_Callback[TCPSite]"
 
     def __init__(
         self, app: Application, *, access_log: Optional[Logger] = None,
@@ -136,7 +148,7 @@ class ServerWire(WaitMixin, Wire):
         self._app = app
         self._access_log = access_log
 
-    def configure(self, value: http_pb2.Server):
+    def configure(self, value: http_pb2.Server) -> None:
         assert isinstance(value, http_pb2.Server), type(value)
 
         self._app.middlewares.append(_healthcheck_middleware)
@@ -146,11 +158,16 @@ class ServerWire(WaitMixin, Wire):
             self._runner, value.bind.host, value.bind.port,
         )
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> None:
         await self._runner.setup()
         self._site = self._site_factory()
         await self._site.start()
         _log.info("%s started: %s", self.__class__.__name__, self._site.name)
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> None:
         await self._runner.cleanup()

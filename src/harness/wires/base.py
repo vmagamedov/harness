@@ -1,12 +1,10 @@
 import asyncio
 from types import TracebackType
-from typing import Optional, Type
-
-from google.protobuf.message import Message
+from typing import Optional, Type, Any
 
 
 class Wire:
-    def configure(self, value: Message) -> None:
+    def configure(self, value: Any) -> None:
         pass
 
     async def __aenter__(self) -> None:
