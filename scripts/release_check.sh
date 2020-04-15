@@ -1,5 +1,6 @@
 #!/bin/bash
-DIFF="$(git status harness setup.py -s)"
+set -euo pipefail
+DIFF="$(git status src/harness setup.py -s)"
 if [[ $DIFF ]]; then
     echo "Working directory is not clean:"
     echo $DIFF | sed 's/^/  /'
