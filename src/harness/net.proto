@@ -5,13 +5,19 @@ package harness.net;
 import "harness/wire.proto";
 import "validate/validate.proto";
 
+// Used to configure TCP sockets
 message Socket {
+    // IP address or domain name
     string host = 1 [(validate.rules).string.min_len = 1];
+    // Port number
     uint32 port = 2 [(validate.rules).uint32.gt = 0];
 }
 
+// Used to configure Unix domain sockets
 message Pipe {
+    // Path on the file system
     string name = 1;
+    // File access permissions
     uint32 mode = 2;
 }
 
@@ -22,6 +28,8 @@ message Address {
     }
 }
 
+// Used to configure TCP servers
 message Server {
+    // TCP address to bind and listen for client connections
     Socket bind = 1 [(harness.mark).protocol = TCP];
 }
