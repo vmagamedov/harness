@@ -185,30 +185,36 @@
 <dl class="message">
 <dt id="Socket">
 <em class="property">message</em><code class="sig-prename descclassname">harness.net.</code><code class="sig-name descname">Socket</code><a class="headerlink" href="#Socket" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field">
+<dd><p>Used to configure TCP sockets</p>
+<dl class="field">
 <dt>
 <code class="sig-name descname">host</code><code class="sig-prename descclassname">string</code></dt>
-<dd></dd></dl>
+<dd><p>IP address or domain name</p>
+</dd></dl>
 
 <dl class="field">
 <dt>
 <code class="sig-name descname">port</code><code class="sig-prename descclassname">uint32</code></dt>
-<dd></dd></dl>
+<dd><p>Port number</p>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="message">
 <dt id="Pipe">
 <em class="property">message</em><code class="sig-prename descclassname">harness.net.</code><code class="sig-name descname">Pipe</code><a class="headerlink" href="#Pipe" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field">
+<dd><p>Used to configure Unix domain sockets</p>
+<dl class="field">
 <dt>
 <code class="sig-name descname">name</code><code class="sig-prename descclassname">string</code></dt>
-<dd></dd></dl>
+<dd><p>Path on the file system</p>
+</dd></dl>
 
 <dl class="field">
 <dt>
 <code class="sig-name descname">mode</code><code class="sig-prename descclassname">uint32</code></dt>
-<dd></dd></dl>
+<dd><p>File access permissions</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -230,10 +236,12 @@
 <dl class="message">
 <dt id="Server">
 <em class="property">message</em><code class="sig-prename descclassname">harness.net.</code><code class="sig-name descname">Server</code><a class="headerlink" href="#Server" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field">
+<dd><p>Used to configure TCP servers</p>
+<dl class="field">
 <dt>
 <code class="sig-name descname">bind</code><a class="reference internal" href="#Socket"><code class="sig-prename descclassname">harness.net.Socket</code></a></dt>
-<dd></dd></dl>
+<dd><p>TCP address to bind and listen for client connections</p>
+</dd></dl>
 
 </dd></dl>
 
