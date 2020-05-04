@@ -9,6 +9,7 @@ extensions = [
     "sphinx_ext_test",
     "sphinx_ext_wire",
     "sphinx_ext_changelog",
+    "sphinx_sitemap",
 ]
 
 autoclass_content = "both"
@@ -30,6 +31,7 @@ intersphinx_mapping = {
 exclude_patterns = ["_build"]
 templates_path = ["_templates"]
 
+html_baseurl = "https://wire-in.dev/"
 html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
 html_additional_pages = {
@@ -45,6 +47,7 @@ html_context = {
     "github_version": "master",
     "conf_py_path": "/docs/",
 }
+html_extra_path = ["robots.txt"]
 
 
 def setup(app):

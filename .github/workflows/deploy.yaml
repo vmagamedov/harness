@@ -48,7 +48,7 @@ jobs:
     - run: |
         cd gh-pages
         git add --all
-        export DIFFERENCE="$(git status -s | egrep '\.(html|js|css)$')"
+        export DIFFERENCE="$(git status -s | egrep '\.(html|js|css|txt|xml)$')"
         [ -z $DIFFERENCE ] && exit 0
         git config --global user.email "vladimir@magamedov.com"
         git config --global user.name "Vladimir Magamedov"

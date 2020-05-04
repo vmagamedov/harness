@@ -1,5 +1,11 @@
 {% extends "!layout.html" %}
 
+{%- block extrahead %}
+    {%- if pagename == 'index' %}
+        <link rel="canonical" href="https://wire-in.dev/" />
+    {% endif %}
+{% endblock %}
+
 {% block footer %}
 {{ super() }}
 <!-- Global site tag (gtag.js) - Google Analytics -->
