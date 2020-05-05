@@ -21,6 +21,7 @@ autodoc_mock_imports = [
     "grpclib",
     "opentelemetry",
     "prometheus_client",
+    "uvicorn",
 ]
 
 intersphinx_mapping = {
