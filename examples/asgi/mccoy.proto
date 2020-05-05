@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package mccoy;
+
+import "validate/validate.proto";
+import "harness/wire.proto";
+import "harness/http.proto";
+import "harness/logging.proto";
+
+message Configuration {
+    option (harness.service).name = "kirk";
+    option (harness.service).container.repository = "registry.acme.dev/team/kirk";
+
+    bool debug = 1;
+
+    harness.http.Server server = 2 [
+        (validate.rules).message.required = true,
+        (harness.wire).output.type = "harness.wires.uvicorn.ServerWire",
+        (harness.wire).output.expose = PUBLIC
+    ];
+    harness.logging.Console console = 3 [
+        (validate.rules).message.required = true,
+        (harness.wire).input.type = "harness.wires.logging.ConsoleWire"
+    ];
+}
