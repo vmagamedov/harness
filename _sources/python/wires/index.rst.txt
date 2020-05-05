@@ -14,6 +14,7 @@ Python Wires
 
   aiohttp
   grpclib
+  uvicorn
 
 .. toctree::
   :caption: Drivers

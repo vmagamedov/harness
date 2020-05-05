@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>apscheduler &mdash; Harness  documentation</title>
+  <title>uvicorn &mdash; Harness  documentation</title>
   
 
   
@@ -36,7 +36,8 @@
   <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="prev" title="asyncpg" href="asyncpg.html" />
+    <link rel="next" title="asyncpg" href="asyncpg.html" />
+    <link rel="prev" title="grpclib" href="grpclib.html" />
 
 </head>
 
@@ -103,9 +104,9 @@
 <li class="toctree-l2"><a class="reference internal" href="aiomonitor.html">aiomonitor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aiohttp.html">aiohttp</a></li>
 <li class="toctree-l2"><a class="reference internal" href="grpclib.html">grpclib</a></li>
-<li class="toctree-l2"><a class="reference internal" href="uvicorn.html">uvicorn</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">uvicorn</a></li>
 <li class="toctree-l2"><a class="reference internal" href="asyncpg.html">asyncpg</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">apscheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apscheduler.html">apscheduler</a></li>
 </ul>
 </li>
 </ul>
@@ -155,14 +156,14 @@
         
           <li><a href="index.html">Python Wires</a> &raquo;</li>
         
-      <li>apscheduler</li>
+      <li>uvicorn</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/vmagamedov/harness/blob/master/docs/python/wires/apscheduler.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/vmagamedov/harness/blob/master/docs/python/wires/uvicorn.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -176,37 +177,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="apscheduler">
-<h1>apscheduler<a class="headerlink" href="#apscheduler" title="Permalink to this headline">¶</a></h1>
-<p>Wires for the <a class="reference external" href="https://github.com/agronholm/apscheduler">apscheduler</a> project.</p>
-<span class="target" id="module-harness.wires.apscheduler"></span><dl class="class">
-<dt id="harness.wires.apscheduler.SchedulerWire">
-<em class="property">class </em><code class="sig-prename descclassname">harness.wires.apscheduler.</code><code class="sig-name descname">SchedulerWire</code><span class="sig-paren">(</span><em class="sig-param">scheduler: apscheduler.schedulers.base.BaseScheduler</em><span class="sig-paren">)</span><a class="headerlink" href="#harness.wires.apscheduler.SchedulerWire" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="wire">
-<dt>
-<em class="property">type:</em><code class="sig-name descname">output</code><em class="property">config:</em><a class="reference internal" href="../../google/protobuf/empty.html#Empty"><code class="sig-prename descclassname">google.protobuf.Empty</code></a></dt>
-<dd><p>Requirements:</p>
-<ul>
-<li><code class="docutils literal notranslate"><span class="pre">apscheduler</span></code></li>
-</ul>
-</dd></dl>
-
-</dd></dl>
-
-<span class="target" id="module-harness.wires.apscheduler.jobstores.redis"></span><dl class="class">
-<dt id="harness.wires.apscheduler.jobstores.redis.RedisJobStoreWire">
-<em class="property">class </em><code class="sig-prename descclassname">harness.wires.apscheduler.jobstores.redis.</code><code class="sig-name descname">RedisJobStoreWire</code><a class="headerlink" href="#harness.wires.apscheduler.jobstores.redis.RedisJobStoreWire" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="wire">
-<dt>
-<em class="property">type:</em><code class="sig-name descname">input</code><em class="property">config:</em><a class="reference internal" href="../../harness/redis.html#Connection"><code class="sig-prename descclassname">harness.redis.Connection</code></a></dt>
-<dd><p>Requirements:</p>
-<ul>
-<li><code class="docutils literal notranslate"><span class="pre">redis</span></code></li>
-</ul>
-</dd></dl>
-
-</dd></dl>
-
+  <div class="section" id="uvicorn">
+<h1>uvicorn<a class="headerlink" href="#uvicorn" title="Permalink to this headline">¶</a></h1>
+<p>Wires for the <a class="reference external" href="https://github.com/encode/uvicorn">uvicorn</a> project.</p>
 </div>
 
 
@@ -217,8 +190,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="asyncpg.html" class="btn btn-neutral float-right" title="asyncpg" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="asyncpg.html" class="btn btn-neutral float-left" title="asyncpg" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="grpclib.html" class="btn btn-neutral float-left" title="grpclib" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
