@@ -4,3 +4,8 @@ server:
     port: 8000
 console:
   level: INFO
+tracing:
+  service_name: mccoy
+  address:
+    host: localhost
+    port: 6831

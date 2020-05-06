@@ -15,6 +15,7 @@ from validate import validate_pb2 as validate_dot_validate__pb2
 from harness import wire_pb2 as harness_dot_wire__pb2
 from harness import http_pb2 as harness_dot_http__pb2
 from harness import logging_pb2 as harness_dot_logging__pb2
+from harness import tracing_pb2 as harness_dot_tracing__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -22,9 +23,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='mccoy',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\x0bmccoy.proto\x12\x05mccoy\x1a\x17validate/validate.proto\x1a\x12harness/wire.proto\x1a\x12harness/http.proto\x1a\x15harness/logging.proto\"\x86\x02\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12\\\n\x06server\x18\x02 \x01(\x0b\x32\x14.harness.http.ServerB6\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}$\x12\"\n harness.wires.uvicorn.ServerWire\x8a}\x04\x12\x02\x10\x03\x12[\n\x07\x63onsole\x18\x03 \x01(\x0b\x32\x18.harness.logging.ConsoleB0\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}%\n#\n!harness.wires.logging.ConsoleWire:+\x8a}\x06\n\x04kirk\x8a}\x1f\x12\x1d\n\x1bregistry.acme.dev/team/kirkb\x06proto3'
+  serialized_pb=b'\n\x0bmccoy.proto\x12\x05mccoy\x1a\x17validate/validate.proto\x1a\x12harness/wire.proto\x1a\x12harness/http.proto\x1a\x15harness/logging.proto\x1a\x15harness/tracing.proto\"\xfe\x02\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12\\\n\x06server\x18\x02 \x01(\x0b\x32\x14.harness.http.ServerB6\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}$\x12\"\n harness.wires.uvicorn.ServerWire\x8a}\x04\x12\x02\x10\x03\x12[\n\x07\x63onsole\x18\x03 \x01(\x0b\x32\x18.harness.logging.ConsoleB0\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}%\n#\n!harness.wires.logging.ConsoleWire\x12v\n\x07tracing\x18\x04 \x01(\x0b\x32\x17.harness.tracing.JaegerBL\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}A\n?\n=harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire:+\x8a}\x06\n\x04kirk\x8a}\x1f\x12\x1d\n\x1bregistry.acme.dev/team/kirkb\x06proto3'
   ,
-  dependencies=[validate_dot_validate__pb2.DESCRIPTOR,harness_dot_wire__pb2.DESCRIPTOR,harness_dot_http__pb2.DESCRIPTOR,harness_dot_logging__pb2.DESCRIPTOR,])
+  dependencies=[validate_dot_validate__pb2.DESCRIPTOR,harness_dot_wire__pb2.DESCRIPTOR,harness_dot_http__pb2.DESCRIPTOR,harness_dot_logging__pb2.DESCRIPTOR,harness_dot_tracing__pb2.DESCRIPTOR,])
 
 
 
@@ -57,6 +58,13 @@ _CONFIGURATION = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=b'\372B\005\212\001\002\020\001\212}%\n#\n!harness.wires.logging.ConsoleWire', file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='tracing', full_name='mccoy.Configuration.tracing', index=3,
+      number=4, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=b'\372B\005\212\001\002\020\001\212}A\n?\n=harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire', file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -69,12 +77,13 @@ _CONFIGURATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=111,
-  serialized_end=373,
+  serialized_start=134,
+  serialized_end=516,
 )
 
 _CONFIGURATION.fields_by_name['server'].message_type = harness_dot_http__pb2._SERVER
 _CONFIGURATION.fields_by_name['console'].message_type = harness_dot_logging__pb2._CONSOLE
+_CONFIGURATION.fields_by_name['tracing'].message_type = harness_dot_tracing__pb2._JAEGER
 DESCRIPTOR.message_types_by_name['Configuration'] = _CONFIGURATION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -88,5 +97,6 @@ _sym_db.RegisterMessage(Configuration)
 
 _CONFIGURATION.fields_by_name['server']._options = None
 _CONFIGURATION.fields_by_name['console']._options = None
+_CONFIGURATION.fields_by_name['tracing']._options = None
 _CONFIGURATION._options = None
 # @@protoc_insertion_point(module_scope)

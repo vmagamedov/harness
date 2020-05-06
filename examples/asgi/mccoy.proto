@@ -6,6 +6,7 @@ import "validate/validate.proto";
 import "harness/wire.proto";
 import "harness/http.proto";
 import "harness/logging.proto";
+import "harness/tracing.proto";
 
 message Configuration {
     option (harness.service).name = "kirk";
@@ -21,5 +22,9 @@ message Configuration {
     harness.logging.Console console = 3 [
         (validate.rules).message.required = true,
         (harness.wire).input.type = "harness.wires.logging.ConsoleWire"
+    ];
+    harness.tracing.Jaeger tracing = 4 [
+        (validate.rules).message.required = true,
+        (harness.wire).input.type = "harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire"
     ];
 }

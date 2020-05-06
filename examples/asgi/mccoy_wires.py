@@ -4,12 +4,14 @@
 from dataclasses import dataclass
 
 import harness.wires.logging
+import harness.wires.opentelemetry.ext.jaeger
 import harness.wires.uvicorn
 
 
 @dataclass
 class WiresIn:
     console: harness.wires.logging.ConsoleWire
+    tracing: harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire
 
 
 @dataclass

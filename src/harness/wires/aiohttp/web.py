@@ -1,8 +1,7 @@
 import logging
-import ipaddress
-from http import HTTPStatus
+
 from types import TracebackType
-from typing import Callable, Awaitable, List, Dict, Optional, Type, TypeVar
+from typing import Callable, Awaitable, List, Optional, Type, TypeVar
 from typing import TYPE_CHECKING
 from logging import Logger
 
@@ -13,11 +12,13 @@ from aiohttp.web_response import StreamResponse
 from opentelemetry.trace import get_tracer, SpanKind
 from opentelemetry.context import attach
 from opentelemetry.propagators import extract
-from opentelemetry.trace.status import Status, StatusCanonicalCode
+from opentelemetry.trace.status import Status
 
 from ... import http_pb2
 
+from .. import _utils
 from ..base import Wire, WaitMixin
+
 
 if TYPE_CHECKING:
     from typing_extensions import Protocol
@@ -32,63 +33,19 @@ if TYPE_CHECKING:
 _log = logging.getLogger(__name__)
 
 
-def _headers_getter(request: Request, header_name: str) -> List[str]:
-    return request.headers.getall(header_name, [])  # type: ignore
-
-
-_HTTP_STATUS_TO_CODE_MAP: Dict[int, StatusCanonicalCode] = {
-    # 401
-    HTTPStatus.UNAUTHORIZED.value: StatusCanonicalCode.UNAUTHENTICATED,
-    # 403
-    HTTPStatus.FORBIDDEN.value: StatusCanonicalCode.PERMISSION_DENIED,
-    # 404
-    HTTPStatus.NOT_FOUND.value: StatusCanonicalCode.NOT_FOUND,
-    # 429
-    HTTPStatus.TOO_MANY_REQUESTS.value: StatusCanonicalCode.RESOURCE_EXHAUSTED,
-    # 501
-    HTTPStatus.NOT_IMPLEMENTED.value: StatusCanonicalCode.UNIMPLEMENTED,
-    # 503
-    HTTPStatus.SERVICE_UNAVAILABLE.value: StatusCanonicalCode.UNAVAILABLE,
-    # 504
-    HTTPStatus.GATEWAY_TIMEOUT.value: StatusCanonicalCode.DEADLINE_EXCEEDED,
-}
-
-
-def _status_to_canonical_code(status_code: int) -> StatusCanonicalCode:
-    try:
-        return _HTTP_STATUS_TO_CODE_MAP[status_code]
-    except KeyError:
-        if status_code < 100:
-            return StatusCanonicalCode.UNKNOWN
-        elif status_code < 400:
-            return StatusCanonicalCode.OK
-        elif status_code < 500:
-            return StatusCanonicalCode.INVALID_ARGUMENT
-        elif status_code < 600:
-            return StatusCanonicalCode.INTERNAL
-        else:
-            return StatusCanonicalCode.UNKNOWN
-
-
-def _internal_request(host: str) -> bool:
-    address, _, _ = host.partition(":")
-    try:
-        ipaddress.ip_address(address)
-    except ValueError:
-        return address == "localhost"
-    else:
-        return True
-
-
 @middleware
 async def _healthcheck_middleware(
     request: Request, handler: Callable[[Request], Awaitable[StreamResponse]],
 ) -> StreamResponse:
     if request.path == "/_/health":
         host = request.headers.get("host")
-        if not host or _internal_request(host):
+        if not host or _utils.is_internal_request(host):
             return Response(text="OK")
     return await handler(request)
+
+
+def _headers_getter(request: Request, header_name: str) -> List[str]:
+    return request.headers.getall(header_name, [])  # type: ignore
 
 
 @middleware
@@ -110,12 +67,12 @@ async def _opentracing_middleware(
         try:
             response = await handler(request)
         except HTTPException as e:
-            code = _status_to_canonical_code(e.status)
+            code = _utils.status_to_canonical_code(e.status)
             span.set_status(Status(code))
             span.set_attribute("http.status_text", e.reason)
             raise
         else:
-            code = _status_to_canonical_code(response.status)
+            code = _utils.status_to_canonical_code(response.status)
             span.set_status(Status(code))
             span.set_attribute("http.status_text", response.reason)
             return response
