@@ -8,5 +8,6 @@ def enable_metrics() -> None:
 def enable_tracing() -> None:
     from opentelemetry.trace import set_tracer_provider
     from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.trace.sampling import DEFAULT_OFF
 
-    set_tracer_provider(TracerProvider())
+    set_tracer_provider(TracerProvider(sampler=DEFAULT_OFF))

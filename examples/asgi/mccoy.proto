@@ -9,8 +9,8 @@ import "harness/logging.proto";
 import "harness/tracing.proto";
 
 message Configuration {
-    option (harness.service).name = "kirk";
-    option (harness.service).container.repository = "registry.acme.dev/team/kirk";
+    option (harness.service).name = "mccoy";
+    option (harness.service).container.repository = "registry.acme.dev/team/mccoy";
 
     bool debug = 1;
 
