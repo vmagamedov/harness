@@ -5,13 +5,13 @@
 #    pip-compile --output-file=requirements/setup.txt setup.py
 #
 json-merge-patch==0.2     # via harness (setup.py)
-jsonpatch==1.25           # via harness (setup.py)
+jsonpatch==1.26           # via harness (setup.py)
 jsonpointer==2.0          # via jsonpatch
 opentelemetry-api==0.5b0  # via opentelemetry-sdk
 opentelemetry-sdk==0.5b0  # via harness (setup.py)
-protobuf==3.11.3          # via harness (setup.py)
-pyyaml==5.3               # via harness (setup.py)
-six==1.14.0               # via protobuf
+protobuf==3.12.2          # via harness (setup.py)
+pyyaml==5.3.1             # via harness (setup.py)
+six==1.15.0               # via protobuf
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

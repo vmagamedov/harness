@@ -49,11 +49,11 @@ docs:
 	PYTHONPATH=docs sphinx-build docs build
 
 requirements:
-	pip-compile --output-file=requirements/setup.txt setup.py
-	pip-compile requirements/check.in
-	pip-compile requirements/docs.in
-	pip-compile requirements/release.in
-	pip-compile requirements/test.in
+	pip-compile -U --output-file=requirements/setup.txt setup.py
+	pip-compile -U requirements/check.in
+	pip-compile -U requirements/docs.in
+	pip-compile -U requirements/release.in
+	pip-compile -U requirements/test.in
 
 run_web:
 	@PYTHONPATH=examples/web:examples/grpc python examples/web/entrypoint.py examples/web/kirk.yaml
