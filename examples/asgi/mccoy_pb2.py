@@ -23,7 +23,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='mccoy',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\x0bmccoy.proto\x12\x05mccoy\x1a\x17validate/validate.proto\x1a\x12harness/wire.proto\x1a\x12harness/http.proto\x1a\x15harness/logging.proto\x1a\x15harness/tracing.proto\"\xfe\x02\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12\\\n\x06server\x18\x02 \x01(\x0b\x32\x14.harness.http.ServerB6\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}$\x12\"\n harness.wires.uvicorn.ServerWire\x8a}\x04\x12\x02\x10\x03\x12[\n\x07\x63onsole\x18\x03 \x01(\x0b\x32\x18.harness.logging.ConsoleB0\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}%\n#\n!harness.wires.logging.ConsoleWire\x12v\n\x07tracing\x18\x04 \x01(\x0b\x32\x17.harness.tracing.JaegerBL\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}A\n?\n=harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire:+\x8a}\x06\n\x04kirk\x8a}\x1f\x12\x1d\n\x1bregistry.acme.dev/team/kirkb\x06proto3'
+  serialized_pb=b'\n\x0bmccoy.proto\x12\x05mccoy\x1a\x17validate/validate.proto\x1a\x12harness/wire.proto\x1a\x12harness/http.proto\x1a\x15harness/logging.proto\x1a\x15harness/tracing.proto\"\x80\x03\n\rConfiguration\x12\r\n\x05\x64\x65\x62ug\x18\x01 \x01(\x08\x12\\\n\x06server\x18\x02 \x01(\x0b\x32\x14.harness.http.ServerB6\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}$\x12\"\n harness.wires.uvicorn.ServerWire\x8a}\x04\x12\x02\x10\x03\x12[\n\x07\x63onsole\x18\x03 \x01(\x0b\x32\x18.harness.logging.ConsoleB0\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}%\n#\n!harness.wires.logging.ConsoleWire\x12v\n\x07tracing\x18\x04 \x01(\x0b\x32\x17.harness.tracing.JaegerBL\xfa\x42\x05\x8a\x01\x02\x10\x01\x8a}A\n?\n=harness.wires.opentelemetry.ext.jaeger.JaegerSpanExporterWire:-\x8a}\x07\n\x05mccoy\x8a} \x12\x1e\n\x1cregistry.acme.dev/team/mccoyb\x06proto3'
   ,
   dependencies=[validate_dot_validate__pb2.DESCRIPTOR,harness_dot_wire__pb2.DESCRIPTOR,harness_dot_http__pb2.DESCRIPTOR,harness_dot_logging__pb2.DESCRIPTOR,harness_dot_tracing__pb2.DESCRIPTOR,])
 
@@ -71,14 +71,14 @@ _CONFIGURATION = _descriptor.Descriptor(
   nested_types=[],
   enum_types=[
   ],
-  serialized_options=b'\212}\006\n\004kirk\212}\037\022\035\n\033registry.acme.dev/team/kirk',
+  serialized_options=b'\212}\007\n\005mccoy\212} \022\036\n\034registry.acme.dev/team/mccoy',
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
   ],
   serialized_start=134,
-  serialized_end=516,
+  serialized_end=518,
 )
 
 _CONFIGURATION.fields_by_name['server'].message_type = harness_dot_http__pb2._SERVER
