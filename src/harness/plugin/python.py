@@ -33,7 +33,7 @@ def _render_wires(proto_file: str, spec: ConfigSpec) -> Tuple[str, str]:
     buf.add("")
 
     buf.add("@dataclass")
-    buf.add(f"class WiresIn:")
+    buf.add("class WiresIn:")
     with buf.indent():
         empty = True
         for wire in spec.wires:
@@ -49,7 +49,7 @@ def _render_wires(proto_file: str, spec: ConfigSpec) -> Tuple[str, str]:
     buf.add("")
     buf.add("")
     buf.add("@dataclass")
-    buf.add(f"class WiresOut:")
+    buf.add("class WiresOut:")
     with buf.indent():
         empty = True
         for wire in spec.wires:

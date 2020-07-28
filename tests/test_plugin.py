@@ -62,7 +62,7 @@ def test_python_optional_input(python_request):
     assert response.file[0].name.endswith("_wires.py")
 
     expected = prepare(
-        f"""
+        """
     from typing import Optional
     from dataclasses import dataclass
 
@@ -98,7 +98,7 @@ def test_python_required_input(python_request):
     assert response.file[0].name.endswith("_wires.py")
 
     expected = prepare(
-        f"""
+        """
     from dataclasses import dataclass
 
     import path.to.implementation

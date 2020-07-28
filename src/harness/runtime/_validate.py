@@ -762,7 +762,7 @@ def field_gen(
         if field.label == FieldDescriptor.LABEL_REPEATED:
             buf.add(f"for item in {field_value}:")
             with buf.indent():
-                buf.add(f"validate(item)")
+                buf.add("validate(item)")
         else:
             outer = ".".join(code_path[:-1])
             inner = code_path[-1]
@@ -792,7 +792,7 @@ def file_gen(message: Message) -> Optional[str]:
                         buf.add("pass")
             for opt, opt_value in oneof.GetOptions().ListFields():
                 if opt.name == "required" and opt_value:
-                    buf.add(f"else:")
+                    buf.add("else:")
                     with buf.indent():
                         err_gen(buf, f"Oneof {oneof.name} is required")
         for field in message.DESCRIPTOR.fields:
