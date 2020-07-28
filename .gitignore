@@ -1,6 +1,7 @@
 dist
 build
 node_modules
+pip-wheel-metadata
 __pycache__
 .tox
 .mypy_cache
