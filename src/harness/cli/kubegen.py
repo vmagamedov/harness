@@ -38,7 +38,7 @@ def _ver(content: bytes) -> str:
 class Socket:
     host: str
     port: int
-    _protocol: wire_pb2.Mark.ProtocolValue
+    _protocol: "wire_pb2.Mark.ProtocolValue"
 
     def is_tcp(self) -> bool:
         return self._protocol == wire_pb2.Mark.TCP
