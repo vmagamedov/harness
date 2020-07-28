@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools >= 40.6.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [tool.black]
 target-version = ["py37"]
 exclude = "(.git|.tox|env|node_modules|_pb2.py|_grpc.py|_wires.py|entrypoint.py)"
