@@ -1,13 +1,7 @@
-import socket
 import logging
-from typing import List, Dict
-
-from opentelemetry.trace import get_tracer, SpanKind
-from opentelemetry.context import attach
-from opentelemetry.propagators import extract
-from opentelemetry.trace.status import Status
 
 from uvicorn import Config, Server
+from opentelemetry.ext.asgi import OpenTelemetryMiddleware
 
 from .. import http_pb2
 
@@ -46,52 +40,6 @@ def _healthcheck_middleware(app):
     return middleware
 
 
-def _metadata_getter(headers: Dict[bytes, bytes], header_name: str) -> List[str]:
-    header_name_bytes = header_name.lower().encode("utf-8")
-    value = headers.get(header_name_bytes)
-    return [value] if value is not None else []
-
-
-def _opentracing_middleware(app):
-    async def middleware(scope, receive, send):
-        if scope["type"] == "http":
-            response = []
-
-            async def send_hook(data):
-                if data["type"] == "http.response.start":
-                    response.append(data)
-                await send(data)
-
-            headers = dict(scope["headers"])
-            host_bytes = headers.get(b"host")
-            if host_bytes is None:
-                host = socket.getfqdn()
-            else:
-                host = host_bytes.decode("utf-8")
-
-            tracer = get_tracer(__name__)
-            attach(extract(_metadata_getter, headers))
-            with tracer.start_as_current_span(
-                scope["path"],
-                kind=SpanKind.SERVER,
-                attributes={
-                    "component": "http",
-                    "http.method": scope["method"],
-                    "http.scheme": scope.get("scheme", "http"),
-                    "http.host": host,
-                },
-            ) as span:
-                await app(scope, receive, send_hook)
-                if response:
-                    status = response[0]["status"]
-                    code = _utils.status_to_canonical_code(status)
-                    span.set_status(Status(code))
-        else:
-            await app(scope, receive, send)
-
-    return middleware
-
-
 class ServerWire(Wire):
     """
 
@@ -99,7 +47,9 @@ class ServerWire(Wire):
       :type: output
       :runtime: python
       :config: harness.http.Server
-      :requirements: uvicorn
+      :requirements:
+        uvicorn
+        opentelemetry-ext-asgi
 
     """
 
@@ -111,7 +61,7 @@ class ServerWire(Wire):
     def configure(self, value: http_pb2.Server):
         assert isinstance(value, http_pb2.Server), type(value)
         app = _healthcheck_middleware(self._app)
-        app = _opentracing_middleware(app)
+        app = OpenTelemetryMiddleware(app)
         config = Config(
             app, value.bind.host, value.bind.port, log_config=None, access_log=False,
         )
