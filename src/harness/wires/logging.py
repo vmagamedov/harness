@@ -117,14 +117,15 @@ class ConsoleWire(Wire):
 
 class _CEEFormatter(logging.Formatter):
     def format(self, record):
-        message = record.getMessage()
+        # Document structure by Elastic Common Schema
+        doc = {"message": record.getMessage(), "log": {"logger": record.name}}
         if record.exc_info:
-            exc_text = self.formatException(record.exc_info)
-            if _WITH_COLORS:
-                exc_text = _highlight(exc_text).rstrip("\n")
-            message += "\n" + exc_text
-        value = json.dumps({"logger": record.name, "message": message})
-        return "@cee: {}".format(value)
+            doc["error"] = {
+                "type": record.exc_info[0].__name__,
+                "message": str(record.exc_info[1]),
+                "stack_trace": self.formatException(record.exc_info),
+            }
+        return "@cee: {}".format(json.dumps(doc))
 
 
 class _SyslogHandler(logging.handlers.SysLogHandler):
