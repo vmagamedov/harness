@@ -4,8 +4,6 @@ Harness
 Harness is a language-neutral meta-framework for building serverless-style
 services.
 
-All you need to know is available here: https://wire-in.dev
-
 There are a bunch of examples_ you can find in this repository in the
 corresponding dir.
 
